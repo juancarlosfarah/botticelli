@@ -1,4 +1,4 @@
-# botticelli_vite
+# botticelli
 
 An Electron application with React and TypeScript
 

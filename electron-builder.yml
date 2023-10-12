@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: botticelli_vite
+productName: botticelli
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: botticelli_vite
+  executableName: botticelli
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
