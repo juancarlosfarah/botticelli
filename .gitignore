@@ -1,4 +1,4 @@
-# Logs
+# logs
 logs
 *.log
 *.log*
@@ -15,7 +15,7 @@ dist-electron
 release
 *.local
 
-# Editor directories and files
+# editor directories and files
 .vscode
 .idea
 .DS_Store
@@ -29,3 +29,6 @@ build/
 tmp/
 temp/
 out
+
+# data
+database.sqlite
