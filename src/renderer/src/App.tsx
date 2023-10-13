@@ -1,145 +1,95 @@
-import Versions from './components/Versions'
-import icons from './assets/icons.svg'
+import { CssVarsProvider } from '@mui/joy/styles'
+import CssBaseline from '@mui/joy/CssBaseline'
+import Box from '@mui/joy/Box'
+import Button from '@mui/joy/Button'
+import Breadcrumbs from '@mui/joy/Breadcrumbs'
+import Link from '@mui/joy/Link'
+import Typography from '@mui/joy/Typography'
+// icons
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
+import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded'
 
-function App(): JSX.Element {
+import Sidebar from './components/Sidebar'
+import Header from './components/Header'
+import { Outlet } from 'react-router-dom'
+
+export default function JoyOrderDashboardTemplate() {
   return (
-    <div className="container">
-      <Versions></Versions>
-
-      <svg className="hero-logo" viewBox="0 0 900 300">
-        <use xlinkHref={`${icons}#electron`} />
-      </svg>
-      <h2 className="hero-text">
-        You{"'"}ve successfully created an Electron project with React and TypeScript
-      </h2>
-      <p className="hero-tagline">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-
-      <div className="links">
-        <div className="link-item">
-          <a target="_blank" href="https://electron-vite.org" rel="noopener noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="link-item link-dot">•</div>
-        <div className="link-item">
-          <a
-            target="_blank"
-            href="https://github.com/alex8088/electron-vite"
-            rel="noopener noreferrer"
+    <CssVarsProvider disableTransitionOnChange>
+      <CssBaseline />
+      <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
+        <Header />
+        <Sidebar />
+        <Box
+          component="main"
+          className="MainContent"
+          sx={{
+            px: {
+              xs: 2,
+              md: 6
+            },
+            pt: {
+              xs: 'calc(12px + var(--Header-height))',
+              sm: 'calc(12px + var(--Header-height))',
+              md: 3
+            },
+            pb: {
+              xs: 2,
+              sm: 2,
+              md: 3
+            },
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0,
+            height: '100dvh',
+            gap: 1
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Breadcrumbs
+              size="sm"
+              aria-label="breadcrumbs"
+              separator={<ChevronRightRoundedIcon />}
+              sx={{ pl: 0 }}
+            >
+              <Link underline="none" color="neutral" href="#some-link" aria-label="Home">
+                <HomeRoundedIcon />
+              </Link>
+              <Link
+                underline="hover"
+                color="neutral"
+                href="#some-link"
+                fontSize={12}
+                fontWeight={500}
+              >
+                Dashboard
+              </Link>
+              <Typography color="primary" fontWeight={500} fontSize={12}>
+                Orders
+              </Typography>
+            </Breadcrumbs>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              my: 1,
+              gap: 1,
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: { xs: 'start', sm: 'center' },
+              flexWrap: 'wrap',
+              justifyContent: 'space-between'
+            }}
           >
-            Getting Help
-          </a>
-        </div>
-        <div className="link-item link-dot">•</div>
-        <div className="link-item">
-          <a
-            target="_blank"
-            href="https://github.com/alex8088/quick-start/tree/master/packages/create-electron"
-            rel="noopener noreferrer"
-          >
-            create-electron
-          </a>
-        </div>
-      </div>
-
-      <div className="features">
-        <div className="feature-item">
-          <article>
-            <h2 className="title">Configuring</h2>
-            <p className="detail">
-              Config with <span>electron.vite.config.ts</span> and refer to the{' '}
-              <a target="_blank" href="https://electron-vite.org/config" rel="noopener noreferrer">
-                config guide
-              </a>
-              .
-            </p>
-          </article>
-        </div>
-        <div className="feature-item">
-          <article>
-            <h2 className="title">HMR</h2>
-            <p className="detail">
-              Edit <span>src/renderer</span> files to test HMR. See{' '}
-              <a
-                target="_blank"
-                href="https://electron-vite.org/guide/hmr.html"
-                rel="noopener noreferrer"
-              >
-                docs
-              </a>
-              .
-            </p>
-          </article>
-        </div>
-        <div className="feature-item">
-          <article>
-            <h2 className="title">Hot Reloading</h2>
-            <p className="detail">
-              Run{' '}
-              <span>
-                {"'"}electron-vite dev --watch{"'"}
-              </span>{' '}
-              to enable. See{' '}
-              <a
-                target="_blank"
-                href="https://electron-vite.org/guide/hot-reloading.html"
-                rel="noopener noreferrer"
-              >
-                docs
-              </a>
-              .
-            </p>
-          </article>
-        </div>
-        <div className="feature-item">
-          <article>
-            <h2 className="title">Debugging</h2>
-            <p className="detail">
-              Check out <span>.vscode/launch.json</span>. See{' '}
-              <a
-                target="_blank"
-                href="https://electron-vite.org/guide/debugging.html"
-                rel="noopener noreferrer"
-              >
-                docs
-              </a>
-              .
-            </p>
-          </article>
-        </div>
-        <div className="feature-item">
-          <article>
-            <h2 className="title">Source Code Protection</h2>
-            <p className="detail">
-              Supported via built-in plugin <span>bytecodePlugin</span>. See{' '}
-              <a
-                target="_blank"
-                href="https://electron-vite.org/guide/source-code-protection.html"
-                rel="noopener noreferrer"
-              >
-                docs
-              </a>
-              .
-            </p>
-          </article>
-        </div>
-        <div className="feature-item">
-          <article>
-            <h2 className="title">Packaging</h2>
-            <p className="detail">
-              Use{' '}
-              <a target="_blank" href="https://www.electron.build" rel="noopener noreferrer">
-                electron-builder
-              </a>{' '}
-              and pre-configured to pack your app.
-            </p>
-          </article>
-        </div>
-      </div>
-    </div>
+            <Typography level="h2">Orders</Typography>
+            <Button color="primary" startDecorator={<DownloadRoundedIcon />} size="sm">
+              Download PDF
+            </Button>
+          </Box>
+          <Outlet />
+        </Box>
+      </Box>
+    </CssVarsProvider>
   )
 }
-
-export default App

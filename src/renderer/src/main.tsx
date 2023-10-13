@@ -1,10 +1,28 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './assets/index.css'
-import App from './App'
+import { StyledEngineProvider } from '@mui/joy/styles'
+import App from './App.tsx'
+import './index.css'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Conversations from './components/Conversations/Conversations.tsx'
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        path: 'conversations',
+        element: <Conversations />
+      }
+    ]
+  }
+])
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <StyledEngineProvider injectFirst>
+      <RouterProvider router={router} />
+    </StyledEngineProvider>
   </React.StrictMode>
 )
