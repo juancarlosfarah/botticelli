@@ -1,14 +1,27 @@
 import ConversationTable from './ConversationTable.tsx';
 import ConversationList from './ConversationList.tsx';
 import Button from '@mui/joy/Button';
-import { POST_CONVERSATION_CHANNEL } from '../../../../shared/channels';
-import { IpcService } from '../../services/IpcService';
+import { fetchConversations, saveNewConversation } from './ConversationsSlice';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Conversations(): JSX.Element {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(fetchConversations());
+  }, []);
+
   const handleNewConversation = async (): Promise<void> => {
-    const res = await IpcService.send<{ hello: string }>(POST_CONVERSATION_CHANNEL);
-    console.log(res);
+    const { payload } = await dispatch(saveNewConversation());
+    console.debug(payload);
+    if (payload.id) {
+      navigate(`/conversation/${payload.id}`);
+    }
   };
+
   return (
     <div>
       <Button onClick={handleNewConversation}>New Conversation</Button>

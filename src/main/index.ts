@@ -6,9 +6,10 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 
 import { AppDataSource } from './data-source';
-import { POST_CONVERSATION_CHANNEL } from '../shared/channels';
 import { IpcChannel } from './interfaces/IpcChannel';
 import { PostConversationChannel } from './channels/PostConversationChannel';
+import { GetConversationsChannel } from './channels/GetConversationsChannel';
+import { DeleteConversationChannel } from './channels/DeleteConversationChannel';
 
 // AppDataSource.initialize()
 //   .then(async () => {
@@ -118,4 +119,8 @@ class Main {
 }
 
 // Here we go!
-new Main().init([new PostConversationChannel()]);
+new Main().init([
+  new PostConversationChannel(),
+  new GetConversationsChannel(),
+  new DeleteConversationChannel(),
+]);

@@ -1,51 +1,51 @@
-import * as React from 'react'
-import GlobalStyles from '@mui/joy/GlobalStyles'
-import Avatar from '@mui/joy/Avatar'
-import Box from '@mui/joy/Box'
-import Button from '@mui/joy/Button'
-import Card from '@mui/joy/Card'
-import Chip from '@mui/joy/Chip'
-import Divider from '@mui/joy/Divider'
-import IconButton from '@mui/joy/IconButton'
-import Input from '@mui/joy/Input'
-import LinearProgress from '@mui/joy/LinearProgress'
-import List from '@mui/joy/List'
-import ListItem from '@mui/joy/ListItem'
-import ListItemButton, { listItemButtonClasses } from '@mui/joy/ListItemButton'
-import ListItemContent from '@mui/joy/ListItemContent'
-import Typography from '@mui/joy/Typography'
-import Sheet from '@mui/joy/Sheet'
-import Stack from '@mui/joy/Stack'
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
-import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded'
-import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded'
-import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded'
-import GroupRoundedIcon from '@mui/icons-material/GroupRounded'
-import SupportRoundedIcon from '@mui/icons-material/SupportRounded'
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded'
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
-import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import * as React from 'react';
+import GlobalStyles from '@mui/joy/GlobalStyles';
+import Avatar from '@mui/joy/Avatar';
+import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
+import Card from '@mui/joy/Card';
+import Chip from '@mui/joy/Chip';
+import Divider from '@mui/joy/Divider';
+import IconButton from '@mui/joy/IconButton';
+import Input from '@mui/joy/Input';
+import LinearProgress from '@mui/joy/LinearProgress';
+import List from '@mui/joy/List';
+import ListItem from '@mui/joy/ListItem';
+import ListItemButton, { listItemButtonClasses } from '@mui/joy/ListItemButton';
+import ListItemContent from '@mui/joy/ListItemContent';
+import Typography from '@mui/joy/Typography';
+import Sheet from '@mui/joy/Sheet';
+import Stack from '@mui/joy/Stack';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
+import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
+import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded';
+import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
+import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
+import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-import { Link } from 'react-router-dom'
-import ColorSchemeToggle from './ColorSchemeToggle'
-import { closeSidebar } from '../utils'
+import { Link } from 'react-router-dom';
+import ColorSchemeToggle from './ColorSchemeToggle';
+import { closeSidebar } from '../utils';
 
 function Toggler({
   defaultExpanded = false,
   renderToggle,
-  children
+  children,
 }: {
-  defaultExpanded?: boolean
-  children: React.ReactNode
+  defaultExpanded?: boolean;
+  children: React.ReactNode;
   renderToggle: (params: {
-    open: boolean
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  }) => React.ReactNode
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  }) => React.ReactNode;
 }) {
-  const [open, setOpen] = React.useState(defaultExpanded)
+  const [open, setOpen] = React.useState(defaultExpanded);
   return (
     <React.Fragment>
       {renderToggle({ open, setOpen })}
@@ -55,14 +55,14 @@ function Toggler({
           gridTemplateRows: open ? '1fr' : '0fr',
           transition: '0.2s ease',
           '& > *': {
-            overflow: 'hidden'
-          }
+            overflow: 'hidden',
+          },
         }}
       >
         {children}
       </Box>
     </React.Fragment>
-  )
+  );
 }
 
 export default function Sidebar() {
@@ -72,11 +72,11 @@ export default function Sidebar() {
       sx={{
         position: {
           xs: 'fixed',
-          md: 'sticky'
+          md: 'sticky',
         },
         transform: {
           xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))',
-          md: 'none'
+          md: 'none',
         },
         transition: 'transform 0.4s, width 0.4s',
         zIndex: 10000,
@@ -89,7 +89,7 @@ export default function Sidebar() {
         flexDirection: 'column',
         gap: 2,
         borderRight: '1px solid',
-        borderColor: 'divider'
+        borderColor: 'divider',
       }}
     >
       <GlobalStyles
@@ -97,9 +97,9 @@ export default function Sidebar() {
           ':root': {
             '--Sidebar-width': '220px',
             [theme.breakpoints.up('lg')]: {
-              '--Sidebar-width': '240px'
-            }
-          }
+              '--Sidebar-width': '240px',
+            },
+          },
         })}
       />
       <Box
@@ -116,8 +116,8 @@ export default function Sidebar() {
           transition: 'opacity 0.4s',
           transform: {
             xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))',
-            lg: 'translateX(-100%)'
-          }
+            lg: 'translateX(-100%)',
+          },
         }}
         onClick={() => closeSidebar()}
       />
@@ -125,7 +125,7 @@ export default function Sidebar() {
         <IconButton variant="soft" color="primary" size="sm">
           <BrightnessAutoRoundedIcon />
         </IconButton>
-        <Typography level="title-lg">Acme Co.</Typography>
+        <Typography level="title-lg">Botticelli</Typography>
         <ColorSchemeToggle sx={{ ml: 'auto' }} />
       </Box>
       <Input size="sm" startDecorator={<SearchRoundedIcon />} placeholder="Search" />
@@ -137,8 +137,8 @@ export default function Sidebar() {
           display: 'flex',
           flexDirection: 'column',
           [`& .${listItemButtonClasses.root}`]: {
-            gap: 1.5
-          }
+            gap: 1.5,
+          },
         }}
       >
         <List
@@ -146,7 +146,7 @@ export default function Sidebar() {
           sx={{
             gap: 1,
             '--List-nestedInsetStart': '30px',
-            '--ListItem-radius': (theme) => theme.vars.radius.sm
+            '--ListItem-radius': (theme) => theme.vars.radius.sm,
           }}
         >
           <ListItem>
@@ -231,7 +231,7 @@ export default function Sidebar() {
             >
               <List sx={{ gap: 0.5 }}>
                 <ListItem sx={{ mt: 0.5 }}>
-                  <ListItemButton role="menuitem" component={Link} to="/team">
+                  <ListItemButton role="menuitem" component={Link} to="/">
                     My profile
                   </ListItemButton>
                 </ListItem>
@@ -253,7 +253,7 @@ export default function Sidebar() {
             flexGrow: 0,
             '--ListItem-radius': (theme) => theme.vars.radius.sm,
             '--List-gap': '8px',
-            mb: 2
+            mb: 2,
           }}
         >
           <ListItem>
@@ -293,13 +293,13 @@ export default function Sidebar() {
           src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
         />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">Siriwat K.</Typography>
-          <Typography level="body-xs">siriwatk@test.com</Typography>
+          <Typography level="title-sm">User</Typography>
+          <Typography level="body-xs">user@email.com</Typography>
         </Box>
         <IconButton size="sm" variant="plain" color="neutral">
           <LogoutRoundedIcon />
         </IconButton>
       </Box>
     </Sheet>
-  )
+  );
 }

@@ -1,10 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { StyledEngineProvider } from '@mui/joy/styles'
-import App from './App.tsx'
-import './index.css'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Conversations from './components/Conversations/Conversations.tsx'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { StyledEngineProvider } from '@mui/joy/styles';
+import App from './App.tsx';
+import { Provider } from 'react-redux';
+import './index.css';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Conversations from './components/Conversations/Conversations.tsx';
+import Conversation from './components/Conversations/Conversation.tsx';
+import store from './store';
 
 const router = createBrowserRouter([
   {
@@ -13,16 +16,22 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'conversations',
-        element: <Conversations />
-      }
-    ]
-  }
-])
+        element: <Conversations />,
+      },
+      {
+        path: 'conversation/:conversationId',
+        element: <Conversation />,
+      },
+    ],
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <StyledEngineProvider injectFirst>
-      <RouterProvider router={router} />
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
     </StyledEngineProvider>
-  </React.StrictMode>
-)
+  </React.StrictMode>,
+);

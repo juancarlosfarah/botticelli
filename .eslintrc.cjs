@@ -4,6 +4,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
     '@electron-toolkit/eslint-config-ts/recommended',
-    '@electron-toolkit/eslint-config-prettier'
+    // disabling due to conflicts with prettier
+    // '@electron-toolkit/eslint-config-prettier'
   ]
 }
