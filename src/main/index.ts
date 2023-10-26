@@ -4,30 +4,19 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
+import installExtension, {
+  REDUX_DEVTOOLS,
+  REACT_DEVELOPER_TOOLS,
+} from 'electron-devtools-installer';
 
 import { AppDataSource } from './data-source';
 import { IpcChannel } from './interfaces/IpcChannel';
-import { PostConversationChannel } from './channels/PostConversationChannel';
-import { GetConversationsChannel } from './channels/GetConversationsChannel';
-import { DeleteConversationChannel } from './channels/DeleteConversationChannel';
-
-// AppDataSource.initialize()
-//   .then(async () => {
-//     console.log('Inserting a new user into the database...');
-//     const user = new User();
-//     user.firstName = 'Timber';
-//     user.lastName = 'Saw';
-//     user.age = 25;
-//     await AppDataSource.manager.save(user);
-//     console.log('Saved a new user with id: ' + user.id);
-//
-//     console.log('Loading users from the database...');
-//     const users = await AppDataSource.manager.find(User);
-//     console.log('Loaded users: ', users);
-//
-//     console.log('Here you can setup and run express / fastify / any other framework.');
-//   })
-//   .catch((error) => console.log(error));
+import { PostConversationChannel } from './channels/conversation/PostConversationChannel';
+import { GetConversationsChannel } from './channels/conversation/GetConversationsChannel';
+import { DeleteConversationChannel } from './channels/conversation/DeleteConversationChannel';
+import { GetConversationChannel } from './channels/conversation/GetConversationChannel';
+import { PostMessageChannel } from './channels/message/PostMessageChannel';
+import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
@@ -41,7 +30,13 @@ class Main {
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.
-        app.whenReady().then(this.createWindow);
+        app.whenReady().then(() => {
+          this.createWindow();
+
+          installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+            .then((name) => console.log(`Added Extension:  ${name}`))
+            .catch((err) => console.log('An error occurred: ', err));
+        });
         app.on('window-all-closed', this.onWindowAllClosed);
         app.on('activate', this.onActivate);
         // Default open or close DevTools by F12 in development
@@ -80,9 +75,11 @@ class Main {
   }
 
   private registerIpcChannels(ipcChannels: IpcChannel[]): void {
-    ipcChannels.forEach((channel) =>
-      ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request)),
-    );
+    ipcChannels.forEach((channel) => {
+      // debugging
+      console.log(`registering ${channel.getName()}`);
+      ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request));
+    });
   }
 
   private createWindow(): void {
@@ -96,6 +93,7 @@ class Main {
       webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: false,
+        devTools: is.dev,
       },
     });
 
@@ -123,4 +121,7 @@ new Main().init([
   new PostConversationChannel(),
   new GetConversationsChannel(),
   new DeleteConversationChannel(),
+  new GetConversationChannel(),
+  new PostMessageChannel(),
+  new GetMessagesChannel(),
 ]);

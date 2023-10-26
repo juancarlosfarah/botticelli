@@ -6,5 +6,5 @@ module.exports = {
     '@electron-toolkit/eslint-config-ts/recommended',
     // disabling due to conflicts with prettier
     // '@electron-toolkit/eslint-config-prettier'
-  ]
+  ],
 }

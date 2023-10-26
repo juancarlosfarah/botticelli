@@ -1,22 +1,16 @@
-import { CssVarsProvider } from '@mui/joy/styles';
+import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import Breadcrumbs from '@mui/joy/Breadcrumbs';
-import Link from '@mui/joy/Link';
-import Typography from '@mui/joy/Typography';
-// icons
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
-import { Link as RouterLink } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import { Outlet } from 'react-router-dom';
+import { ReactElement } from 'react';
 
-export default function JoyOrderDashboardTemplate() {
+const theme = extendTheme();
+
+export default function JoyOrderDashboardTemplate(): ReactElement {
   return (
-    <CssVarsProvider disableTransitionOnChange>
+    <CssVarsProvider theme={theme} disableTransitionOnChange>
       <CssBaseline />
       <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
         <Header />
@@ -47,53 +41,6 @@ export default function JoyOrderDashboardTemplate() {
             gap: 1,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Breadcrumbs
-              size="sm"
-              aria-label="breadcrumbs"
-              separator={<ChevronRightRoundedIcon />}
-              sx={{ pl: 0 }}
-            >
-              <Link
-                underline="none"
-                color="neutral"
-                aria-label="Home"
-                component={RouterLink}
-                to="/"
-              >
-                <HomeRoundedIcon />
-              </Link>
-              <Link
-                underline="hover"
-                color="neutral"
-                component={RouterLink}
-                fontSize={12}
-                fontWeight={500}
-                to="/"
-              >
-                Dashboard
-              </Link>
-              <Typography color="primary" fontWeight={500} fontSize={12}>
-                Conversations
-              </Typography>
-            </Breadcrumbs>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              my: 1,
-              gap: 1,
-              flexDirection: { xs: 'column', sm: 'row' },
-              alignItems: { xs: 'start', sm: 'center' },
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Typography level="h2">Orders</Typography>
-            <Button color="primary" startDecorator={<DownloadRoundedIcon />} size="sm">
-              Download PDF
-            </Button>
-          </Box>
           <Outlet />
         </Box>
       </Box>

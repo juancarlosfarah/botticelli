@@ -1,10 +1,10 @@
 import { IpcMainEvent } from 'electron';
-import { IpcChannel } from '../interfaces/IpcChannel';
-import { POST_CONVERSATION_CHANNEL } from '../../shared/channels';
-import { IpcRequest } from '../../shared/interfaces/IpcRequest';
-import { Conversation } from '../entity/Conversation';
+import { IpcChannel } from '../../interfaces/IpcChannel';
+import { POST_CONVERSATION_CHANNEL } from '../../../shared/channels';
+import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
+import { Conversation } from '../../entity/Conversation';
 import { instanceToPlain } from 'class-transformer';
-import { AppDataSource } from '../data-source';
+import { AppDataSource } from '../../data-source';
 
 export class PostConversationChannel implements IpcChannel {
   getName(): string {

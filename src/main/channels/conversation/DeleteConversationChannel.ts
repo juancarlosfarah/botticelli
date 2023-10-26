@@ -1,10 +1,10 @@
 import { IpcMainEvent } from 'electron';
-import { IpcChannel } from '../interfaces/IpcChannel';
-import { DELETE_CONVERSATION_CHANNEL } from '../../shared/channels';
-import { IpcRequest } from '../../shared/interfaces/IpcRequest';
-import { Conversation } from '../entity/Conversation';
+import { IpcChannel } from '../../interfaces/IpcChannel';
+import { DELETE_CONVERSATION_CHANNEL } from '../../../shared/channels';
+import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
+import { Conversation } from '../../entity/Conversation';
 import { instanceToPlain } from 'class-transformer';
-import { AppDataSource } from '../data-source';
+import { AppDataSource } from '../../data-source';
 
 export class DeleteConversationChannel implements IpcChannel {
   getName(): string {
@@ -16,7 +16,10 @@ export class DeleteConversationChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
     const { id } = request.params;
-    console.log(id);
+
+    // debugging
+    console.debug(id);
+
     const conversation = await AppDataSource.manager.delete(Conversation, { id });
     event.sender.send(request.responseChannel, instanceToPlain(conversation));
   }

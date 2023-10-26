@@ -8,6 +8,7 @@ import { IpcService } from '../../services/IpcService';
 import {
   DELETE_CONVERSATION_CHANNEL,
   GET_CONVERSATIONS_CHANNEL,
+  GET_CONVERSATION_CHANNEL,
   POST_CONVERSATION_CHANNEL,
 } from '../../../../shared/channels';
 
@@ -18,6 +19,20 @@ const initialState = conversationsAdapter.getInitialState({
 });
 
 // thunk functions
+export const fetchConversation = createAsyncThunk(
+  'conversations/fetchConversation',
+  async (query) => {
+    const response = await IpcService.send<{ conversation: any }>(GET_CONVERSATION_CHANNEL, {
+      params: { query },
+    });
+
+    // debugging
+    console.log(response);
+
+    return response;
+  },
+);
+
 export const fetchConversations = createAsyncThunk('conversations/fetchConversations', async () => {
   const response = await IpcService.send<{ conversations: any }>(GET_CONVERSATIONS_CHANNEL);
   return response;
@@ -57,7 +72,10 @@ const conversationsSlice = createSlice({
         conversationsAdapter.setAll(state, action.payload);
         state.status = 'idle';
       })
-      .addCase(saveNewConversation.fulfilled, conversationsAdapter.addOne)
+      .addCase(saveNewConversation.fulfilled, (state, action) => {
+        const conversation = action.payload;
+        conversationsAdapter.addOne(state, conversation);
+      })
       .addCase(deleteConversation.fulfilled, conversationsAdapter.removeOne);
   },
 });

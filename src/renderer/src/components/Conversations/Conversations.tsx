@@ -18,7 +18,7 @@ export default function Conversations(): JSX.Element {
     const { payload } = await dispatch(saveNewConversation());
     console.debug(payload);
     if (payload.id) {
-      navigate(`/conversation/${payload.id}`);
+      navigate(`/conversations/${payload.id}`);
     }
   };
 

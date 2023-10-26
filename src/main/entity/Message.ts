@@ -1,24 +1,24 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { Message } from './Message';
+import { Conversation } from './Conversation';
 
 @Entity()
-export class Conversation {
+export class Message {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(
-    () => Message,
-    (message) => message.conversation,
-    // { eager: true }
-  )
-  messages: Relation<Message>[];
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
+  conversation: Relation<Conversation>;
+
+  @Column({ default: '' })
+  content: string;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

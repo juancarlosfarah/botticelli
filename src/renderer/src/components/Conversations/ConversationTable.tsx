@@ -35,6 +35,8 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { deleteConversation, selectConversations } from './ConversationsSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { ReactElement } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -101,7 +103,7 @@ function RowMenu({ rowId }) {
   );
 }
 
-export default function OrderTable() {
+export default function ConversationTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [open, setOpen] = React.useState(false);
@@ -301,8 +303,8 @@ export default function OrderTable() {
                 </td>
                 <td>
                   <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                    <Link level="body-xs" component="button">
-                      Download
+                    <Link level="body-xs" component={RouterLink} to={`/conversations/${row.id}`}>
+                      View
                     </Link>
                     <RowMenu rowId={row.id} />
                   </Box>
