@@ -14,11 +14,7 @@ export class Conversation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(
-    () => Message,
-    (message) => message.conversation,
-    // { eager: true }
-  )
+  @OneToMany(() => Message, (message) => message.conversation, {})
   messages: Relation<Message>[];
 
   @CreateDateColumn({ type: 'datetime' })
