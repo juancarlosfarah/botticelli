@@ -29,16 +29,16 @@ export class PostMessageChannel implements IpcChannel {
     message.content = content;
     message.conversation = conversationId;
 
-    await messageRepository.save(message);
-    event.sender.send(request.responseChannel, instanceToPlain(message));
+    // todo: make dynamic
+    message.sender = 2;
 
-    // if requires response post to bot api
-    if (true) {
-      const messages = await messageRepository.findBy({ conversation: { id: conversationId } });
-      console.log(messages);
+    const { id } = await messageRepository.save(message);
 
-      // transform messages to prompt format
-      const prompt = 'Give me a random name for a baby boy.';
-    }
+    const savedResponse = await messageRepository.findOneBy({ id });
+
+    // debug
+    console.log(savedResponse);
+
+    event.sender.send(request.responseChannel, instanceToPlain(savedResponse));
   }
 }

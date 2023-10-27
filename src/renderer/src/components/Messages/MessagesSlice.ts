@@ -11,6 +11,7 @@ import {
   GET_MESSAGE_CHANNEL,
   GET_MESSAGES_CHANNEL,
 } from '@shared/channels';
+import { GENERATE_RESPONSE_CHANNEL } from '../../../../shared/channels';
 
 export const messagesAdapter = createEntityAdapter();
 
@@ -42,13 +43,36 @@ export const fetchMessages = createAsyncThunk(
 
 export const saveNewMessage = createAsyncThunk(
   'messages/saveNewMessage',
-  async ({ conversationId, content }) => {
-    console.log('testtest');
+  async ({ conversationId, content }, { dispatch }) => {
+    // todo: debug
     console.log(conversationId, content);
+
     const response = await IpcService.send<{ message: any }>(POST_MESSAGE_CHANNEL, {
       params: { conversationId, content },
     });
+
+    // generate a response
+    dispatch(generateResponse({ conversationId }));
+
+    // todo: debug
     console.log(response);
+    return response;
+  },
+);
+
+export const generateResponse = createAsyncThunk(
+  'messages/generateResponse',
+  async ({ conversationId }) => {
+    // todo: debug
+    console.debug(conversationId);
+
+    const response = await IpcService.send<{ message: any }>(GENERATE_RESPONSE_CHANNEL, {
+      params: { conversationId },
+    });
+
+    // todo: debug
+    console.debug(response);
+
     return response;
   },
 );
@@ -78,7 +102,17 @@ const messagesSlice = createSlice({
         messagesAdapter.setAll(state, action.payload);
         state.status = 'idle';
       })
+      .addCase(saveNewMessage.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(saveNewMessage.fulfilled, messagesAdapter.addOne)
+      .addCase(generateResponse.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(generateResponse.fulfilled, (state, action) => {
+        messagesAdapter.addOne(state, action.payload);
+        state.status = 'idle';
+      })
       .addCase(deleteMessage.fulfilled, messagesAdapter.removeOne);
   },
 });

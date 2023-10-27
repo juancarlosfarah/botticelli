@@ -1,0 +1,4 @@
+const { MAIN_VITE_OPENAI_API_KEY, MAIN_VITE_OPENAI_ORG_ID } = import.meta.env;
+
+export const OPENAI_API_KEY = MAIN_VITE_OPENAI_API_KEY;
+export const OPENAI_ORG_ID = MAIN_VITE_OPENAI_ORG_ID;

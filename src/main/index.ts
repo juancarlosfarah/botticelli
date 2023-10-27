@@ -17,6 +17,7 @@ import { DeleteConversationChannel } from './channels/conversation/DeleteConvers
 import { GetConversationChannel } from './channels/conversation/GetConversationChannel';
 import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
+import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
@@ -124,4 +125,5 @@ new Main().init([
   new GetConversationChannel(),
   new PostMessageChannel(),
   new GetMessagesChannel(),
+  new GenerateResponseChannel(),
 ]);

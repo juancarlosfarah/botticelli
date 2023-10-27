@@ -1,29 +1,26 @@
 import {
-  AfterLoad,
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
+  OneToMany,
+  JoinTable,
+  AfterLoad,
 } from 'typeorm';
-import { Conversation } from './Conversation';
-import { Agent } from './Agent';
+import { Message } from './Message';
 
 @Entity()
-export class Message {
+export class Agent {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
-  conversation: Relation<Conversation>;
+  @Column()
+  type: string;
 
-  @Column({ default: '' })
-  content: string;
-
-  @ManyToOne(() => Agent, (agent) => agent.messages, { eager: true })
-  sender: Relation<Agent>;
+  @OneToMany(() => Message, (message) => message.sender)
+  @JoinTable()
+  messages: Message[];
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

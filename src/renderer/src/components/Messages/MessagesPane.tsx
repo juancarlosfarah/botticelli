@@ -9,6 +9,7 @@ import MessagesPaneHeader from './MessagesPaneHeader';
 import { ChatProps, MessageProps } from '../../types';
 import { useDispatch, useSelector } from 'react-redux';
 import { saveNewMessage, selectMessages } from './MessagesSlice';
+import MessageLoader from '../layout/MessageLoader';
 
 type MessagesPaneProps = {
   conversation: MessageProps[];
@@ -19,12 +20,16 @@ export default function MessagesPane({ conversation }: MessagesPaneProps): React
     return 'Loading';
   }
 
+  const status = useSelector((state) => state.messages.status);
+
   const [textAreaValue, setTextAreaValue] = React.useState('');
 
   const dispatch = useDispatch();
   const messages = useSelector(selectMessages);
 
   const conversationId = conversation.id;
+
+  console.debug(messages);
 
   return (
     <Sheet
@@ -50,8 +55,8 @@ export default function MessagesPane({ conversation }: MessagesPaneProps): React
       >
         <Stack spacing={2} justifyContent="flex-end">
           {messages.map((message: MessageProps, index: number) => {
-            // const isYou = message.sender === 'You';
-            const isYou = true;
+            const isYou = message?.sender?.type !== 'bot';
+
             return (
               <Stack
                 key={index}
@@ -59,7 +64,7 @@ export default function MessagesPane({ conversation }: MessagesPaneProps): React
                 spacing={2}
                 flexDirection={isYou ? 'row-reverse' : 'row'}
               >
-                {message.sender !== 'You' && <AvatarWithStatus online src="" />}
+                {!isYou && <AvatarWithStatus online src="" />}
                 <ChatBubble
                   variant={isYou ? 'sent' : 'received'}
                   content={message.content}
@@ -70,6 +75,7 @@ export default function MessagesPane({ conversation }: MessagesPaneProps): React
               </Stack>
             );
           })}
+          {status === 'loading' && <MessageLoader />}
         </Stack>
       </Box>
 

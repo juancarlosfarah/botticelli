@@ -6,6 +6,7 @@ import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import { MessageProps } from '../../types';
+import { getFormattedTime } from '../../utils/datetime';
 
 type ChatBubbleProps = MessageProps & {
   variant: 'sent' | 'received';
@@ -24,7 +25,7 @@ export default function ChatBubble({
     <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
       <Stack direction="row" justifyContent="space-between" spacing={2} sx={{ mb: 0.25 }}>
         <Typography level="body-xs">{sender === 'You' ? sender : sender.name}</Typography>
-        <Typography level="body-xs">{timestamp}</Typography>
+        <Typography level="body-xs">{getFormattedTime(timestamp, 'en')}</Typography>
       </Stack>
       {attachment ? (
         <Sheet

@@ -1,4 +1,5 @@
 import {
+  AfterLoad,
   CreateDateColumn,
   Entity,
   OneToMany,
@@ -25,4 +26,14 @@ export class Conversation {
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
+
+  @AfterLoad()
+  getCreatedAt(): void {
+    this.createdAt = this.createdAt.toISOString();
+  }
+
+  @AfterLoad()
+  getUpdatedAt(): void {
+    this.updatedAt = this.updatedAt.toISOString();
+  }
 }
