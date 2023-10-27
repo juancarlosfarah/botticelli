@@ -110,109 +110,8 @@ export default function ConversationTable(): ReactElement {
 
   const conversations = useSelector(selectConversations);
 
-  const renderFilters = () => (
-    <React.Fragment>
-      <FormControl size="sm">
-        <FormLabel>Status</FormLabel>
-        <Select
-          size="sm"
-          placeholder="Filter by status"
-          slotProps={{ button: { sx: { whiteSpace: 'nowrap' } } }}
-        >
-          <Option value="paid">Paid</Option>
-          <Option value="pending">Pending</Option>
-          <Option value="refunded">Refunded</Option>
-          <Option value="cancelled">Cancelled</Option>
-        </Select>
-      </FormControl>
-
-      <FormControl size="sm">
-        <FormLabel>Category</FormLabel>
-        <Select size="sm" placeholder="All">
-          <Option value="all">All</Option>
-          <Option value="refund">Refund</Option>
-          <Option value="purchase">Purchase</Option>
-          <Option value="debit">Debit</Option>
-        </Select>
-      </FormControl>
-
-      <FormControl size="sm">
-        <FormLabel>Customer</FormLabel>
-        <Select size="sm" placeholder="All">
-          <Option value="all">All</Option>
-          <Option value="olivia">Olivia Rhye</Option>
-          <Option value="steve">Steve Hampton</Option>
-          <Option value="ciaran">Ciaran Murray</Option>
-          <Option value="marina">Marina Macdonald</Option>
-          <Option value="charles">Charles Fulton</Option>
-          <Option value="jay">Jay Hoper</Option>
-        </Select>
-      </FormControl>
-    </React.Fragment>
-  );
   return (
     <React.Fragment>
-      <Sheet
-        className="SearchAndFilters-mobile"
-        sx={{
-          display: {
-            xs: 'flex',
-            sm: 'none',
-          },
-          my: 1,
-          gap: 1,
-        }}
-      >
-        <Input
-          size="sm"
-          placeholder="Search"
-          startDecorator={<SearchIcon />}
-          sx={{ flexGrow: 1 }}
-        />
-        <IconButton size="sm" variant="outlined" color="neutral" onClick={() => setOpen(true)}>
-          <FilterAltIcon />
-        </IconButton>
-        <Modal open={open} onClose={() => setOpen(false)}>
-          <ModalDialog aria-labelledby="filter-modal" layout="fullscreen">
-            <ModalClose />
-            <Typography id="filter-modal" level="h2">
-              Filters
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-            <Sheet sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {renderFilters()}
-              <Button color="primary" onClick={() => setOpen(false)}>
-                Submit
-              </Button>
-            </Sheet>
-          </ModalDialog>
-        </Modal>
-      </Sheet>
-      <Box
-        className="SearchAndFilters-tabletUp"
-        sx={{
-          borderRadius: 'sm',
-          py: 2,
-          display: {
-            xs: 'none',
-            sm: 'flex',
-          },
-          flexWrap: 'wrap',
-          gap: 1.5,
-          '& > *': {
-            minWidth: {
-              xs: '120px',
-              md: '160px',
-            },
-          },
-        }}
-      >
-        <FormControl sx={{ flex: 1 }} size="sm">
-          <FormLabel>Search for order</FormLabel>
-          <Input size="sm" placeholder="Search" startDecorator={<SearchIcon />} />
-        </FormControl>
-        {renderFilters()}
-      </Box>
       <Sheet
         className="OrderTableContainer"
         variant="outlined"
@@ -235,6 +134,7 @@ export default function ConversationTable(): ReactElement {
             '--TableRow-hoverBackground': 'var(--joy-palette-background-level1)',
             '--TableCell-paddingY': '4px',
             '--TableCell-paddingX': '8px',
+            mt: 5,
           }}
         >
           <thead>
@@ -255,7 +155,7 @@ export default function ConversationTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 120, padding: '12px 6px' }}>
+              <th style={{ width: 20, padding: '12px 6px' }}>
                 <Link
                   underline="none"
                   color="primary"
@@ -270,13 +170,12 @@ export default function ConversationTable(): ReactElement {
                     },
                   }}
                 >
-                  Date
+                  ID
                 </Link>
               </th>
-              <th style={{ width: 140, padding: '12px 6px' }}>Number of Messages</th>
-              <th style={{ width: 140, padding: '12px 6px' }}>Status</th>
-              <th style={{ width: 240, padding: '12px 6px' }}>Participants</th>
-              <th style={{ width: 140, padding: '12px 6px' }}> </th>
+              <th style={{ width: 100, padding: '12px 6px' }}>Number of Messages</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>Participants</th>
+              <th style={{ width: 50, padding: '12px 6px' }}> </th>
             </tr>
           </thead>
           <tbody>
@@ -302,6 +201,14 @@ export default function ConversationTable(): ReactElement {
                   <Typography level="body-xs">{row.id}</Typography>
                 </td>
                 <td>
+                  <Typography level="body-xs">{row.messages?.length || 0}</Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {Object.keys(row.participants).join(' ') || '—'}
+                  </Typography>
+                </td>
+                <td>
                   <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                     <Link level="body-xs" component={RouterLink} to={`/conversations/${row.id}`}>
                       View
@@ -314,49 +221,51 @@ export default function ConversationTable(): ReactElement {
           </tbody>
         </Table>
       </Sheet>
-      <Box
-        className="Pagination-laptopUp"
-        sx={{
-          pt: 2,
-          gap: 1,
-          [`& .${iconButtonClasses.root}`]: { borderRadius: '50%' },
-          display: {
-            xs: 'none',
-            md: 'flex',
-          },
-        }}
-      >
-        <Button
-          size="sm"
-          variant="outlined"
-          color="neutral"
-          startDecorator={<KeyboardArrowLeftIcon />}
-        >
-          Previous
-        </Button>
 
-        <Box sx={{ flex: 1 }} />
-        {['1', '2', '3', '…', '8', '9', '10'].map((page) => (
-          <IconButton
-            key={page}
-            size="sm"
-            variant={Number(page) ? 'outlined' : 'plain'}
-            color="neutral"
-          >
-            {page}
-          </IconButton>
-        ))}
-        <Box sx={{ flex: 1 }} />
+      {/* todo: pagination */}
+      {/*<Box*/}
+      {/*  className="Pagination-laptopUp"*/}
+      {/*  sx={{*/}
+      {/*    pt: 2,*/}
+      {/*    gap: 1,*/}
+      {/*    [`& .${iconButtonClasses.root}`]: { borderRadius: '50%' },*/}
+      {/*    display: {*/}
+      {/*      xs: 'none',*/}
+      {/*      md: 'flex',*/}
+      {/*    },*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <Button*/}
+      {/*    size="sm"*/}
+      {/*    variant="outlined"*/}
+      {/*    color="neutral"*/}
+      {/*    startDecorator={<KeyboardArrowLeftIcon />}*/}
+      {/*  >*/}
+      {/*    Previous*/}
+      {/*  </Button>*/}
 
-        <Button
-          size="sm"
-          variant="outlined"
-          color="neutral"
-          endDecorator={<KeyboardArrowRightIcon />}
-        >
-          Next
-        </Button>
-      </Box>
+      {/*  <Box sx={{ flex: 1 }} />*/}
+      {/*  {['1', '2', '3', '…', '8', '9', '10'].map((page) => (*/}
+      {/*    <IconButton*/}
+      {/*      key={page}*/}
+      {/*      size="sm"*/}
+      {/*      variant={Number(page) ? 'outlined' : 'plain'}*/}
+      {/*      color="neutral"*/}
+      {/*    >*/}
+      {/*      {page}*/}
+      {/*    </IconButton>*/}
+      {/*  ))}*/}
+      {/*  <Box sx={{ flex: 1 }} />*/}
+
+      {/*  <Button*/}
+      {/*    size="sm"*/}
+      {/*    variant="outlined"*/}
+      {/*    color="neutral"*/}
+      {/*    endDecorator={<KeyboardArrowRightIcon />}*/}
+      {/*  >*/}
+      {/*    Next*/}
+      {/*  </Button>*/}
+      {/*</Box>*/}
     </React.Fragment>
   );
 }

@@ -8,14 +8,29 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Message } from './Message';
+import { Agent } from './Agent';
 
 @Entity()
 export class Conversation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => Message, (message) => message.conversation, {})
+  // note: array initialization is not allowed in relations
+  @OneToMany(() => Message, (message) => message.conversation, { eager: true })
   messages: Relation<Message>[];
+
+  participants: Map<number, Agent> = new Map<number, Agent>();
+
+  @AfterLoad()
+  getParticipants(): void {
+    if (this.messages?.length) {
+      this.messages.forEach((message) => {
+        if (!this.participants.has(message.sender.id)) {
+          this.participants.set(message.sender.id, message.sender);
+        }
+      });
+    }
+  }
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
