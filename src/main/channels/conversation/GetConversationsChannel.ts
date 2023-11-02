@@ -5,6 +5,7 @@ import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { Conversation } from '../../entity/Conversation';
 import { instanceToPlain } from 'class-transformer';
 import { AppDataSource } from '../../data-source';
+import log from 'electron-log/main';
 
 export class GetConversationsChannel implements IpcChannel {
   getName(): string {
@@ -12,8 +13,7 @@ export class GetConversationsChannel implements IpcChannel {
   }
 
   async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
-    // todo: debug
-    console.log(`handling ${this.getName()}...`);
+    log.debug(`handling ${this.getName()}...`);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;

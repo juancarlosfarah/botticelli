@@ -5,6 +5,7 @@ import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { Conversation } from '../../entity/Conversation';
 import { instanceToPlain } from 'class-transformer';
 import { AppDataSource } from '../../data-source';
+import log from 'electron-log/main';
 
 export class GetConversationChannel implements IpcChannel {
   getName(): string {
@@ -19,13 +20,13 @@ export class GetConversationChannel implements IpcChannel {
     const { query } = request.params;
 
     // debugging
-    console.log(query);
+    log.debug(`handling get conversation with query:`, query);
 
     const conversationRepository = AppDataSource.getRepository(Conversation);
     const conversation = await conversationRepository.findOneBy(query);
 
     // debugging
-    console.log(conversation);
+    log.debug(`got conversation:`, conversation);
 
     event.sender.send(request.responseChannel, instanceToPlain(conversation));
   }

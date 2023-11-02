@@ -1,4 +1,5 @@
 import { IpcMainEvent } from 'electron';
+import log from 'electron-log/main';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 import { DELETE_CONVERSATION_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
@@ -18,7 +19,7 @@ export class DeleteConversationChannel implements IpcChannel {
     const { id } = request.params;
 
     // debugging
-    console.debug(id);
+    log.debug(`handling delete conversation:`, id);
 
     const conversation = await AppDataSource.manager.delete(Conversation, { id });
     event.sender.send(request.responseChannel, instanceToPlain(conversation));

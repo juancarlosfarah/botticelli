@@ -1,17 +1,19 @@
 import {
-  createSlice,
-  createSelector,
   createAsyncThunk,
   createEntityAdapter,
+  createSelector,
+  createSlice,
 } from '@reduxjs/toolkit';
-import { IpcService } from '../../services/IpcService';
 import {
-  POST_MESSAGE_CHANNEL,
   DELETE_MESSAGE_CHANNEL,
-  GET_MESSAGE_CHANNEL,
   GET_MESSAGES_CHANNEL,
+  GET_MESSAGE_CHANNEL,
+  POST_MESSAGE_CHANNEL,
 } from '@shared/channels';
+import log from 'electron-log/renderer';
+
 import { GENERATE_RESPONSE_CHANNEL } from '../../../../shared/channels';
+import { IpcService } from '../../services/IpcService';
 
 export const messagesAdapter = createEntityAdapter();
 
@@ -20,44 +22,59 @@ const initialState = messagesAdapter.getInitialState({
 });
 
 // thunk functions
-export const fetchMessage = createAsyncThunk('messages/fetchMessage', async (query) => {
-  const response = await IpcService.send<{ message: any }>(GET_MESSAGE_CHANNEL, {
-    params: { query },
-  });
+export const fetchMessage = createAsyncThunk(
+  'messages/fetchMessage',
+  async (query) => {
+    const response = await IpcService.send<{ message: any }>(
+      GET_MESSAGE_CHANNEL,
+      {
+        params: { query },
+      },
+    );
 
-  // debugging
-  console.log(response);
+    // debugging
+    log.debug(`fetchMessage response:`, response);
 
-  return response;
-});
+    return response;
+  },
+);
 
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',
   async ({ conversationId }) => {
-    const response = await IpcService.send<{ messages: any }>(GET_MESSAGES_CHANNEL, {
-      params: { conversationId },
-    });
+    const response = await IpcService.send<{ messages: any }>(
+      GET_MESSAGES_CHANNEL,
+      {
+        params: { conversationId },
+      },
+    );
     return response;
   },
 );
 
 export const saveNewMessage = createAsyncThunk(
   'messages/saveNewMessage',
-  async ({ conversationId, content, requiresResponse, sender }, { dispatch }) => {
+  async (
+    { conversationId, content, requiresResponse, sender },
+    { dispatch },
+  ) => {
     // debugging
-    console.debug(`saveNewMessage:`, conversationId, content);
+    log.debug(`saveNewMessage:`, conversationId, content);
 
-    const response = await IpcService.send<{ message: any }>(POST_MESSAGE_CHANNEL, {
-      params: { conversationId, content, sender },
-    });
+    const response = await IpcService.send<{ message: any }>(
+      POST_MESSAGE_CHANNEL,
+      {
+        params: { conversationId, content, sender },
+      },
+    );
 
     // generate a response
     if (requiresResponse) {
       dispatch(generateResponse({ conversationId }));
     }
 
-    // debugging
-    console.debug(`saveNewMessage response:`, response);
+    // debug
+    log.debug(`saveNewMessage response:`, response);
     return response;
   },
 );
@@ -65,27 +82,36 @@ export const saveNewMessage = createAsyncThunk(
 export const generateResponse = createAsyncThunk(
   'messages/generateResponse',
   async ({ conversationId }) => {
-    // todo: debug
-    console.debug(`generateResponse:`, conversationId);
+    // debug
+    log.debug(`generateResponse:`, conversationId);
 
-    const response = await IpcService.send<{ message: any }>(GENERATE_RESPONSE_CHANNEL, {
-      params: { conversationId },
-    });
+    const response = await IpcService.send<{ message: any }>(
+      GENERATE_RESPONSE_CHANNEL,
+      {
+        params: { conversationId },
+      },
+    );
 
-    // todo: debug
-    console.debug(`generateResponse response:`, response);
+    // debug
+    log.debug(`generateResponse response:`, response);
 
     return response;
   },
 );
 
-export const deleteMessage = createAsyncThunk('messages/deleteMessage', async (id) => {
-  const response = await IpcService.send<{ message: any }>(DELETE_MESSAGE_CHANNEL, {
-    params: { id },
-  });
-  console.debug(`deleteMessage response:`, response);
-  return id;
-});
+export const deleteMessage = createAsyncThunk(
+  'messages/deleteMessage',
+  async (id) => {
+    const response = await IpcService.send<{ message: any }>(
+      DELETE_MESSAGE_CHANNEL,
+      {
+        params: { id },
+      },
+    );
+    log.debug(`deleteMessage response:`, response);
+    return id;
+  },
+);
 
 const messagesSlice = createSlice({
   name: 'messages',
@@ -99,8 +125,8 @@ const messagesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
-        // debugging
-        console.debug(`fetchMessages.fulfilled:`, action.payload);
+        // debug
+        log.debug(`fetchMessages.fulfilled:`, action.payload);
         messagesAdapter.setAll(state, action.payload);
         state.status = 'idle';
       })

@@ -1,10 +1,14 @@
 import { ChangeEvent, ReactElement, useState } from 'react';
-import { FormControl, FormLabel, FormHelperText, Button } from '@mui/joy';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { saveNewConversation } from './ConversationsSlice';
-import { saveNewMessage } from '../Messages/MessagesSlice';
+
+import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
 import Textarea from '@mui/joy/Textarea';
+
+import log from 'electron-log/renderer';
+
+import { saveNewMessage } from '../Messages/MessagesSlice';
+import { saveNewConversation } from './ConversationsSlice';
 
 const NewConversation = (): ReactElement => {
   const dispatch = useDispatch();
@@ -21,11 +25,11 @@ const NewConversation = (): ReactElement => {
         instructions,
       }),
     );
-    console.debug(`saveNewConversation response.payload:`, payload);
+    log.debug(`saveNewConversation response.payload:`, payload);
     if (payload.id) {
       if (cue) {
         // debugging
-        console.debug(`handleNewConversation cue:`, cue);
+        log.debug(`handleNewConversation cue:`, cue);
 
         await dispatch(
           saveNewMessage({
@@ -41,12 +45,16 @@ const NewConversation = (): ReactElement => {
     }
   };
 
-  const handleChangeDescription = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+  const handleChangeDescription = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ): void => {
     const value = event.target.value;
     setDescription(value);
   };
 
-  const handleChangeInstructions = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+  const handleChangeInstructions = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ): void => {
     const value = event.target.value;
     setInstructions(value);
   };
@@ -61,7 +69,9 @@ const NewConversation = (): ReactElement => {
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
-        <FormHelperText>This is an internal descriptions for this conversation.</FormHelperText>
+        <FormHelperText>
+          This is an internal descriptions for this conversation.
+        </FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Instructions</FormLabel>
@@ -73,7 +83,9 @@ const NewConversation = (): ReactElement => {
       <FormControl>
         <FormLabel>Cue</FormLabel>
         <Textarea value={cue} onChange={handleChangeCue} />
-        <FormHelperText>This is the cue that will be shown to the participant.</FormHelperText>
+        <FormHelperText>
+          This is the cue that will be shown to the participant.
+        </FormHelperText>
       </FormControl>
       <Button onClick={handleNewConversation}>Save</Button>
     </>

@@ -1,22 +1,26 @@
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
+import Typography from '@mui/joy/Typography';
+
+import { ChatProps, MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
+import MessageLoader from '../layout/MessageLoader';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import MessagesPaneHeader from './MessagesPaneHeader';
-import { ChatProps, MessageProps } from '../../types';
-import { useDispatch, useSelector } from 'react-redux';
 import { saveNewMessage, selectMessages } from './MessagesSlice';
-import MessageLoader from '../layout/MessageLoader';
-import Typography from '@mui/joy/Typography';
 
 type MessagesPaneProps = {
   conversation: MessageProps[];
 };
 
-export default function MessagesPane({ conversation }: MessagesPaneProps): React.ReactElement {
+export default function MessagesPane({
+  conversation,
+}: MessagesPaneProps): React.ReactElement {
   const status = useSelector((state) => state.messages.status);
 
   const [textAreaValue, setTextAreaValue] = React.useState('');
@@ -25,8 +29,6 @@ export default function MessagesPane({ conversation }: MessagesPaneProps): React
   const messages = useSelector(selectMessages);
 
   const conversationId = conversation.id;
-
-  console.debug(messages);
 
   return (
     <>
@@ -84,7 +86,11 @@ export default function MessagesPane({ conversation }: MessagesPaneProps): React
           setTextAreaValue={setTextAreaValue}
           onSubmit={(): void => {
             dispatch(
-              saveNewMessage({ conversationId, content: textAreaValue, requiresResponse: true }),
+              saveNewMessage({
+                conversationId,
+                content: textAreaValue,
+                requiresResponse: true,
+              }),
             );
           }}
         />

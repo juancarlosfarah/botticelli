@@ -1,13 +1,19 @@
-import { useParams } from 'react-router-dom';
-import MessagesPane from '../Messages/MessagesPane';
-
 import { ReactElement, useEffect } from 'react';
-import { fetchConversation, selectConversationById } from './ConversationsSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+
+import Box from '@mui/joy/Box';
+import Typography from '@mui/joy/Typography';
+
+import log from 'electron-log/renderer';
+
+import MessagesPane from '../Messages/MessagesPane';
 import { fetchMessages } from '../Messages/MessagesSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import Typography from '@mui/joy/Typography';
-import Box from '@mui/joy/Box';
+import {
+  fetchConversation,
+  selectConversationById,
+} from './ConversationsSlice';
 
 export default function Conversation(): ReactElement {
   const { conversationId } = useParams();
@@ -15,12 +21,14 @@ export default function Conversation(): ReactElement {
 
   useEffect(() => {
     const query = { id: conversationId };
-    console.debug(`fetching conversation ${conversationId}`);
+    log.debug(`fetching conversation ${conversationId}`);
     dispatch(fetchConversation(query));
     dispatch(fetchMessages({ conversationId }));
   }, [conversationId]);
 
-  const conversation = useSelector((state) => selectConversationById(state, conversationId));
+  const conversation = useSelector((state) =>
+    selectConversationById(state, conversationId),
+  );
 
   if (!conversation) {
     return <div>Conversation Not Found</div>;

@@ -19,15 +19,21 @@ import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
 
+import log from 'electron-log/main';
+
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 
 class Main {
   public init(ipcChannels: IpcChannel[]): void {
+    // initialize the logger for any renderer process
+    log.initialize({ preload: true });
+
     AppDataSource.initialize()
       .then(() => {
-        // Set app user model id for windows
+        // set app user model id for windows
         electronApp.setAppUserModelId('com.electron');
+
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.
@@ -35,8 +41,8 @@ class Main {
           this.createWindow();
 
           installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
-            .then((name) => console.log(`Added Extension:  ${name}`))
-            .catch((err) => console.log('An error occurred: ', err));
+            .then((name) => log.debug(`Added Extension:  ${name}`))
+            .catch((err) => log.error('An error occurred: ', err));
         });
         app.on('window-all-closed', this.onWindowAllClosed);
         app.on('activate', this.onActivate);
@@ -48,7 +54,7 @@ class Main {
         });
         this.registerIpcChannels(ipcChannels);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => log.error(error));
   }
 
   /**
@@ -78,7 +84,7 @@ class Main {
   private registerIpcChannels(ipcChannels: IpcChannel[]): void {
     ipcChannels.forEach((channel) => {
       // debugging
-      console.log(`registering ${channel.getName()}`);
+      log.debug(`registering ${channel.getName()}`);
       ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request));
     });
   }

@@ -9,6 +9,7 @@ import OpenAi from 'openai';
 import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
 import { messagesToPrompt } from '../../utils/messagesToPrompt';
 import { Conversation } from '../../entity/Conversation';
+import log from 'electron-log/main';
 
 export class GenerateResponseChannel implements IpcChannel {
   getName(): string {
@@ -17,7 +18,7 @@ export class GenerateResponseChannel implements IpcChannel {
 
   async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
     // debug
-    console.log(`handling ${this.getName()}...`);
+    log.debug(`handling ${this.getName()}...`);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
@@ -25,8 +26,8 @@ export class GenerateResponseChannel implements IpcChannel {
 
     const { conversationId } = request.params;
 
-    // debugging
-    console.log(conversationId);
+    // debug
+    log.debug(`generating response for conversation:`, conversationId);
 
     const conversationRepository = AppDataSource.getRepository(Conversation);
     const messageRepository = AppDataSource.getRepository(Message);
@@ -45,15 +46,16 @@ export class GenerateResponseChannel implements IpcChannel {
       apiKey: OPENAI_API_KEY,
     });
 
-    // todo: debug
-    console.log(instructions);
+    // debug
+    log.debug(`requesting completion with instructions:`, instructions);
 
     const completion = await openAi.chat.completions.create({
       messages: [{ role: 'system', content: instructions }, ...prompt],
       model: 'gpt-3.5-turbo',
     });
 
-    console.log(completion);
+    // debug
+    log.debug(`received completion:`, completion);
 
     const response = new Message();
     response.content = completion.choices[0].message.content || '';
@@ -67,7 +69,7 @@ export class GenerateResponseChannel implements IpcChannel {
     const savedMessage = await messageRepository.findOneBy({ id });
 
     // debug
-    console.log(savedMessage);
+    log.debug(`generated response:`, savedMessage);
     event.sender.send(request.responseChannel, instanceToPlain(savedMessage));
   }
 }
