@@ -8,6 +8,7 @@ import { AppDataSource } from '../../data-source';
 import OpenAi from 'openai';
 import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
 import { messagesToPrompt } from '../../utils/messagesToPrompt';
+import { Conversation } from '../../entity/Conversation';
 
 export class GenerateResponseChannel implements IpcChannel {
   getName(): string {
@@ -27,7 +28,11 @@ export class GenerateResponseChannel implements IpcChannel {
     // debugging
     console.log(conversationId);
 
+    const conversationRepository = AppDataSource.getRepository(Conversation);
     const messageRepository = AppDataSource.getRepository(Message);
+
+    const conversation = await conversationRepository.findOneBy({ id: conversationId });
+    const instructions = conversation?.instructions || '';
 
     const messages = await messageRepository.findBy({ conversation: { id: conversationId } });
 
@@ -40,10 +45,16 @@ export class GenerateResponseChannel implements IpcChannel {
       apiKey: OPENAI_API_KEY,
     });
 
+    // todo: debug
+    console.log(instructions);
+
     const completion = await openAi.chat.completions.create({
-      messages: [{ role: 'system', content: 'You are a helpful assistant.' }, ...prompt],
+      messages: [{ role: 'system', content: instructions }, ...prompt],
       model: 'gpt-3.5-turbo',
     });
+
+    console.log(completion);
+
     const response = new Message();
     response.content = completion.choices[0].message.content || '';
     response.conversation = conversationId;

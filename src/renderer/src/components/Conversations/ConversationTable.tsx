@@ -37,6 +37,7 @@ import { deleteConversation, selectConversations } from './ConversationsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactElement } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import _ from 'lodash';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -106,7 +107,6 @@ function RowMenu({ rowId }) {
 export default function ConversationTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [open, setOpen] = React.useState(false);
 
   const conversations = useSelector(selectConversations);
 
@@ -173,6 +173,7 @@ export default function ConversationTable(): ReactElement {
                   ID
                 </Link>
               </th>
+              <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Number of Messages</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Participants</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
@@ -199,6 +200,9 @@ export default function ConversationTable(): ReactElement {
                 </td>
                 <td>
                   <Typography level="body-xs">{row.id}</Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">{_.truncate(row.description, 25)}</Typography>
                 </td>
                 <td>
                   <Typography level="body-xs">{row.messages?.length || 0}</Typography>

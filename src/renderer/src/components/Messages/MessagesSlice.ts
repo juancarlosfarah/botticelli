@@ -43,19 +43,21 @@ export const fetchMessages = createAsyncThunk(
 
 export const saveNewMessage = createAsyncThunk(
   'messages/saveNewMessage',
-  async ({ conversationId, content }, { dispatch }) => {
-    // todo: debug
-    console.log(conversationId, content);
+  async ({ conversationId, content, requiresResponse, sender }, { dispatch }) => {
+    // debugging
+    console.debug(`saveNewMessage:`, conversationId, content);
 
     const response = await IpcService.send<{ message: any }>(POST_MESSAGE_CHANNEL, {
-      params: { conversationId, content },
+      params: { conversationId, content, sender },
     });
 
     // generate a response
-    dispatch(generateResponse({ conversationId }));
+    if (requiresResponse) {
+      dispatch(generateResponse({ conversationId }));
+    }
 
-    // todo: debug
-    console.log(response);
+    // debugging
+    console.debug(`saveNewMessage response:`, response);
     return response;
   },
 );
@@ -64,14 +66,14 @@ export const generateResponse = createAsyncThunk(
   'messages/generateResponse',
   async ({ conversationId }) => {
     // todo: debug
-    console.debug(conversationId);
+    console.debug(`generateResponse:`, conversationId);
 
     const response = await IpcService.send<{ message: any }>(GENERATE_RESPONSE_CHANNEL, {
       params: { conversationId },
     });
 
     // todo: debug
-    console.debug(response);
+    console.debug(`generateResponse response:`, response);
 
     return response;
   },
@@ -81,7 +83,7 @@ export const deleteMessage = createAsyncThunk('messages/deleteMessage', async (i
   const response = await IpcService.send<{ message: any }>(DELETE_MESSAGE_CHANNEL, {
     params: { id },
   });
-  console.debug(response);
+  console.debug(`deleteMessage response:`, response);
   return id;
 });
 
@@ -97,8 +99,8 @@ const messagesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
-        // todo: debug
-        console.log(action.payload);
+        // debugging
+        console.debug(`fetchMessages.fulfilled:`, action.payload);
         messagesAdapter.setAll(state, action.payload);
         state.status = 'idle';
       })

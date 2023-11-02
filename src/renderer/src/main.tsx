@@ -7,6 +7,7 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Conversations from './components/Conversations/Conversations.tsx';
 import Conversation from './components/Conversations/Conversation.tsx';
+import NewConversation from './components/Conversations/NewConversation';
 import store from './store';
 
 const router = createBrowserRouter([
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: 'conversations',
         element: <Conversations />,
+      },
+      {
+        path: 'conversations/new',
+        element: <NewConversation />,
       },
       {
         path: 'conversations/:conversationId',

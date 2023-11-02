@@ -27,21 +27,25 @@ export const fetchConversation = createAsyncThunk(
     });
 
     // debugging
-    console.log(response);
+    console.debug(response);
 
     return response;
   },
 );
 
 export const fetchConversations = createAsyncThunk('conversations/fetchConversations', async () => {
-  const response = await IpcService.send<{ conversations: any }>(GET_CONVERSATIONS_CHANNEL);
-  return response;
+  return await IpcService.send<{ conversations: any }>(GET_CONVERSATIONS_CHANNEL);
 });
 
 export const saveNewConversation = createAsyncThunk(
   'conversations/saveNewConversation',
-  async () => {
-    const response = await IpcService.send<{ conversation: any }>(POST_CONVERSATION_CHANNEL);
+  async ({ description, instructions }) => {
+    const response = await IpcService.send<{ conversation: any }>(POST_CONVERSATION_CHANNEL, {
+      params: {
+        description,
+        instructions,
+      },
+    });
     return response;
   },
 );
@@ -65,7 +69,7 @@ const conversationsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchConversations.pending, (state, action) => {
+      .addCase(fetchConversations.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchConversations.fulfilled, (state, action) => {

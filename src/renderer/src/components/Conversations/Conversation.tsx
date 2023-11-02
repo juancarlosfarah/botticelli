@@ -1,8 +1,7 @@
 import { useParams } from 'react-router-dom';
 import MessagesPane from '../Messages/MessagesPane';
-type Props = {};
 
-import { useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { fetchConversation, selectConversationById } from './ConversationsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMessages } from '../Messages/MessagesSlice';
@@ -10,19 +9,23 @@ import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import Typography from '@mui/joy/Typography';
 import Box from '@mui/joy/Box';
 
-export default function Conversation({}: Props): JSX.Element {
+export default function Conversation(): ReactElement {
   const { conversationId } = useParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const query = { id: conversationId };
-    console.log(`fetching conversation ${conversationId}`);
+    console.debug(`fetching conversation ${conversationId}`);
     dispatch(fetchConversation(query));
     dispatch(fetchMessages({ conversationId }));
   }, [conversationId]);
 
   const conversation = useSelector((state) => selectConversationById(state, conversationId));
-  console.log('conversation 20:', conversation);
+
+  if (!conversation) {
+    return <div>Conversation Not Found</div>;
+  }
+
   return (
     <>
       <CustomBreadcrumbs />
@@ -38,10 +41,15 @@ export default function Conversation({}: Props): JSX.Element {
         }}
       >
         <Typography level="h2">{`Conversation #${conversationId}`}</Typography>
-        {/*<Button color="primary" startDecorator={<DownloadRoundedIcon />} size="sm">*/}
-        {/*  Download PDF*/}
-        {/*</Button>*/}
       </Box>
+      <Typography sx={{}} level="title-md">
+        Description
+      </Typography>
+      <Typography>{conversation.description}</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Instructions
+      </Typography>
+      <Typography>{conversation.instructions}</Typography>
       <MessagesPane conversation={conversation} />
     </>
   );

@@ -15,7 +15,12 @@ export class PostConversationChannel implements IpcChannel {
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
+
+    const { description, instructions } = request.params;
+
     const conversation = new Conversation();
+    conversation.description = description;
+    conversation.instructions = instructions;
 
     await AppDataSource.manager.save(conversation);
     event.sender.send(request.responseChannel, instanceToPlain(conversation));

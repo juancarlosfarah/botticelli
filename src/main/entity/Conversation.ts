@@ -1,5 +1,6 @@
 import {
   AfterLoad,
+  Column,
   CreateDateColumn,
   Entity,
   OneToMany,
@@ -14,6 +15,12 @@ import { Agent } from './Agent';
 export class Conversation {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ default: '' })
+  description: string = '';
+
+  @Column({ default: '' })
+  instructions: string = '';
 
   // note: array initialization is not allowed in relations
   @OneToMany(() => Message, (message) => message.conversation, { eager: true })
