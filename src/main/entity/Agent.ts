@@ -15,8 +15,14 @@ export class Agent {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ default: '' })
+  name: string = '';
+
   @Column()
   type: string;
+
+  @Column({ default: '' })
+  description: string = '';
 
   @OneToMany(() => Message, (message) => message.sender)
   @JoinTable()

@@ -4,6 +4,7 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
+import Conversation from '@shared/interfaces/Conversation';
 import log from 'electron-log/renderer';
 
 import {
@@ -47,7 +48,10 @@ export const fetchConversations = createAsyncThunk(
   },
 );
 
-export const saveNewConversation = createAsyncThunk(
+export const saveNewConversation = createAsyncThunk<
+  Conversation,
+  { description: string; instructions: string }
+>(
   'conversations/saveNewConversation',
   async ({ description, instructions }) => {
     const response = await IpcService.send<{ conversation: any }>(
@@ -63,19 +67,19 @@ export const saveNewConversation = createAsyncThunk(
   },
 );
 
-export const deleteConversation = createAsyncThunk(
-  'conversations/deleteConversation',
-  async (id) => {
-    const response = await IpcService.send<{ conversation: any }>(
-      DELETE_CONVERSATION_CHANNEL,
-      {
-        params: { id },
-      },
-    );
-    log.debug(response);
-    return id;
-  },
-);
+export const deleteConversation = createAsyncThunk<
+  string | number,
+  string | number
+>('conversations/deleteConversation', async (id) => {
+  const response = await IpcService.send<{ conversation: any }>(
+    DELETE_CONVERSATION_CHANNEL,
+    {
+      params: { id },
+    },
+  );
+  log.debug(response);
+  return id;
+});
 
 const conversationsSlice = createSlice({
   name: 'conversations',

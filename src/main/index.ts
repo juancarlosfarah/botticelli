@@ -1,25 +1,28 @@
-import 'reflect-metadata';
-import 'reflect-metadata';
-import { app, shell, BrowserWindow, ipcMain } from 'electron';
-import { join } from 'path';
-import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import icon from '../../resources/icon.png?asset';
+import { electronApp, is, optimizer } from '@electron-toolkit/utils';
+import { BrowserWindow, app, ipcMain, shell } from 'electron';
 import installExtension, {
-  REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
+import log from 'electron-log/main';
+import { join } from 'path';
+import 'reflect-metadata';
+import 'reflect-metadata';
 
-import { AppDataSource } from './data-source';
-import { IpcChannel } from './interfaces/IpcChannel';
-import { PostConversationChannel } from './channels/conversation/PostConversationChannel';
-import { GetConversationsChannel } from './channels/conversation/GetConversationsChannel';
+import icon from '../../resources/icon.png?asset';
+import { DeleteAgentChannel } from './channels/agent/DeleteAgentChannel';
+import { GetAgentChannel } from './channels/agent/GetAgentChannel';
+import { GetAgentsChannel } from './channels/agent/GetAgentsChannel';
+import { PostAgentChannel } from './channels/agent/PostAgentChannel';
 import { DeleteConversationChannel } from './channels/conversation/DeleteConversationChannel';
 import { GetConversationChannel } from './channels/conversation/GetConversationChannel';
-import { PostMessageChannel } from './channels/message/PostMessageChannel';
+import { GetConversationsChannel } from './channels/conversation/GetConversationsChannel';
+import { PostConversationChannel } from './channels/conversation/PostConversationChannel';
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
+import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
-
-import log from 'electron-log/main';
+import { AppDataSource } from './data-source';
+import { IpcChannel } from './interfaces/IpcChannel';
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
@@ -85,7 +88,9 @@ class Main {
     ipcChannels.forEach((channel) => {
       // debugging
       log.debug(`registering ${channel.getName()}`);
-      ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request));
+      ipcMain.on(channel.getName(), (event, request) =>
+        channel.handle(event, request),
+      );
     });
   }
 
@@ -125,11 +130,18 @@ class Main {
 
 // Here we go!
 new Main().init([
+  // conversations
   new PostConversationChannel(),
   new GetConversationsChannel(),
   new DeleteConversationChannel(),
   new GetConversationChannel(),
+  // messages
   new PostMessageChannel(),
   new GetMessagesChannel(),
   new GenerateResponseChannel(),
+  // agents
+  new PostAgentChannel(),
+  new GetAgentChannel(),
+  new DeleteAgentChannel(),
+  new GetAgentsChannel(),
 ]);

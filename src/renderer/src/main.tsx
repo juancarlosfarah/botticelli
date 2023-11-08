@@ -1,13 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { StyledEngineProvider } from '@mui/joy/styles';
-import App from './App.tsx';
 import { Provider } from 'react-redux';
-import './index.css';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Conversations from './components/Conversations/Conversations.tsx';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+
+import { StyledEngineProvider } from '@mui/joy/styles';
+
+import App from './App.tsx';
+import Agent from './components/Agents/Agent';
+import Agents from './components/Agents/Agents';
+import NewAgent from './components/Agents/NewAgent';
 import Conversation from './components/Conversations/Conversation.tsx';
+import Conversations from './components/Conversations/Conversations.tsx';
 import NewConversation from './components/Conversations/NewConversation';
+import './index.css';
 import store from './store';
 
 const router = createBrowserRouter([
@@ -26,6 +31,18 @@ const router = createBrowserRouter([
       {
         path: 'conversations/:conversationId',
         element: <Conversation />,
+      },
+      {
+        path: 'Agents',
+        element: <Agents />,
+      },
+      {
+        path: 'agents/new',
+        element: <NewAgent />,
+      },
+      {
+        path: 'agents/:agentId',
+        element: <Agent />,
       },
     ],
   },

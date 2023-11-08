@@ -9,3 +9,8 @@ export const GET_MESSAGES_CHANNEL = 'messages:get';
 export const DELETE_MESSAGE_CHANNEL = 'messages:delete';
 
 export const GENERATE_RESPONSE_CHANNEL = 'response:generate';
+
+export const POST_AGENT_CHANNEL = 'agent:post';
+export const GET_AGENT_CHANNEL = 'agent:get';
+export const GET_AGENTS_CHANNEL = 'agents:get';
+export const DELETE_AGENT_CHANNEL = 'agent:delete';
