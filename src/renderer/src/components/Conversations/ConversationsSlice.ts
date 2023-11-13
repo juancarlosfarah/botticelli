@@ -53,13 +53,14 @@ export const saveNewConversation = createAsyncThunk<
   { description: string; instructions: string }
 >(
   'conversations/saveNewConversation',
-  async ({ description, instructions }) => {
+  async ({ description, instructions, lead }) => {
     const response = await IpcService.send<{ conversation: any }>(
       POST_CONVERSATION_CHANNEL,
       {
         params: {
           description,
           instructions,
+          lead,
         },
       },
     );

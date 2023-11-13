@@ -72,7 +72,7 @@ export default function MessagesPane({
                     content={message.content}
                     timestamp={message.updatedAt.toString()}
                     attachment={false}
-                    sender={isYou ? 'You' : { name: 'Agent' }}
+                    sender={isYou ? 'You' : message?.sender}
                   />
                 </Stack>
               );

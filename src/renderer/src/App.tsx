@@ -1,10 +1,12 @@
-import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
-import CssBaseline from '@mui/joy/CssBaseline';
-import Box from '@mui/joy/Box';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
-import { Outlet } from 'react-router-dom';
 import { ReactElement } from 'react';
+import { Outlet } from 'react-router-dom';
+
+import Box from '@mui/joy/Box';
+import CssBaseline from '@mui/joy/CssBaseline';
+import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
+
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
 
 const theme = extendTheme();
 
@@ -39,6 +41,7 @@ export default function JoyOrderDashboardTemplate(): ReactElement {
             minWidth: 0,
             height: '100dvh',
             gap: 1,
+            overflowY: 'scroll',
           }}
         >
           <Outlet />

@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -25,6 +26,9 @@ export class Conversation {
   // note: array initialization is not allowed in relations
   @OneToMany(() => Message, (message) => message.conversation, { eager: true })
   messages: Relation<Message>[];
+
+  @ManyToOne(() => Agent,  { eager: true })
+  lead: Relation<Agent>;
 
   participants: Map<number, Agent> = new Map<number, Agent>();
 

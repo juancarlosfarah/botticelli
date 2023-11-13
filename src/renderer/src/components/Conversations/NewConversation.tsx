@@ -1,28 +1,44 @@
-import { ChangeEvent, ReactElement, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import {
+  ChangeEvent,
+  ReactElement,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import Option from '@mui/joy/Option';
+import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
 import log from 'electron-log/renderer';
 
+import { fetchAgents, selectAgents } from '../Agents/AgentsSlice';
 import { saveNewMessage } from '../Messages/MessagesSlice';
 import { saveNewConversation } from './ConversationsSlice';
 
 const NewConversation = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const agents = useSelector(selectAgents);
 
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
   const [cue, setCue] = useState<string>('');
+  const [lead, setLead] = useState<string | null>(null);
+
+  useEffect(() => {
+    dispatch(fetchAgents());
+  }, []);
 
   const handleNewConversation = async (): Promise<void> => {
     const { payload } = await dispatch(
       saveNewConversation({
         description,
         instructions,
+        lead,
       }),
     );
     log.debug(`saveNewConversation response.payload:`, payload);
@@ -36,7 +52,7 @@ const NewConversation = (): ReactElement => {
             conversationId: payload.id,
             content: cue,
             requiresResponse: false,
-            sender: 1,
+            sender: lead,
           }),
         );
       }
@@ -64,6 +80,13 @@ const NewConversation = (): ReactElement => {
     setCue(value);
   };
 
+  const handleChangeLead = (
+    event: SyntheticEvent | null,
+    newValue: string | null,
+  ): void => {
+    setLead(newValue);
+  };
+
   return (
     <>
       <FormControl>
@@ -86,6 +109,16 @@ const NewConversation = (): ReactElement => {
         <FormHelperText>
           This is the cue that will be shown to the participant.
         </FormHelperText>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Lead</FormLabel>
+        <Select value={lead} onChange={handleChangeLead}>
+          {agents.map((agent) => (
+            <Option value={agent.id} key={agent.id}>
+              {agent.name}
+            </Option>
+          ))}
+        </Select>
       </FormControl>
       <Button onClick={handleNewConversation}>Save</Button>
     </>

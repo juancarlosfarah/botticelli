@@ -1,3 +1,4 @@
+import Agent from './Agent';
 import { Message } from './Message';
 
 type Conversation = {
@@ -5,6 +6,7 @@ type Conversation = {
   description: string;
   instructions: string;
   messages: Message[];
+  participants: Agent[];
 };
 
 export default Conversation;

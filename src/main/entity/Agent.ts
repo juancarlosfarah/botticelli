@@ -25,6 +25,7 @@ export class Agent {
   description: string = '';
 
   @OneToMany(() => Message, (message) => message.sender)
+  // todo: do we need this?
   @JoinTable()
   messages: Message[];
 

@@ -1,15 +1,16 @@
+import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
-import { IpcChannel } from '../../interfaces/IpcChannel';
+import log from 'electron-log/main';
+import OpenAi from 'openai';
+
 import { GENERATE_RESPONSE_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
-import { Message } from '../../entity/Message';
-import { instanceToPlain } from 'class-transformer';
-import { AppDataSource } from '../../data-source';
-import OpenAi from 'openai';
 import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
-import { messagesToPrompt } from '../../utils/messagesToPrompt';
+import { AppDataSource } from '../../data-source';
 import { Conversation } from '../../entity/Conversation';
-import log from 'electron-log/main';
+import { Message } from '../../entity/Message';
+import { IpcChannel } from '../../interfaces/IpcChannel';
+import { messagesToPrompt } from '../../utils/messagesToPrompt';
 
 export class GenerateResponseChannel implements IpcChannel {
   getName(): string {
@@ -32,10 +33,16 @@ export class GenerateResponseChannel implements IpcChannel {
     const conversationRepository = AppDataSource.getRepository(Conversation);
     const messageRepository = AppDataSource.getRepository(Message);
 
-    const conversation = await conversationRepository.findOneBy({ id: conversationId });
+    const conversation = await conversationRepository.findOneBy({
+      id: conversationId,
+    });
     const instructions = conversation?.instructions || '';
 
-    const messages = await messageRepository.findBy({ conversation: { id: conversationId } });
+    const lead = conversation.lead;
+
+    const messages = await messageRepository.findBy({
+      conversation: { id: conversationId },
+    });
 
     // transform messages to prompt format
     const prompt = messagesToPrompt(messages);
@@ -48,9 +55,14 @@ export class GenerateResponseChannel implements IpcChannel {
 
     // debug
     log.debug(`requesting completion with instructions:`, instructions);
+    log.debug(`led by:`, lead);
 
     const completion = await openAi.chat.completions.create({
-      messages: [{ role: 'system', content: instructions }, ...prompt],
+      messages: [
+        { role: 'system', content: lead.description },
+        { role: 'system', content: instructions },
+        ...prompt,
+      ],
       model: 'gpt-3.5-turbo',
     });
 
@@ -62,7 +74,7 @@ export class GenerateResponseChannel implements IpcChannel {
     response.conversation = conversationId;
 
     // todo: make dynamic
-    response.sender = 1;
+    response.sender = lead;
 
     const { id } = await messageRepository.save(response);
 
