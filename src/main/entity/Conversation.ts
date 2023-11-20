@@ -9,8 +9,9 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { Message } from './Message';
+
 import { Agent } from './Agent';
+import { Message } from './Message';
 
 @Entity()
 export class Conversation {
@@ -27,7 +28,7 @@ export class Conversation {
   @OneToMany(() => Message, (message) => message.conversation, { eager: true })
   messages: Relation<Message>[];
 
-  @ManyToOne(() => Agent,  { eager: true })
+  @ManyToOne(() => Agent, { eager: true })
   lead: Relation<Agent>;
 
   participants: Map<number, Agent> = new Map<number, Agent>();

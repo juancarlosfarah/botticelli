@@ -16,7 +16,9 @@ export class IpcService {
 
     // returns a promise which will be resolved when the response has arrived
     return new Promise((resolve) => {
-      ipcRenderer.once(request.responseChannel, (event, response) => resolve(response));
+      ipcRenderer.once(request.responseChannel, (event, response) =>
+        resolve(response),
+      );
     });
   }
 }

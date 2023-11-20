@@ -1,10 +1,12 @@
 import * as React from 'react';
+
+import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import Avatar from '@mui/joy/Avatar';
 import Box from '@mui/joy/Box';
-import Stack from '@mui/joy/Stack';
 import Sheet from '@mui/joy/Sheet';
+import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
-import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
+
 import { MessageProps } from '../../types';
 import { getFormattedTime } from '../../utils/datetime';
 
@@ -23,9 +25,18 @@ export default function ChatBubble({
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
   return (
     <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
-      <Stack direction="row" justifyContent="space-between" spacing={2} sx={{ mb: 0.25 }}>
-        <Typography level="body-xs">{sender === 'You' ? sender : sender.name}</Typography>
-        <Typography level="body-xs">{getFormattedTime(timestamp, 'en')}</Typography>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        spacing={2}
+        sx={{ mb: 0.25 }}
+      >
+        <Typography level="body-xs">
+          {sender === 'You' ? sender : sender.name}
+        </Typography>
+        <Typography level="body-xs">
+          {getFormattedTime(timestamp, 'en')}
+        </Typography>
       </Stack>
       {attachment ? (
         <Sheet
@@ -62,7 +73,9 @@ export default function ChatBubble({
               borderRadius: 'lg',
               borderTopRightRadius: isSent ? 0 : 'lg',
               borderTopLeftRadius: isSent ? 'lg' : 0,
-              backgroundColor: isSent ? 'var(--joy-palette-primary-solidBg)' : 'background.body',
+              backgroundColor: isSent
+                ? 'var(--joy-palette-primary-solidBg)'
+                : 'background.body',
             }}
           >
             <Typography

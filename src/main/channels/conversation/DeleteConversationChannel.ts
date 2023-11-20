@@ -1,11 +1,12 @@
+import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
-import { IpcChannel } from '../../interfaces/IpcChannel';
+
 import { DELETE_CONVERSATION_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
-import { Conversation } from '../../entity/Conversation';
-import { instanceToPlain } from 'class-transformer';
 import { AppDataSource } from '../../data-source';
+import { Conversation } from '../../entity/Conversation';
+import { IpcChannel } from '../../interfaces/IpcChannel';
 
 export class DeleteConversationChannel implements IpcChannel {
   getName(): string {
@@ -21,7 +22,9 @@ export class DeleteConversationChannel implements IpcChannel {
     // debugging
     log.debug(`handling delete conversation:`, id);
 
-    const conversation = await AppDataSource.manager.delete(Conversation, { id });
+    const conversation = await AppDataSource.manager.delete(Conversation, {
+      id,
+    });
     event.sender.send(request.responseChannel, instanceToPlain(conversation));
   }
 }

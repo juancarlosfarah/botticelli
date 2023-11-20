@@ -1,11 +1,12 @@
+import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
-import { IpcChannel } from '../../interfaces/IpcChannel';
+import log from 'electron-log/main';
+
 import { GET_MESSAGES_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
-import { Message } from '../../entity/Message';
-import { instanceToPlain } from 'class-transformer';
 import { AppDataSource } from '../../data-source';
-import log from 'electron-log/main';
+import { Message } from '../../entity/Message';
+import { IpcChannel } from '../../interfaces/IpcChannel';
 
 export class GetMessagesChannel implements IpcChannel {
   getName(): string {
@@ -26,7 +27,9 @@ export class GetMessagesChannel implements IpcChannel {
     log.debug(`getting messages for conversation:`, conversationId);
 
     const messageRepository = AppDataSource.getRepository(Message);
-    const messages = await messageRepository.findBy({ conversation: { id: conversationId } });
+    const messages = await messageRepository.findBy({
+      conversation: { id: conversationId },
+    });
 
     // debug
     log.debug(`got messages:`, messages);

@@ -1,9 +1,10 @@
+import { Link as RouterLink } from 'react-router-dom';
+
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import Box from '@mui/joy/Box';
 import Breadcrumbs from '@mui/joy/Breadcrumbs';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Link from '@mui/joy/Link';
-import { Link as RouterLink } from 'react-router-dom';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import Typography from '@mui/joy/Typography';
 
 type Props = {
@@ -20,7 +21,13 @@ const CustomBreadcrumbs = ({ entityName }: Props) => {
           separator={<ChevronRightRoundedIcon />}
           sx={{ pl: 0 }}
         >
-          <Link underline="none" color="neutral" aria-label="Home" component={RouterLink} to="/">
+          <Link
+            underline="none"
+            color="neutral"
+            aria-label="Home"
+            component={RouterLink}
+            to="/"
+          >
             <HomeRoundedIcon />
           </Link>
           {/*<Link*/}

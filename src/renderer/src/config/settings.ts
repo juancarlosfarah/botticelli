@@ -1,5 +1,8 @@
 // default settings object
-import { GeneralSettingsKeys, GeneralSettings } from '@shared/interfaces/Settings';
+import {
+  GeneralSettings,
+  GeneralSettingsKeys,
+} from '@shared/interfaces/Settings';
 
 export const DEFAULT_ALLOW_REPLIES_SETTING = true;
 export const DEFAULT_ALLOW_REPORTING = true;

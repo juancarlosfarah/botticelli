@@ -13,8 +13,8 @@ import Typography from '@mui/joy/Typography';
 import _ from 'lodash';
 
 import { Order, getComparator, stableSort } from '../../utils/sort';
-import { deleteAgent, selectAgents } from './/AgentsSlice';
 import RowMenu from '../common/RowMenu';
+import { deleteAgent, selectAgents } from './AgentsSlice';
 
 function AgentTable(): ReactElement {
   const [order, setOrder] = useState<Order>('desc');

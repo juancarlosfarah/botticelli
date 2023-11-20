@@ -1,5 +1,5 @@
-import ContentLoader from 'react-content-loader';
 import { ReactElement } from 'react';
+import ContentLoader from 'react-content-loader';
 
 const MessageLoader = (props): ReactElement => (
   <ContentLoader

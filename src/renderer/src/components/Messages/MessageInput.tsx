@@ -1,15 +1,15 @@
 import * as React from 'react';
+
+import FormatBoldRoundedIcon from '@mui/icons-material/FormatBoldRounded';
+import FormatItalicRoundedIcon from '@mui/icons-material/FormatItalicRounded';
+import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import StrikethroughSRoundedIcon from '@mui/icons-material/StrikethroughSRounded';
+import { IconButton, Stack } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
 import Textarea from '@mui/joy/Textarea';
-import { IconButton, Stack } from '@mui/joy';
-
-import FormatBoldRoundedIcon from '@mui/icons-material/FormatBoldRounded';
-import FormatItalicRoundedIcon from '@mui/icons-material/FormatItalicRounded';
-import StrikethroughSRoundedIcon from '@mui/icons-material/StrikethroughSRounded';
-import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
-import SendRoundedIcon from '@mui/icons-material/SendRounded';
 
 export type MessageInputProps = {
   textAreaValue: string;

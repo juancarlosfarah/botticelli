@@ -8,8 +8,9 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { Conversation } from './Conversation';
+
 import { Agent } from './Agent';
+import { Conversation } from './Conversation';
 
 @Entity()
 export class Message {

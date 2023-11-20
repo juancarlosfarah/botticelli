@@ -1,4 +1,4 @@
-import { useRef, useEffect, MutableRefObject } from 'react';
+import { MutableRefObject, useEffect, useRef } from 'react';
 
 const useAutoFocus = (): MutableRefObject<HTMLElement | null> => {
   const inputRef: MutableRefObject<HTMLElement | null> = useRef(null);

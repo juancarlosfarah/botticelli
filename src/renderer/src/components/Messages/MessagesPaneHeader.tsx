@@ -1,14 +1,16 @@
 import * as React from 'react';
+
+import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
+import CircleIcon from '@mui/icons-material/Circle';
+import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
+import PhoneInTalkRoundedIcon from '@mui/icons-material/PhoneInTalkRounded';
 import Avatar from '@mui/joy/Avatar';
 import Button from '@mui/joy/Button';
 import Chip from '@mui/joy/Chip';
 import IconButton from '@mui/joy/IconButton';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
-import CircleIcon from '@mui/icons-material/Circle';
-import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
-import PhoneInTalkRoundedIcon from '@mui/icons-material/PhoneInTalkRounded';
-import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
+
 import { UserProps } from '../../types';
 import { toggleMessagesPane } from '../../utils';
 
@@ -59,7 +61,9 @@ export default function MessagesPaneHeader({
                   sx={{
                     borderRadius: 'sm',
                   }}
-                  startDecorator={<CircleIcon sx={{ fontSize: 8 }} color="success" />}
+                  startDecorator={
+                    <CircleIcon sx={{ fontSize: 8 }} color="success" />
+                  }
                   slotProps={{ root: { component: 'span' } }}
                 >
                   Online

@@ -1,18 +1,19 @@
 import {
-  PrimaryGeneratedColumn,
+  AfterLoad,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  AfterLoad,
-  Relation,
   Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
   TableInheritance,
+  UpdateDateColumn,
 } from 'typeorm';
+
 import { Message } from './Message';
 
 @Entity()
-@TableInheritance({ column: { type: "varchar", name: "type" } })
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class Agent {
   @PrimaryGeneratedColumn()
   id: number;
