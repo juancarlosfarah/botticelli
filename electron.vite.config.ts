@@ -1,10 +1,16 @@
-import { resolve } from 'path';
-import { defineConfig, externalizeDepsPlugin, swcPlugin } from 'electron-vite';
 import react from '@vitejs/plugin-react';
+import { defineConfig, externalizeDepsPlugin, swcPlugin } from 'electron-vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin(), swcPlugin()],
+    resolve: {
+      alias: {
+        '@main': resolve('src/main'),
+        '@shared': resolve('src/shared'),
+      },
+    },
   },
   preload: {
     plugins: [externalizeDepsPlugin()],

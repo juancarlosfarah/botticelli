@@ -14,6 +14,14 @@
     "outDir": "./build",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@main/*": [
+        "src/main/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ]
+    }
   }
 }
