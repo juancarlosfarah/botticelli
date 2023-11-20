@@ -6,11 +6,11 @@ import { POST_CONVERSATION_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
 import { Conversation } from '../../entity/Conversation';
-import { IpcChannel } from '../../interfaces/IpcChannel';
+import { PostOneChannel } from '../common/PostOneChannel';
 
-export class PostConversationChannel implements IpcChannel {
-  getName(): string {
-    return POST_CONVERSATION_CHANNEL;
+export class PostConversationChannel extends PostOneChannel {
+  constructor() {
+    super({ name: POST_CONVERSATION_CHANNEL, entity: Conversation });
   }
 
   async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {

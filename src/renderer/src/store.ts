@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import agentsReducer from './components/Agents/AgentsSlice';
 import conversationsReducer from './components/Conversations/ConversationsSlice';
 import messagesReducer from './components/Messages/MessagesSlice';
+import agentsReducer from './components/agent/AgentsSlice';
 
 const store = configureStore({
   reducer: {

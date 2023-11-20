@@ -13,7 +13,16 @@ import icon from '../../resources/icon.png?asset';
 import { DeleteAgentChannel } from './channels/agent/DeleteAgentChannel';
 import { GetAgentChannel } from './channels/agent/GetAgentChannel';
 import { GetAgentsChannel } from './channels/agent/GetAgentsChannel';
-import { PostAgentChannel } from './channels/agent/PostAgentChannel';
+import { DeleteOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/DeleteOneArtificialAssistantChannel';
+import { GetManyArtificialAssistantChannel } from './channels/agent/artificial/assistant/GetManyArtificialAssistantChannel';
+import { GetOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/GetOneArtificialAssistantChannel';
+import { PostOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/PostOneArtificialAssistantChannel';
+import { DeleteOneArtificialParticipantChannel } from './channels/agent/artificial/participant/DeleteOneArtificialParticipantChannel';
+import { GetManyArtificialParticipantsChannel } from './channels/agent/artificial/participant/GetManyArtificialParticipantsChannel';
+import { GetOneArtificialParticipantChannel } from './channels/agent/artificial/participant/GetOneArtificialParticipantChannel';
+import { PostOneArtificialParticipantChannel } from './channels/agent/artificial/participant/PostOneArtificialParticipantChannel';
+import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/PostOneHumanAssistantChannel';
+import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
 import { DeleteConversationChannel } from './channels/conversation/DeleteConversationChannel';
 import { GetConversationChannel } from './channels/conversation/GetConversationChannel';
 import { GetConversationsChannel } from './channels/conversation/GetConversationsChannel';
@@ -140,8 +149,23 @@ new Main().init([
   new GetMessagesChannel(),
   new GenerateResponseChannel(),
   // agents
-  new PostAgentChannel(),
+  new GetAgentsChannel(),
   new GetAgentChannel(),
   new DeleteAgentChannel(),
-  new GetAgentsChannel(),
+  // |_ artificial
+  //   |_ assistant
+  new PostOneArtificialAssistantChannel(),
+  new GetManyArtificialAssistantChannel(),
+  new DeleteOneArtificialAssistantChannel(),
+  new GetOneArtificialAssistantChannel(),
+  //   |_ participant
+  new PostOneArtificialParticipantChannel(),
+  new GetOneArtificialParticipantChannel(),
+  new GetManyArtificialParticipantsChannel(),
+  new DeleteOneArtificialParticipantChannel(),
+  // |_ human
+  //   |_ assistant
+  new PostOneHumanAssistantChannel(),
+  //   |_ participant
+  new PostOneHumanParticipantChannel(),
 ]);

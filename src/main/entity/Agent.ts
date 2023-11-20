@@ -1,16 +1,18 @@
 import {
-  Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  JoinTable,
   AfterLoad,
+  Relation,
+  Entity,
+  TableInheritance,
 } from 'typeorm';
 import { Message } from './Message';
 
 @Entity()
+@TableInheritance({ column: { type: "varchar", name: "type" } })
 export class Agent {
   @PrimaryGeneratedColumn()
   id: number;
@@ -18,16 +20,14 @@ export class Agent {
   @Column({ default: '' })
   name: string = '';
 
-  @Column()
-  type: string;
-
   @Column({ default: '' })
   description: string = '';
 
+  @Column()
+  type: string;
+
   @OneToMany(() => Message, (message) => message.sender)
-  // todo: do we need this?
-  @JoinTable()
-  messages: Message[];
+  messages: Relation<Message>[];
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

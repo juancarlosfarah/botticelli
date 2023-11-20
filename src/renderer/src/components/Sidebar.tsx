@@ -1,7 +1,9 @@
-import * as React from 'react';
+import { ReactElement } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -23,40 +25,9 @@ import Typography from '@mui/joy/Typography';
 
 import { closeSidebar } from '../utils';
 import ColorSchemeToggle from './ColorSchemeToggle';
+import Toggler from './layout/Toggler';
 
-function Toggler({
-  defaultExpanded = false,
-  renderToggle,
-  children,
-}: {
-  defaultExpanded?: boolean;
-  children: React.ReactNode;
-  renderToggle: (params: {
-    open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  }) => React.ReactNode;
-}) {
-  const [open, setOpen] = React.useState(defaultExpanded);
-  return (
-    <React.Fragment>
-      {renderToggle({ open, setOpen })}
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateRows: open ? '1fr' : '0fr',
-          transition: '0.2s ease',
-          '& > *': {
-            overflow: 'hidden',
-          },
-        }}
-      >
-        {children}
-      </Box>
-    </React.Fragment>
-  );
-}
-
-export default function Sidebar() {
+export default function Sidebar(): ReactElement {
   const { pathname } = useLocation();
 
   return (
@@ -174,47 +145,107 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
-            <ListItemButton
-              selected={pathname === '/agents'}
-              role="menuitem"
-              component={Link}
-              to="/agents"
+          <ListItem nested>
+            <Toggler
+              renderToggle={({ open, setOpen }): ReactElement => (
+                <ListItemButton onClick={(): void => setOpen(!open)}>
+                  <GroupRoundedIcon />
+                  <ListItemContent>
+                    <Typography level="title-sm">Agents</Typography>
+                  </ListItemContent>
+                  <KeyboardArrowDownIcon
+                    sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
+                  />
+                </ListItemButton>
+              )}
             >
-              <RobotIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Agents</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
+              <List sx={{ gap: 0.5 }}>
+                <ListItem nested>
+                  <Toggler
+                    renderToggle={({ open, setOpen }): ReactElement => (
+                      <ListItemButton onClick={(): void => setOpen(!open)}>
+                        <RobotIcon />
+                        <ListItemContent>
+                          <Typography level="title-sm">Artificial</Typography>
+                        </ListItemContent>
+                        <KeyboardArrowDownIcon
+                          sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
+                        />
+                      </ListItemButton>
+                    )}
+                  >
+                    <List sx={{ gap: 0.5 }}>
+                      <ListItemButton
+                        sx={{ mt: 0.5 }}
+                        selected={pathname === '/agents/artificial/assistants'}
+                        role="menuitem"
+                        component={Link}
+                        to="/agents/artificial/assistants"
+                      >
+                        <ListItemContent>
+                          <Typography level="body-sm">Assistants</Typography>
+                        </ListItemContent>
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ mt: 0.5 }}
+                        selected={
+                          pathname === '/agents/artificial/participants'
+                        }
+                        role="menuitem"
+                        component={Link}
+                        to="/agents/artificial/participants"
+                      >
+                        <ListItemContent>
+                          <Typography level="body-sm">Participants</Typography>
+                        </ListItemContent>
+                      </ListItemButton>
+                    </List>
+                  </Toggler>
+                </ListItem>
 
-          {/*<ListItem nested>*/}
-          {/*  <Toggler*/}
-          {/*    renderToggle={({ open, setOpen }) => (*/}
-          {/*      <ListItemButton onClick={() => setOpen(!open)}>*/}
-          {/*        <GroupRoundedIcon />*/}
-          {/*        <ListItemContent>*/}
-          {/*          <Typography level="title-sm">Users</Typography>*/}
-          {/*        </ListItemContent>*/}
-          {/*        <KeyboardArrowDownIcon sx={{ transform: open ? 'rotate(180deg)' : 'none' }} />*/}
-          {/*      </ListItemButton>*/}
-          {/*    )}*/}
-          {/*  >*/}
-          {/*    <List sx={{ gap: 0.5 }}>*/}
-          {/*      <ListItem sx={{ mt: 0.5 }}>*/}
-          {/*        <ListItemButton role="menuitem" component={Link} to="/">*/}
-          {/*          My profile*/}
-          {/*        </ListItemButton>*/}
-          {/*      </ListItem>*/}
-          {/*      <ListItem>*/}
-          {/*        <ListItemButton>Create a new user</ListItemButton>*/}
-          {/*      </ListItem>*/}
-          {/*      <ListItem>*/}
-          {/*        <ListItemButton>Roles & permission</ListItemButton>*/}
-          {/*      </ListItem>*/}
-          {/*    </List>*/}
-          {/*  </Toggler>*/}
-          {/*</ListItem>*/}
+                <ListItem nested>
+                  <Toggler
+                    renderToggle={({ open, setOpen }): ReactElement => (
+                      <ListItemButton onClick={(): void => setOpen(!open)}>
+                        <GroupRoundedIcon />
+                        <ListItemContent>
+                          <Typography level="title-sm">Human</Typography>
+                        </ListItemContent>
+                        <KeyboardArrowDownIcon
+                          sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
+                        />
+                      </ListItemButton>
+                    )}
+                  >
+                    <List sx={{ gap: 0.5 }}>
+                      <ListItemButton
+                        sx={{ mt: 0.5 }}
+                        selected={pathname === '/agents/human/assistants'}
+                        role="menuitem"
+                        component={Link}
+                        to="/agents/human/assistants"
+                      >
+                        <ListItemContent>
+                          <Typography level="body-sm">Assistants</Typography>
+                        </ListItemContent>
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ mt: 0.5 }}
+                        selected={pathname === '/agents/human/participants'}
+                        role="menuitem"
+                        component={Link}
+                        to="/agents/human/participants"
+                      >
+                        <ListItemContent>
+                          <Typography level="body-sm">Participants</Typography>
+                        </ListItemContent>
+                      </ListItemButton>
+                    </List>
+                  </Toggler>
+                </ListItem>
+              </List>
+            </Toggler>
+          </ListItem>
         </List>
 
         <List

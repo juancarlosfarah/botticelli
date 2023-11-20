@@ -14,3 +14,29 @@ export const POST_AGENT_CHANNEL = 'agent:post';
 export const GET_AGENT_CHANNEL = 'agent:get';
 export const GET_AGENTS_CHANNEL = 'agents:get';
 export const DELETE_AGENT_CHANNEL = 'agent:delete';
+
+export const GET_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
+  'agent:artificial:assistant:get:one';
+
+export const POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
+  'agent:artificial:assistant:post:one';
+export const GET_MANY_ARTIFICIAL_ASSISTANTS_CHANNEL =
+  'agents:artificial:assistant:get:many';
+export const DELETE_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
+  'agent:artificial:assistant:delete:one';
+
+export const GET_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL =
+  'agent:artificial:participant:get:one';
+
+export const POST_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL =
+  'agent:artificial:participant:post:one';
+export const GET_MANY_ARTIFICIAL_PARTICIPANTS_CHANNEL =
+  'agents:artificial:participant:get:many';
+export const DELETE_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL =
+  'agent:artificial:participant:delete:one';
+
+export const POST_ONE_HUMAN_PARTICIPANT_CHANNEL =
+  'agent:human:participant:post:one';
+
+export const POST_ONE_HUMAN_ASSISTANT_CHANNEL =
+  'agent:human:assistant:post:one';

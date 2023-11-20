@@ -15,8 +15,8 @@ import Textarea from '@mui/joy/Textarea';
 
 import log from 'electron-log/renderer';
 
-import { fetchAgents, selectAgents } from '../Agents/AgentsSlice';
 import { saveNewMessage } from '../Messages/MessagesSlice';
+import { fetchAgents, selectAgents } from '../agent/AgentsSlice';
 import { saveNewConversation } from './ConversationsSlice';
 
 const NewConversation = (): ReactElement => {

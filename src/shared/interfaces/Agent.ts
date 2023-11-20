@@ -1,6 +1,6 @@
 type Agent = {
   id: number;
-  type: 'bot' | 'user';
+  type: string;
   description: string;
   name: string;
 };
