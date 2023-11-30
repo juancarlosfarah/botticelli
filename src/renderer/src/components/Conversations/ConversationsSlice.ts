@@ -13,6 +13,7 @@ import {
   GET_CONVERSATION_CHANNEL,
   POST_CONVERSATION_CHANNEL,
 } from '../../../../shared/channels';
+import Agent from '../../../../shared/interfaces/Agent';
 import { IpcService } from '../../services/IpcService';
 
 const conversationsAdapter = createEntityAdapter();
@@ -50,17 +51,23 @@ export const fetchConversations = createAsyncThunk(
 
 export const saveNewConversation = createAsyncThunk<
   Conversation,
-  { description: string; instructions: string }
+  {
+    description: string;
+    instructions: string;
+    assistant: Agent;
+    participant: Agent;
+  }
 >(
   'conversations/saveNewConversation',
-  async ({ description, instructions, lead }) => {
+  async ({ description, instructions, assistant, participant }) => {
     const response = await IpcService.send<{ conversation: any }>(
       POST_CONVERSATION_CHANNEL,
       {
         params: {
           description,
           instructions,
-          lead,
+          assistant,
+          participant,
         },
       },
     );

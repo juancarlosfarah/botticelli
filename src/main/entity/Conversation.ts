@@ -29,7 +29,10 @@ export class Conversation {
   messages: Relation<Message>[];
 
   @ManyToOne(() => Agent, { eager: true })
-  lead: Relation<Agent>;
+  participant: Relation<Agent>;
+
+  @ManyToOne(() => Agent, { eager: true })
+  assistant: Relation<Agent>;
 
   participants: Map<number, Agent> = new Map<number, Agent>();
 

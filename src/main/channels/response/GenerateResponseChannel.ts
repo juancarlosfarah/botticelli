@@ -38,7 +38,7 @@ export class GenerateResponseChannel implements IpcChannel {
     });
     const instructions = conversation?.instructions || '';
 
-    const lead = conversation.lead;
+    const assistant = conversation.assistant;
 
     const messages = await messageRepository.findBy({
       conversation: { id: conversationId },
@@ -55,11 +55,11 @@ export class GenerateResponseChannel implements IpcChannel {
 
     // debug
     log.debug(`requesting completion with instructions:`, instructions);
-    log.debug(`led by:`, lead);
+    log.debug(`assisted by:`, assistant);
 
     const completion = await openAi.chat.completions.create({
       messages: [
-        { role: 'system', content: lead.description },
+        { role: 'system', content: assistant.description },
         { role: 'system', content: instructions },
         ...prompt,
       ],
@@ -74,7 +74,7 @@ export class GenerateResponseChannel implements IpcChannel {
     response.conversation = conversationId;
 
     // todo: make dynamic
-    response.sender = lead;
+    response.sender = assistant;
 
     const { id } = await messageRepository.save(response);
 

@@ -57,7 +57,7 @@ export default function MessagesPane({
         >
           <Stack spacing={2} justifyContent="flex-end">
             {messages.map((message: MessageProps, index: number) => {
-              const isYou = message?.sender?.type !== 'bot';
+              const isYou = message?.sender?.id === 2;
 
               return (
                 <Stack

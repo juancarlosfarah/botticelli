@@ -16,18 +16,24 @@ import Textarea from '@mui/joy/Textarea';
 import log from 'electron-log/renderer';
 
 import { saveNewMessage } from '../Messages/MessagesSlice';
-import { fetchAgents, selectAgents } from '../agent/AgentsSlice';
+import {
+  fetchAgents,
+  selectAssistants,
+  selectParticipants,
+} from '../agent/AgentsSlice';
 import { saveNewConversation } from './ConversationsSlice';
 
 const NewConversation = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const agents = useSelector(selectAgents);
+  const participants = useSelector(selectParticipants);
+  const assistants = useSelector(selectAssistants);
 
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
   const [cue, setCue] = useState<string>('');
-  const [lead, setLead] = useState<string | null>(null);
+  const [participant, setParticipant] = useState<string | null>(null);
+  const [assistant, setAssistant] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -38,7 +44,8 @@ const NewConversation = (): ReactElement => {
       saveNewConversation({
         description,
         instructions,
-        lead,
+        assistant,
+        participant,
       }),
     );
     log.debug(`saveNewConversation response.payload:`, payload);
@@ -52,7 +59,7 @@ const NewConversation = (): ReactElement => {
             conversationId: payload.id,
             content: cue,
             requiresResponse: false,
-            sender: lead,
+            sender: assistant,
           }),
         );
       }
@@ -80,11 +87,18 @@ const NewConversation = (): ReactElement => {
     setCue(value);
   };
 
-  const handleChangeLead = (
+  const handleChangeParticipant = (
     event: SyntheticEvent | null,
     newValue: string | null,
   ): void => {
-    setLead(newValue);
+    setParticipant(newValue);
+  };
+
+  const handleChangeAssistant = (
+    event: SyntheticEvent | null,
+    newValue: string | null,
+  ): void => {
+    setAssistant(newValue);
   };
 
   return (
@@ -111,9 +125,19 @@ const NewConversation = (): ReactElement => {
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Lead</FormLabel>
-        <Select value={lead} onChange={handleChangeLead}>
-          {agents.map((agent) => (
+        <FormLabel>Assistant</FormLabel>
+        <Select value={assistant} onChange={handleChangeAssistant}>
+          {assistants.map((agent) => (
+            <Option value={agent.id} key={agent.id}>
+              {agent.name}
+            </Option>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Participant</FormLabel>
+        <Select value={participant} onChange={handleChangeParticipant}>
+          {participants.map((agent) => (
             <Option value={agent.id} key={agent.id}>
               {agent.name}
             </Option>

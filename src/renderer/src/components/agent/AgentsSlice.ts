@@ -189,6 +189,23 @@ export const selectAgentIds = createSelector(
   (agents) => agents.map((agent) => agent.id),
 );
 
+export const selectAssistants = createSelector(selectAgents, (agents) =>
+  agents.filter((agent) => {
+    return (
+      agent.type === 'ArtificialAssistant' || agent.type === 'HumanAssistant'
+    );
+  }),
+);
+
+export const selectParticipants = createSelector(selectAgents, (agents) =>
+  agents.filter((agent) => {
+    return (
+      agent.type === 'ArtificialParticipant' ||
+      agent.type === 'HumanParticipant'
+    );
+  }),
+);
+
 export const selectArtificialAssistants = createSelector(
   selectAgents,
   (agents) =>

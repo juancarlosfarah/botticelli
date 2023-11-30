@@ -20,12 +20,14 @@ export class PostConversationChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, instructions, lead } = request.params;
+    const { description, instructions, assistant, participant } =
+      request.params;
 
     const conversation = new Conversation();
     conversation.description = description;
     conversation.instructions = instructions;
-    conversation.lead = lead;
+    conversation.assistant = assistant;
+    conversation.participant = participant;
 
     await AppDataSource.manager.save(conversation);
     event.sender.send(request.responseChannel, instanceToPlain(conversation));
