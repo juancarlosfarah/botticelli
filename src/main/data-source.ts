@@ -10,6 +10,7 @@ import { HumanAgent } from './entity/HumanAgent';
 import { HumanAssistant } from './entity/HumanAssistant';
 import { HumanParticipant } from './entity/HumanParticipant';
 import { Message } from './entity/Message';
+import { Trigger } from './entity/Trigger';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
@@ -26,6 +27,7 @@ export const AppDataSource = new DataSource({
     HumanAgent,
     HumanParticipant,
     HumanAssistant,
+    Trigger,
   ],
   migrations: [],
   subscribers: [],

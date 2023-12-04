@@ -34,7 +34,7 @@ export const fetchConversation = createAsyncThunk(
     );
 
     // debugging
-    log.debug(response);
+    log.debug(`fetchConversation response:`, response);
 
     return response;
   },
@@ -56,10 +56,11 @@ export const saveNewConversation = createAsyncThunk<
     instructions: string;
     assistant: Agent;
     participant: Agent;
+    triggers: number;
   }
 >(
   'conversations/saveNewConversation',
-  async ({ description, instructions, assistant, participant }) => {
+  async ({ description, instructions, assistant, participant, triggers }) => {
     const response = await IpcService.send<{ conversation: any }>(
       POST_CONVERSATION_CHANNEL,
       {
@@ -68,6 +69,7 @@ export const saveNewConversation = createAsyncThunk<
           instructions,
           assistant,
           participant,
+          triggers,
         },
       },
     );
@@ -102,6 +104,14 @@ const conversationsSlice = createSlice({
       })
       .addCase(fetchConversations.fulfilled, (state, action) => {
         conversationsAdapter.setAll(state, action.payload);
+        state.status = 'idle';
+      })
+      .addCase(fetchConversation.pending, (state, action) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchConversation.fulfilled, (state, action) => {
+        const conversation = action.payload;
+        conversationsAdapter.setOne(state, conversation);
         state.status = 'idle';
       })
       .addCase(saveNewConversation.fulfilled, (state, action) => {

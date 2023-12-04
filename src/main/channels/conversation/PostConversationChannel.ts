@@ -5,7 +5,9 @@ import log from 'electron-log/main';
 import { POST_CONVERSATION_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
+import { Agent } from '../../entity/Agent';
 import { Conversation } from '../../entity/Conversation';
+import { Trigger } from '../../entity/Trigger';
 import { PostOneChannel } from '../common/PostOneChannel';
 
 export class PostConversationChannel extends PostOneChannel {
@@ -20,14 +22,33 @@ export class PostConversationChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, instructions, assistant, participant } =
+    const { description, instructions, assistant, participant, triggers } =
       request.params;
+
+    log.debug(`linking triggers: ${triggers}`);
 
     const conversation = new Conversation();
     conversation.description = description;
     conversation.instructions = instructions;
-    conversation.assistant = assistant;
-    conversation.participant = participant;
+
+    const agentRepository = AppDataSource.getRepository(Agent);
+    const savedAssistant = await agentRepository.findOneBy({ id: assistant });
+    const savedParticipant = await agentRepository.findOneBy({
+      id: participant,
+    });
+    if (savedAssistant) {
+      conversation.assistant = savedAssistant;
+    }
+    if (savedParticipant) {
+      conversation.participant = savedParticipant;
+    }
+
+    // todo: array should come from the front end
+    const triggerRepository = AppDataSource.getRepository(Trigger);
+    const savedTrigger = await triggerRepository.findOneBy({ id: triggers });
+    if (savedTrigger) {
+      conversation.triggers = [savedTrigger];
+    }
 
     await AppDataSource.manager.save(conversation);
     event.sender.send(request.responseChannel, instanceToPlain(conversation));

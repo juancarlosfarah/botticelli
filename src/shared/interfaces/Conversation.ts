@@ -1,12 +1,15 @@
 import Agent from './Agent';
 import { Message } from './Message';
+import Trigger from './Trigger';
 
 type Conversation = {
   id: number;
   description: string;
   instructions: string;
   messages: Message[];
-  participants: Agent[];
+  assistant: Agent;
+  participant: Agent;
+  triggers: Trigger[];
 };
 
 export default Conversation;

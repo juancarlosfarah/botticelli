@@ -40,3 +40,9 @@ export const POST_ONE_HUMAN_PARTICIPANT_CHANNEL =
 
 export const POST_ONE_HUMAN_ASSISTANT_CHANNEL =
   'agent:human:assistant:post:one';
+
+// triggers
+export const POST_ONE_TRIGGER_CHANNEL = 'trigger:post:one';
+export const GET_MANY_TRIGGERS_CHANNEL = 'trigger:get:many';
+export const DELETE_ONE_TRIGGER_CHANNEL = 'trigger:delete:one';
+export const GET_ONE_TRIGGER_CHANNEL = 'trigger:get:one';

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
@@ -80,20 +81,23 @@ export default function MessagesPane({
             {status === 'loading' && <MessageLoader />}
           </Stack>
         </Box>
-
-        <MessageInput
-          textAreaValue={textAreaValue}
-          setTextAreaValue={setTextAreaValue}
-          onSubmit={(): void => {
-            dispatch(
-              saveNewMessage({
-                conversationId,
-                content: textAreaValue,
-                requiresResponse: true,
-              }),
-            );
-          }}
-        />
+        {conversation.completed ? (
+          <Button sx={{ m: 1 }}>Next</Button>
+        ) : (
+          <MessageInput
+            textAreaValue={textAreaValue}
+            setTextAreaValue={setTextAreaValue}
+            onSubmit={(): void => {
+              dispatch(
+                saveNewMessage({
+                  conversationId,
+                  content: textAreaValue,
+                  evaluate: true,
+                }),
+              );
+            }}
+          />
+        )}
       </Sheet>
     </>
   );

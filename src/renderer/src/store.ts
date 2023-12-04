@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import conversationsReducer from './components/Conversations/ConversationsSlice';
 import messagesReducer from './components/Messages/MessagesSlice';
 import agentsReducer from './components/agent/AgentsSlice';
+import triggersReducer from './components/trigger/TriggersSlice';
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     conversations: conversationsReducer,
     messages: messagesReducer,
     agents: agentsReducer,
+    triggers: triggersReducer,
   },
 });
 

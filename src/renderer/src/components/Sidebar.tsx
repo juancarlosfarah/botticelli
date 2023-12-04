@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -141,6 +142,20 @@ export default function Sidebar(): ReactElement {
               <QuestionAnswerRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Conversations</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem>
+            <ListItemButton
+              selected={pathname === '/triggers'}
+              role="menuitem"
+              component={Link}
+              to="/triggers"
+            >
+              <ElectricBoltIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Triggers</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>

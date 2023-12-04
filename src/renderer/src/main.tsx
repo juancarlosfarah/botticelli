@@ -24,6 +24,9 @@ import NewHumanAssistant from './components/agent/human/assistant/NewHumanAssist
 import HumanParticipant from './components/agent/human/participant/HumanParticipant';
 import HumanParticipants from './components/agent/human/participant/HumanParticipants';
 import NewHumanParticipant from './components/agent/human/participant/NewHumanParticipant';
+import NewTrigger from './components/trigger/NewTrigger';
+import Trigger from './components/trigger/Trigger';
+import Triggers from './components/trigger/Triggers';
 import './index.css';
 import store from './store';
 
@@ -43,6 +46,18 @@ const router = createBrowserRouter([
       {
         path: 'conversations/:conversationId',
         element: <Conversation />,
+      },
+      {
+        path: 'triggers',
+        element: <Triggers />,
+      },
+      {
+        path: 'triggers/new',
+        element: <NewTrigger />,
+      },
+      {
+        path: 'triggers/:triggerId',
+        element: <Trigger />,
       },
       {
         path: 'agents',

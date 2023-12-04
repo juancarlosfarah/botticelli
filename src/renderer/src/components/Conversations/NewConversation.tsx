@@ -21,6 +21,7 @@ import {
   selectAssistants,
   selectParticipants,
 } from '../agent/AgentsSlice';
+import { fetchTriggers, selectTriggers } from '../trigger/TriggersSlice';
 import { saveNewConversation } from './ConversationsSlice';
 
 const NewConversation = (): ReactElement => {
@@ -28,15 +29,18 @@ const NewConversation = (): ReactElement => {
   const navigate = useNavigate();
   const participants = useSelector(selectParticipants);
   const assistants = useSelector(selectAssistants);
+  const availableTriggers = useSelector(selectTriggers);
 
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
   const [cue, setCue] = useState<string>('');
   const [participant, setParticipant] = useState<string | null>(null);
   const [assistant, setAssistant] = useState<string | null>(null);
+  const [triggers, setTriggers] = useState<number | null>(null);
 
   useEffect(() => {
     dispatch(fetchAgents());
+    dispatch(fetchTriggers());
   }, []);
 
   const handleNewConversation = async (): Promise<void> => {
@@ -46,6 +50,7 @@ const NewConversation = (): ReactElement => {
         instructions,
         assistant,
         participant,
+        triggers,
       }),
     );
     log.debug(`saveNewConversation response.payload:`, payload);
@@ -101,6 +106,13 @@ const NewConversation = (): ReactElement => {
     setAssistant(newValue);
   };
 
+  const handleChangeTriggers = (
+    event: SyntheticEvent | null,
+    newValue: string | null,
+  ): void => {
+    setTriggers(newValue);
+  };
+
   return (
     <>
       <FormControl>
@@ -140,6 +152,16 @@ const NewConversation = (): ReactElement => {
           {participants.map((agent) => (
             <Option value={agent.id} key={agent.id}>
               {agent.name}
+            </Option>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Trigger</FormLabel>
+        <Select value={triggers} onChange={handleChangeTriggers}>
+          {availableTriggers.map((trigger) => (
+            <Option value={trigger.id} key={trigger.id}>
+              {trigger.name}
             </Option>
           ))}
         </Select>

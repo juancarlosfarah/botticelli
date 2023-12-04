@@ -1,8 +1,11 @@
+import log from 'electron-log/main';
 import {
   AfterLoad,
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -12,17 +15,21 @@ import {
 
 import { Agent } from './Agent';
 import { Message } from './Message';
+import { Trigger } from './Trigger';
 
 @Entity()
 export class Conversation {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ default: '' })
   description: string = '';
 
   @Column({ default: '' })
   instructions: string = '';
+
+  @Column({ default: false })
+  completed: boolean = false;
 
   // note: array initialization is not allowed in relations
   @OneToMany(() => Message, (message) => message.conversation, { eager: true })
@@ -34,18 +41,9 @@ export class Conversation {
   @ManyToOne(() => Agent, { eager: true })
   assistant: Relation<Agent>;
 
-  participants: Map<number, Agent> = new Map<number, Agent>();
-
-  @AfterLoad()
-  getParticipants(): void {
-    if (this.messages?.length) {
-      this.messages.forEach((message) => {
-        if (!this.participants.has(message.sender.id)) {
-          this.participants.set(message.sender.id, message.sender);
-        }
-      });
-    }
-  }
+  @ManyToMany(() => Trigger)
+  @JoinTable()
+  triggers: Trigger[];
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

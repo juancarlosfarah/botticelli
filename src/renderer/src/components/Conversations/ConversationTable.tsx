@@ -107,30 +107,13 @@ export default function ConversationTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 20, padding: '12px 6px' }}>
-                <Link
-                  underline="none"
-                  color="primary"
-                  component="button"
-                  onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
-                  fontWeight="lg"
-                  endDecorator={<ArrowDropDownIcon />}
-                  sx={{
-                    '& svg': {
-                      transition: '0.2s',
-                      transform:
-                        order === 'desc' ? 'rotate(0deg)' : 'rotate(180deg)',
-                    },
-                  }}
-                >
-                  ID
-                </Link>
-              </th>
+
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 100, padding: '12px 6px' }}>
                 Number of Messages
               </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Participants</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>Assistant</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>Participant</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
             </tr>
           </thead>
@@ -155,9 +138,6 @@ export default function ConversationTable(): ReactElement {
                     />
                   </td>
                   <td>
-                    <Typography level="body-xs">{row.id}</Typography>
-                  </td>
-                  <td>
                     <Typography level="body-xs">
                       {_.truncate(row.description, 25)}
                     </Typography>
@@ -169,7 +149,12 @@ export default function ConversationTable(): ReactElement {
                   </td>
                   <td>
                     <Typography level="body-xs">
-                      {Object.keys(row.participants).join(' ') || '—'}
+                      {row?.assistant.name || '—'}
+                    </Typography>
+                  </td>
+                  <td>
+                    <Typography level="body-xs">
+                      {row?.participant.name || '—'}
                     </Typography>
                   </td>
                   <td>

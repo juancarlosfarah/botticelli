@@ -14,6 +14,7 @@ import log from 'electron-log/renderer';
 
 import { GENERATE_RESPONSE_CHANNEL } from '../../../../shared/channels';
 import { IpcService } from '../../services/IpcService';
+import { fetchConversation } from '../Conversations/ConversationsSlice';
 
 export const messagesAdapter = createEntityAdapter();
 
@@ -54,10 +55,7 @@ export const fetchMessages = createAsyncThunk(
 
 export const saveNewMessage = createAsyncThunk(
   'messages/saveNewMessage',
-  async (
-    { conversationId, content, requiresResponse, sender },
-    { dispatch },
-  ) => {
+  async ({ conversationId, content, evaluate, sender }, { dispatch }) => {
     // debugging
     log.debug(`saveNewMessage:`, conversationId, content);
 
@@ -69,7 +67,7 @@ export const saveNewMessage = createAsyncThunk(
     );
 
     // generate a response
-    if (requiresResponse) {
+    if (evaluate) {
       dispatch(generateResponse({ conversationId }));
     }
 
@@ -81,7 +79,7 @@ export const saveNewMessage = createAsyncThunk(
 
 export const generateResponse = createAsyncThunk(
   'messages/generateResponse',
-  async ({ conversationId }) => {
+  async ({ conversationId }, { dispatch }) => {
     // debug
     log.debug(`generateResponse:`, conversationId);
 
@@ -91,6 +89,8 @@ export const generateResponse = createAsyncThunk(
         params: { conversationId },
       },
     );
+
+    dispatch(fetchConversation({ id: conversationId }));
 
     // debug
     log.debug(`generateResponse response:`, response);

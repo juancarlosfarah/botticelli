@@ -34,6 +34,11 @@ export default function Conversation(): ReactElement {
     return <div>Conversation Not Found</div>;
   }
 
+  // show first trigger only if triggers exist
+  const trigger = conversation?.triggers?.length
+    ? conversation.triggers[0]
+    : null;
+
   return (
     <>
       <CustomBreadcrumbs />
@@ -58,6 +63,18 @@ export default function Conversation(): ReactElement {
         Instructions
       </Typography>
       <Typography>{conversation.instructions}</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Assistant
+      </Typography>
+      <Typography>{conversation?.assistant?.name || '—'}</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Participant
+      </Typography>
+      <Typography>{conversation?.participant?.name || '—'}</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Trigger
+      </Typography>
+      <Typography>{trigger?.name || '—'}</Typography>
       <MessagesPane conversation={conversation} />
     </>
   );

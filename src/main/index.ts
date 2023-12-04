@@ -30,6 +30,10 @@ import { PostConversationChannel } from './channels/conversation/PostConversatio
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
+import { DeleteOneTriggerChannel } from './channels/trigger/DeleteOneTriggerChannel';
+import { GetManyTriggersChannel } from './channels/trigger/GetManyTriggersChannel';
+import { GetOneTriggerChannel } from './channels/trigger/GetOneTriggerChannel';
+import { PostOneTriggerChannel } from './channels/trigger/PostOneTriggerChannel';
 import { AppDataSource } from './data-source';
 import { IpcChannel } from './interfaces/IpcChannel';
 
@@ -168,4 +172,9 @@ new Main().init([
   new PostOneHumanAssistantChannel(),
   //   |_ participant
   new PostOneHumanParticipantChannel(),
+  // triggers
+  new PostOneTriggerChannel(),
+  new GetOneTriggerChannel(),
+  new GetManyTriggersChannel(),
+  new DeleteOneTriggerChannel(),
 ]);
