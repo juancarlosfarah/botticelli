@@ -1,18 +1,18 @@
-import { GET_ONE_INTERACTION_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
+import { GET_ONE_EXCHANGE_TEMPLATE_CHANNEL } from '../../../shared/channels';
 import { AppDataSource } from '../../data-source';
-import { Interaction } from '../../entity/Interaction';
+import { ExchangeTemplate } from '../../entity/ExchangeTemplate';
 import { GetOneChannel } from '../common/GetOneChannel';
 
-export class GetOneInteractionChannel extends GetOneChannel {
+export class GetOneExchangeTemplateChannel extends GetOneChannel {
   constructor() {
     super({
-      name: GET_ONE_INTERACTION_CHANNEL,
-      entity: Interaction,
+      name: GET_ONE_EXCHANGE_TEMPLATE_CHANNEL,
+      entity: ExchangeTemplate,
     });
   }
 
@@ -34,7 +34,7 @@ export class GetOneInteractionChannel extends GetOneChannel {
       where: {
         ...query,
       },
-      relations: { exchanges: true },
+      relations: { triggers: true },
       take: 1,
     });
 

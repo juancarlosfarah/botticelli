@@ -2,7 +2,7 @@ import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
-import { POST_ONE_EXCHANGE_TEMPLATE_CHANNEL } from '../../../shared/channels';
+import { POST_ONE_EXCHANGE_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
 import { Agent } from '../../entity/Agent';
@@ -10,9 +10,9 @@ import { Exchange } from '../../entity/Exchange';
 import { Trigger } from '../../entity/Trigger';
 import { PostOneChannel } from '../common/PostOneChannel';
 
-export class PostOneExchangeTemplateChannel extends PostOneChannel {
+export class PostOneExchangeChannel extends PostOneChannel {
   constructor() {
-    super({ name: POST_ONE_EXCHANGE_TEMPLATE_CHANNEL, entity: Exchange });
+    super({ name: POST_ONE_EXCHANGE_CHANNEL, entity: Exchange });
   }
 
   async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {

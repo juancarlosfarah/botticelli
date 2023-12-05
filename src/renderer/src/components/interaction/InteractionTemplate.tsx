@@ -10,24 +10,27 @@ import Typography from '@mui/joy/Typography';
 import log from 'electron-log/renderer';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import { fetchInteraction, selectInteractionById } from './InteractionsSlice';
+import {
+  fetchInteractionTemplate,
+  selectInteractionTemplateById,
+} from './InteractionTemplatesSlice';
 
-export default function Interaction(): ReactElement {
-  const { interactionId } = useParams();
+export default function InteractionTemplate(): ReactElement {
+  const { interactionTemplateId } = useParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const query = { id: interactionId };
-    log.debug(`fetching interaction ${interactionId}`);
-    dispatch(fetchInteraction(query));
-  }, [interactionId]);
+    const query = { id: interactionTemplateId };
+    log.debug(`fetching interaction template ${interactionTemplateId}`);
+    dispatch(fetchInteractionTemplate(query));
+  }, [interactionTemplateId]);
 
-  const interaction = useSelector((state) =>
-    selectInteractionById(state, interactionId),
+  const interactionTemplate = useSelector((state) =>
+    selectInteractionTemplateById(state, interactionTemplateId),
   );
 
-  if (!interaction) {
-    return <div>Interaction Not Found</div>;
+  if (!interactionTemplate) {
+    return <div>Interaction Template Not Found</div>;
   }
 
   return (
@@ -46,24 +49,32 @@ export default function Interaction(): ReactElement {
       >
         <Typography level="h2">Interaction</Typography>
       </Box>
+
       <Typography sx={{}} level="title-md">
         Name
       </Typography>
-      <Typography>{interaction.name}</Typography>
+      <Typography>{interactionTemplate.name}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Description
       </Typography>
-      <Typography>{interaction.description}</Typography>
+      <Typography>{interactionTemplate.description}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Instructions
       </Typography>
-      <Typography>{interaction.instructions}</Typography>
+      <Typography>{interactionTemplate.instructions}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
-        Exchanges
+        Exchange Templates
       </Typography>
       <List component="ol" marker="decimal">
-        {interaction?.exchanges?.map((exchange) => {
-          return <ListItem key={exchange.id}>{exchange.name || '—'}</ListItem>;
+        {interactionTemplate?.exchangeTemplates?.map((exchangeTemplate) => {
+          return (
+            <ListItem key={exchangeTemplate.id}>
+              {exchangeTemplate.name || '—'}
+            </ListItem>
+          );
         }) || '—'}
       </List>
     </>

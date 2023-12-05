@@ -24,17 +24,25 @@ import { PostOneArtificialParticipantChannel } from './channels/agent/artificial
 import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/PostOneHumanAssistantChannel';
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
 import { DeleteOneExchangeChannel } from './channels/exchange/DeleteOneExchangeChannel';
+import { DeleteOneExchangeTemplateChannel } from './channels/exchange/DeleteOneExchangeTemplateChannel';
+import { GetManyExchangeTemplatesChannel } from './channels/exchange/GetManyExchangeTemplatesChannel';
 import { GetManyExchangesChannel } from './channels/exchange/GetManyExchangesChannel';
 import { GetOneExchangeChannel } from './channels/exchange/GetOneExchangeChannel';
+import { GetOneExchangeTemplateChannel } from './channels/exchange/GetOneExchangeTemplateChannel';
+import { PostOneExchangeChannel } from './channels/exchange/PostOneExchangeChannel';
 import { PostOneExchangeTemplateChannel } from './channels/exchange/PostOneExchangeTemplateChannel';
 import { DeleteOneExperimentChannel } from './channels/experiment/DeleteOneExperimentChannel';
 import { GetManyExperimentsChannel } from './channels/experiment/GetManyExperimentsChannel';
 import { GetOneExperimentChannel } from './channels/experiment/GetOneExperimentChannel';
 import { PostOneExperimentChannel } from './channels/experiment/PostOneExperimentChannel';
 import { DeleteOneInteractionChannel } from './channels/interaction/DeleteOneInteractionChannel';
+import { DeleteOneInteractionTemplateChannel } from './channels/interaction/DeleteOneInteractionTemplateChannel';
+import { GetManyInteractionTemplatesChannel } from './channels/interaction/GetManyInteractionTemplatesChannel';
 import { GetManyInteractionsChannel } from './channels/interaction/GetManyInteractionsChannel';
 import { GetOneInteractionChannel } from './channels/interaction/GetOneInteractionChannel';
+import { GetOneInteractionTemplateChannel } from './channels/interaction/GetOneInteractionTemplateChannel';
 import { PostOneInteractionChannel } from './channels/interaction/PostOneInteractionChannel';
+import { PostOneInteractionTemplateChannel } from './channels/interaction/PostOneInteractionTemplateChannel';
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
@@ -151,8 +159,12 @@ class Main {
 
 // Here we go!
 new Main().init([
-  // conversations
+  // exchanges
   new PostOneExchangeTemplateChannel(),
+  new PostOneExchangeChannel(),
+  new GetManyExchangeTemplatesChannel(),
+  new GetOneExchangeTemplateChannel(),
+  new DeleteOneExchangeTemplateChannel(),
   new GetManyExchangesChannel(),
   new DeleteOneExchangeChannel(),
   new GetOneExchangeChannel(),
@@ -190,6 +202,10 @@ new Main().init([
   new GetOneInteractionChannel(),
   new GetManyInteractionsChannel(),
   new DeleteOneInteractionChannel(),
+  new PostOneInteractionTemplateChannel(),
+  new GetOneInteractionTemplateChannel(),
+  new GetManyInteractionTemplatesChannel(),
+  new DeleteOneInteractionTemplateChannel(),
   // experiments
   new PostOneExperimentChannel(),
   new GetOneExperimentChannel(),

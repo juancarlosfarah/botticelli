@@ -53,14 +53,14 @@ export const saveNewExperiment = createAsyncThunk<
   }
 >(
   'experiments/saveNewExperiment',
-  async ({ description, interactions, name, participants }) => {
+  async ({ description, interactionTemplates, name, participants }) => {
     const response = await IpcService.send<{ experiment: any }>(
       POST_ONE_EXPERIMENT_CHANNEL,
       {
         params: {
           name,
           description,
-          interactions,
+          interactionTemplates,
           participants,
         },
       },

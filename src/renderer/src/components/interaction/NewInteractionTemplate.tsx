@@ -20,35 +20,38 @@ import Textarea from '@mui/joy/Textarea';
 
 import log from 'electron-log/renderer';
 
-import { fetchExchanges, selectAllExchanges } from '../exchange/ExchangesSlice';
-import { saveNewInteraction } from './InteractionsSlice';
+import {
+  fetchExchangeTemplates,
+  selectAllExchangeTemplates,
+} from '../exchange/ExchangeTemplatesSlice';
+import { saveNewInteractionTemplate } from './InteractionTemplatesSlice';
 
-const NewInteraction = (): ReactElement => {
+const NewInteractionTemplate = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const availableExchanges = useSelector(selectAllExchanges);
+  const availableExchangeTemplates = useSelector(selectAllExchangeTemplates);
 
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
   const [name, setName] = useState<string>('');
-  const [exchanges, setExchanges] = useState<string[]>([]);
+  const [exchangeTemplates, setExchangeTemplates] = useState<string[]>([]);
 
   useEffect(() => {
-    dispatch(fetchExchanges());
+    dispatch(fetchExchangeTemplates());
   }, []);
 
-  const handleNewInteraction = async (): Promise<void> => {
+  const handleNewInteractionTemplate = async (): Promise<void> => {
     const { payload } = await dispatch(
-      saveNewInteraction({
+      saveNewInteractionTemplate({
         name,
         description,
         instructions,
-        exchanges,
+        exchangeTemplates,
       }),
     );
-    log.debug(`saveNewInteraction response.payload:`, payload);
-    navigate(`/interactions/${payload.id}`);
+    log.debug(`saveNewInteractionTemplate response.payload:`, payload);
+    navigate(`/interactions/templates/${payload.id}`);
   };
 
   const handleChangeDescription = (
@@ -70,11 +73,11 @@ const NewInteraction = (): ReactElement => {
     setName(value);
   };
 
-  const handleChangeExchanges = (
-    event: MouseEvent | KeyboardEvent | FocusEvent | null,
-    newValue: string[],
+  const handleChangeExchangeTemplates = (
+    _: MouseEvent | KeyboardEvent | FocusEvent | null,
+    value: string[],
   ): void => {
-    setExchanges(newValue);
+    setExchangeTemplates(value);
   };
 
   return (
@@ -82,13 +85,13 @@ const NewInteraction = (): ReactElement => {
       <FormControl>
         <FormLabel>Name</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the interaction's name.`}</FormHelperText>
+        <FormHelperText>{`This is the interaction template's name.`}</FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this interaction.
+          This is an internal descriptions for this interaction template.
         </FormHelperText>
       </FormControl>
       <FormControl>
@@ -99,11 +102,11 @@ const NewInteraction = (): ReactElement => {
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Exchanges</FormLabel>
+        <FormLabel>Exchange Templates</FormLabel>
         <Select
           multiple
-          value={exchanges}
-          onChange={handleChangeExchanges}
+          value={exchangeTemplates}
+          onChange={handleChangeExchangeTemplates}
           renderValue={(selected): ReactElement => (
             <Box sx={{ display: 'flex', gap: '0.25rem' }}>
               {selected.map((selectedOption) => (
@@ -121,16 +124,16 @@ const NewInteraction = (): ReactElement => {
             },
           }}
         >
-          {availableExchanges.map((exchange) => (
-            <Option value={exchange.id} key={exchange.id}>
-              {exchange.name}
+          {availableExchangeTemplates.map((exchangeTemplate) => (
+            <Option value={exchangeTemplate.id} key={exchangeTemplate.id}>
+              {exchangeTemplate.name}
             </Option>
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewInteraction}>Save</Button>
+      <Button onClick={handleNewInteractionTemplate}>Save</Button>
     </>
   );
 };
 
-export default NewInteraction;
+export default NewInteractionTemplate;

@@ -52,6 +52,14 @@ export const POST_ONE_INTERACTION_CHANNEL = 'interaction:post:one';
 export const GET_MANY_INTERACTIONS_CHANNEL = 'interaction:get:many';
 export const DELETE_ONE_INTERACTION_CHANNEL = 'interaction:delete:one';
 export const GET_ONE_INTERACTION_CHANNEL = 'interaction:get:one';
+export const POST_ONE_INTERACTION_TEMPLATE_CHANNEL =
+  'interaction:template:post:one';
+export const GET_MANY_INTERACTION_TEMPLATES_CHANNEL =
+  'interaction:template:get:many';
+export const DELETE_ONE_INTERACTION_TEMPLATE_CHANNEL =
+  'interaction:template:delete:one';
+export const GET_ONE_INTERACTION_TEMPLATE_CHANNEL =
+  'interaction:template:get:one';
 
 // interactions
 export const POST_ONE_EXPERIMENT_CHANNEL = 'experiment:post:one';

@@ -1,17 +1,19 @@
 import {
+  AfterLoad,
   Column,
+  CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { Agent } from './Agent';
 import { Exchange } from './Exchange';
-import { ExchangeTemplate } from './ExchangeTemplate';
+import { Experiment } from './Experiment';
+import { InteractionTemplate } from './InteractionTemplate';
 
 @Entity()
 export class Interaction {
@@ -28,13 +30,20 @@ export class Interaction {
   instructions: string = '';
 
   @ManyToOne(() => Agent, { eager: true })
+  // @ts-ignore: array initialization is not allowed in relations
   participant: Relation<Agent>;
 
-  // note: array initialization is not allowed in relations
   @OneToMany(() => Exchange, (exchange) => exchange.interaction, {
     eager: true,
   })
+  // @ts-ignore: array initialization is not allowed in relations
   exchanges: Relation<Exchange[]>;
+
+  @ManyToOne(() => Experiment, (experiment) => experiment.interactions, {
+    onDelete: 'CASCADE',
+  })
+  // @ts-ignore: array initialization is not allowed in relations
+  experiment: Relation<Experiment>;
 
   // @Column({ type: 'array' })
   // exchangeOrder: string[];
@@ -42,8 +51,23 @@ export class Interaction {
   @Column({ type: 'uuid', default: null })
   currentExchange: string;
 
-  // note: array initialization is not allowed in relations
-  @ManyToMany(() => ExchangeTemplate)
-  @JoinTable()
-  exchangeTemplates: ExchangeTemplate[];
+  @ManyToOne(() => InteractionTemplate)
+  // @ts-ignore: array initialization is not allowed in relations
+  template: Relation<InteractionTemplate>;
+
+  @CreateDateColumn({ type: 'datetime' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'datetime' })
+  updatedAt: Date;
+
+  @AfterLoad()
+  getCreatedAt(): void {
+    this.createdAt = this.createdAt.toISOString();
+  }
+
+  @AfterLoad()
+  getUpdatedAt(): void {
+    this.updatedAt = this.updatedAt.toISOString();
+  }
 }

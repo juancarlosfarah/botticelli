@@ -12,6 +12,7 @@ import { HumanAgent } from './entity/HumanAgent';
 import { HumanAssistant } from './entity/HumanAssistant';
 import { HumanParticipant } from './entity/HumanParticipant';
 import { Interaction } from './entity/Interaction';
+import { InteractionTemplate } from './entity/InteractionTemplate';
 import { Message } from './entity/Message';
 import { Trigger } from './entity/Trigger';
 
@@ -33,6 +34,7 @@ export const AppDataSource = new DataSource({
     HumanAssistant,
     Trigger,
     Interaction,
+    InteractionTemplate,
     Experiment,
   ],
   migrations: [],

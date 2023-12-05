@@ -30,8 +30,11 @@ import Experiment from './components/experiment/Experiment';
 import Experiments from './components/experiment/Experiments';
 import NewExperiment from './components/experiment/NewExperiment';
 import Interaction from './components/interaction/Interaction';
+import InteractionTemplate from './components/interaction/InteractionTemplate';
+import InteractionTemplates from './components/interaction/InteractionTemplates';
 import Interactions from './components/interaction/Interactions';
 import NewInteraction from './components/interaction/NewInteraction';
+import NewInteractionTemplate from './components/interaction/NewInteractionTemplate';
 import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
@@ -86,6 +89,18 @@ const router = createBrowserRouter([
       {
         path: 'interactions/:interactionId',
         element: <Interaction />,
+      },
+      {
+        path: 'interactions/templates',
+        element: <InteractionTemplates />,
+      },
+      {
+        path: 'interactions/templates/new',
+        element: <NewInteractionTemplate />,
+      },
+      {
+        path: 'interactions/templates/:interactionTemplateId',
+        element: <InteractionTemplate />,
       },
       {
         path: 'triggers',

@@ -34,7 +34,11 @@ export class GetOneExperimentChannel extends GetOneChannel {
       where: {
         ...query,
       },
-      relations: { participants: true, interactions: true },
+      relations: {
+        participants: true,
+        interactionTemplates: true,
+        interactions: true,
+      },
       take: 1,
     });
 

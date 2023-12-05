@@ -6,7 +6,6 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -14,12 +13,9 @@ import {
 
 import { Agent } from './Agent';
 import { ExchangeTemplate } from './ExchangeTemplate';
-import { Interaction } from './Interaction';
-import { Message } from './Message';
-import { Trigger } from './Trigger';
 
 @Entity()
-export class Exchange {
+export class InteractionTemplate {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -32,31 +28,19 @@ export class Exchange {
   @Column({ default: '' })
   instructions: string = '';
 
-  @Column({ default: false })
-  completed: boolean = false;
-
-  // note: array initialization is not allowed in relations
-  @ManyToOne(() => Interaction, (interaction) => interaction.exchanges, {
-    onDelete: 'CASCADE',
-  })
-  interaction: Relation<Interaction>;
-
-  // note: array initialization is not allowed in relations
-  @OneToMany(() => Message, (message) => message.exchange, { eager: true })
-  messages: Relation<Message>[];
-
   @ManyToOne(() => Agent, { eager: true })
   participant: Relation<Agent>;
 
-  @ManyToOne(() => Agent, { eager: true })
-  assistant: Relation<Agent>;
+  // @Column({ type: 'array' })
+  // exchangeOrder: string[];
 
-  @ManyToOne(() => ExchangeTemplate)
-  template: Relation<ExchangeTemplate>;
+  @Column({ type: 'uuid', default: null })
+  currentExchange: string;
 
-  @ManyToMany(() => Trigger)
+  // note: array initialization is not allowed in relations
+  @ManyToMany(() => ExchangeTemplate)
   @JoinTable()
-  triggers: Trigger[];
+  exchangeTemplates: ExchangeTemplate[];
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

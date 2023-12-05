@@ -148,18 +148,45 @@ export default function Sidebar(): ReactElement {
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
-            <ListItemButton
-              selected={pathname === '/interactions'}
-              role="menuitem"
-              component={Link}
-              to="/interactions"
+          <ListItem nested>
+            <Toggler
+              renderToggle={({ open, setOpen }): ReactElement => (
+                <ListItemButton onClick={(): void => setOpen(!open)}>
+                  <AssignmentIcon />
+                  <ListItemContent>
+                    <Typography level="title-sm">Interactions</Typography>
+                  </ListItemContent>
+                  <KeyboardArrowDownIcon
+                    sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
+                  />
+                </ListItemButton>
+              )}
             >
-              <AssignmentIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Interactions</Typography>
-              </ListItemContent>
-            </ListItemButton>
+              <List sx={{ gap: 0.5 }}>
+                <ListItemButton
+                  sx={{ mt: 0.5 }}
+                  selected={pathname === '/interactions'}
+                  role="menuitem"
+                  component={Link}
+                  to="/interactions"
+                >
+                  <ListItemContent>
+                    <Typography level="body-sm">Interactions</Typography>
+                  </ListItemContent>
+                </ListItemButton>
+                <ListItemButton
+                  sx={{ mt: 0.5 }}
+                  selected={pathname === '/interactions/templates'}
+                  role="menuitem"
+                  component={Link}
+                  to="/interactions/templates"
+                >
+                  <ListItemContent>
+                    <Typography level="body-sm">Templates</Typography>
+                  </ListItemContent>
+                </ListItemButton>
+              </List>
+            </Toggler>
           </ListItem>
 
           <ListItem nested>

@@ -22,26 +22,28 @@ import log from 'electron-log/renderer';
 
 import { fetchAgents, selectParticipants } from '../agent/AgentsSlice';
 import {
-  fetchInteractions,
-  selectInteractions,
-} from '../interaction/InteractionsSlice';
+  fetchInteractionTemplates,
+  selectInteractionTemplates,
+} from '../interaction/InteractionTemplatesSlice';
 import { saveNewExperiment } from './ExperimentsSlice';
 
 const NewExperiment = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const availableInteractions = useSelector(selectInteractions);
+  const availableInteractionTemplates = useSelector(selectInteractionTemplates);
   const availableParticipants = useSelector(selectParticipants);
 
   const [description, setDescription] = useState('');
   const [name, setName] = useState<string>('');
-  const [interactions, setInteractions] = useState<string[]>([]);
+  const [interactionTemplates, setInteractionTemplates] = useState<string[]>(
+    [],
+  );
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(fetchAgents());
-    dispatch(fetchInteractions());
+    dispatch(fetchInteractionTemplates());
   }, []);
 
   const handleNewExperiment = async (): Promise<void> => {
@@ -49,7 +51,7 @@ const NewExperiment = (): ReactElement => {
       saveNewExperiment({
         name,
         description,
-        interactions,
+        interactionTemplates,
         participants,
       }),
     );
@@ -76,11 +78,11 @@ const NewExperiment = (): ReactElement => {
     setName(value);
   };
 
-  const handleChangeInteractions = (
+  const handleChangeInteractionTemplates = (
     _: MouseEvent | KeyboardEvent | FocusEvent | null,
     newValue: string[],
   ): void => {
-    setInteractions(newValue);
+    setInteractionTemplates(newValue);
   };
 
   return (
@@ -98,11 +100,11 @@ const NewExperiment = (): ReactElement => {
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Interactions</FormLabel>
+        <FormLabel>InteractionTemplates</FormLabel>
         <Select
           multiple
-          value={interactions}
-          onChange={handleChangeInteractions}
+          value={interactionTemplates}
+          onChange={handleChangeInteractionTemplates}
           renderValue={(selected): ReactElement => (
             <Box sx={{ display: 'flex', gap: '0.25rem' }}>
               {selected.map((selectedOption) => (
@@ -120,9 +122,9 @@ const NewExperiment = (): ReactElement => {
             },
           }}
         >
-          {availableInteractions.map((interaction) => (
-            <Option value={interaction.id} key={interaction.id}>
-              {interaction.name}
+          {availableInteractionTemplates.map((interactionTemplate) => (
+            <Option value={interactionTemplate.id} key={interactionTemplate.id}>
+              {interactionTemplate.name}
             </Option>
           ))}
         </Select>

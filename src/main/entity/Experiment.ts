@@ -3,11 +3,13 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { Agent } from './Agent';
 import { Interaction } from './Interaction';
+import { InteractionTemplate } from './InteractionTemplate';
 
 @Entity()
 export class Experiment {
@@ -20,13 +22,19 @@ export class Experiment {
   @Column({ default: '' })
   description: string = '';
 
-  // note: array initialization is not allowed in relations
-  @ManyToMany(() => Interaction)
-  @JoinTable()
+  @OneToMany(() => Interaction, (interaction) => interaction.experiment, {
+    eager: true,
+  })
+  // @ts-ignore: array initialization is not allowed in relations
   interactions: Interaction[];
 
-  // note: array initialization is not allowed in relations
+  @ManyToMany(() => InteractionTemplate)
+  @JoinTable()
+  // @ts-ignore: array initialization is not allowed in relations
+  interactionTemplates: InteractionTemplate[];
+
   @ManyToMany(() => Agent)
   @JoinTable()
+  // @ts-ignore: array initialization is not allowed in relations
   participants: Agent[];
 }

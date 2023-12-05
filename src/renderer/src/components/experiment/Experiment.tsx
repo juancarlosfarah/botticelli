@@ -13,8 +13,6 @@ import log from 'electron-log/renderer';
 import _ from 'lodash';
 
 import { Order, getComparator, stableSort } from '../../utils/sort';
-import RowMenu from '../common/RowMenu';
-import { deleteInteraction } from '../interaction/InteractionsSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchExperiment, selectExperimentById } from './ExperimentsSlice';
 
@@ -39,7 +37,7 @@ export default function Experiment(): ReactElement {
   }
 
   const participants = experiment.participants || [];
-  const interactions = experiment.interactions || [];
+  const interactionTemplates = experiment.interactionTemplates || [];
 
   return (
     <>
@@ -97,17 +95,16 @@ export default function Experiment(): ReactElement {
           <thead>
             <tr>
               <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
-              {interactions.map((interaction) => {
+              {interactionTemplates.map((interactionTemplate) => {
                 return (
                   <th
-                    key={interaction.id}
+                    key={interactionTemplate.id}
                     style={{ width: 100, padding: '12px 6px' }}
                   >
-                    {interaction.name || '—'}
+                    {interactionTemplate.name || '—'}
                   </th>
                 );
               })}
-              <th style={{ width: 50, padding: '12px 6px' }}> </th>
             </tr>
           </thead>
           <tbody>
@@ -118,23 +115,13 @@ export default function Experiment(): ReactElement {
                     {_.truncate(row.name, 25)}
                   </Typography>
                 </td>
-                {interactions.map((interaction) => {
+                {interactionTemplates.map((interactionTemplate) => {
                   return (
-                    <td key={interaction.id}>{interaction.name || '—'}</td>
+                    <td key={interactionTemplate.id}>
+                      {interactionTemplate.name || '—'}
+                    </td>
                   );
                 })}
-                <td>
-                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                    <Link
-                      level="body-xs"
-                      component={RouterLink}
-                      to={`/interactions/${row.id}`}
-                    >
-                      View
-                    </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteInteraction} />
-                  </Box>
-                </td>
               </tr>
             ))}
           </tbody>

@@ -25,7 +25,7 @@ export class PostOneInteractionChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, instructions, name, conversations } = request.params;
+    const { description, instructions, name, exchanges } = request.params;
 
     const interaction = new Interaction();
     interaction.name = name;
@@ -33,13 +33,12 @@ export class PostOneInteractionChannel extends PostOneChannel {
     interaction.instructions = instructions;
 
     const interactionRepository = AppDataSource.getRepository(Interaction);
-    const conversationRepository = AppDataSource.getRepository(Exchange);
+    const exchangeRepository = AppDataSource.getRepository(Exchange);
 
-    log.debug(`linking conversations:`, conversations);
-    const savedConversations = await conversationRepository.findBy({
-      id: In(conversations),
+    log.debug(`linking conversations:`, exchanges);
+    interaction.exchanges = await exchangeRepository.findBy({
+      id: In(exchanges),
     });
-    interaction.conversations = savedConversations;
 
     await interactionRepository.save(interaction);
 

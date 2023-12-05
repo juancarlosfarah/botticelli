@@ -8,7 +8,7 @@ import { In } from 'typeorm';
 import { AppDataSource } from '../../data-source';
 import { Agent } from '../../entity/Agent';
 import { Experiment } from '../../entity/Experiment';
-import { Interaction } from '../../entity/Interaction';
+import { InteractionTemplate } from '../../entity/InteractionTemplate';
 import { PostOneChannel } from '../common/PostOneChannel';
 
 export class PostOneExperimentChannel extends PostOneChannel {
@@ -26,22 +26,25 @@ export class PostOneExperimentChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, interactions, name, participants } = request.params;
+    const { description, interactionTemplates, name, participants } =
+      request.params;
 
     const experiment = new Experiment();
     experiment.name = name;
     experiment.description = description;
 
     const experimentRepository = AppDataSource.getRepository(Experiment);
-    const interactionRepository = AppDataSource.getRepository(Interaction);
+    const interactionTemplateRepository =
+      AppDataSource.getRepository(InteractionTemplate);
     const agentRepository = AppDataSource.getRepository(Agent);
 
     // interactions
-    log.debug(`linking ${interactions?.length} interactions`);
-    const savedInteractions = await interactionRepository.findBy({
-      id: In(interactions),
-    });
-    experiment.interactions = savedInteractions;
+    log.debug(`linking ${interactionTemplates?.length} interactions`);
+    const savedInteractionTemplates =
+      await interactionTemplateRepository.findBy({
+        id: In(interactionTemplates),
+      });
+    experiment.interactionTemplates = savedInteractionTemplates;
 
     // participants
     log.debug(`linking ${participants?.length} participants`);
