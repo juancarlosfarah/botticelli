@@ -162,18 +162,45 @@ export default function Sidebar(): ReactElement {
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
-            <ListItemButton
-              selected={pathname === '/conversations'}
-              role="menuitem"
-              component={Link}
-              to="/conversations"
+          <ListItem nested>
+            <Toggler
+              renderToggle={({ open, setOpen }): ReactElement => (
+                <ListItemButton onClick={(): void => setOpen(!open)}>
+                  <QuestionAnswerRoundedIcon />
+                  <ListItemContent>
+                    <Typography level="title-sm">Exchanges</Typography>
+                  </ListItemContent>
+                  <KeyboardArrowDownIcon
+                    sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
+                  />
+                </ListItemButton>
+              )}
             >
-              <QuestionAnswerRoundedIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Conversations</Typography>
-              </ListItemContent>
-            </ListItemButton>
+              <List sx={{ gap: 0.5 }}>
+                <ListItemButton
+                  sx={{ mt: 0.5 }}
+                  selected={pathname === '/exchanges'}
+                  role="menuitem"
+                  component={Link}
+                  to="/exchanges"
+                >
+                  <ListItemContent>
+                    <Typography level="body-sm">Exchanges</Typography>
+                  </ListItemContent>
+                </ListItemButton>
+                <ListItemButton
+                  sx={{ mt: 0.5 }}
+                  selected={pathname === '/exchanges/templates'}
+                  role="menuitem"
+                  component={Link}
+                  to="/exchanges/templates"
+                >
+                  <ListItemContent>
+                    <Typography level="body-sm">Templates</Typography>
+                  </ListItemContent>
+                </ListItemButton>
+              </List>
+            </Toggler>
           </ListItem>
 
           <ListItem>

@@ -6,18 +6,16 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Agent } from './Agent';
-import { Message } from './Message';
 import { Trigger } from './Trigger';
 
 @Entity()
-export class Conversation {
+export class ExchangeTemplate {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -29,16 +27,6 @@ export class Conversation {
 
   @Column({ default: '' })
   instructions: string = '';
-
-  @Column({ default: false })
-  completed: boolean = false;
-
-  // note: array initialization is not allowed in relations
-  @OneToMany(() => Message, (message) => message.conversation, { eager: true })
-  messages: Relation<Message>[];
-
-  @ManyToOne(() => Agent, { eager: true })
-  participant: Relation<Agent>;
 
   @ManyToOne(() => Agent, { eager: true })
   assistant: Relation<Agent>;

@@ -29,7 +29,7 @@ export class PostMessageChannel implements IpcChannel {
     const messageRepository = AppDataSource.getRepository(Message);
     const message = new Message();
     message.content = content;
-    message.conversation = conversationId;
+    message.exchange = conversationId;
 
     // todo: make dynamic
     if (sender) {

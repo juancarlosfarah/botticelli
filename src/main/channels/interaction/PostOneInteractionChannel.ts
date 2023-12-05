@@ -6,7 +6,7 @@ import log from 'electron-log/main';
 import { In } from 'typeorm';
 
 import { AppDataSource } from '../../data-source';
-import { Conversation } from '../../entity/Conversation';
+import { Exchange } from '../../entity/Exchange';
 import { Interaction } from '../../entity/Interaction';
 import { PostOneChannel } from '../common/PostOneChannel';
 
@@ -33,7 +33,7 @@ export class PostOneInteractionChannel extends PostOneChannel {
     interaction.instructions = instructions;
 
     const interactionRepository = AppDataSource.getRepository(Interaction);
-    const conversationRepository = AppDataSource.getRepository(Conversation);
+    const conversationRepository = AppDataSource.getRepository(Exchange);
 
     log.debug(`linking conversations:`, conversations);
     const savedConversations = await conversationRepository.findBy({

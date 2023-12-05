@@ -23,10 +23,10 @@ import { GetOneArtificialParticipantChannel } from './channels/agent/artificial/
 import { PostOneArtificialParticipantChannel } from './channels/agent/artificial/participant/PostOneArtificialParticipantChannel';
 import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/PostOneHumanAssistantChannel';
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
-import { DeleteConversationChannel } from './channels/conversation/DeleteConversationChannel';
-import { GetConversationChannel } from './channels/conversation/GetConversationChannel';
-import { GetConversationsChannel } from './channels/conversation/GetConversationsChannel';
-import { PostConversationChannel } from './channels/conversation/PostConversationChannel';
+import { DeleteOneExchangeChannel } from './channels/exchange/DeleteOneExchangeChannel';
+import { GetManyExchangesChannel } from './channels/exchange/GetManyExchangesChannel';
+import { GetOneExchangeChannel } from './channels/exchange/GetOneExchangeChannel';
+import { PostOneExchangeTemplateChannel } from './channels/exchange/PostOneExchangeTemplateChannel';
 import { DeleteOneExperimentChannel } from './channels/experiment/DeleteOneExperimentChannel';
 import { GetManyExperimentsChannel } from './channels/experiment/GetManyExperimentsChannel';
 import { GetOneExperimentChannel } from './channels/experiment/GetOneExperimentChannel';
@@ -152,10 +152,10 @@ class Main {
 // Here we go!
 new Main().init([
   // conversations
-  new PostConversationChannel(),
-  new GetConversationsChannel(),
-  new DeleteConversationChannel(),
-  new GetConversationChannel(),
+  new PostOneExchangeTemplateChannel(),
+  new GetManyExchangesChannel(),
+  new DeleteOneExchangeChannel(),
+  new GetOneExchangeChannel(),
   // messages
   new PostMessageChannel(),
   new GetMessagesChannel(),

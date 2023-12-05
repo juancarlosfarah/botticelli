@@ -1,6 +1,6 @@
 import { ArtificialAssistant } from '../entity/ArtificialAssistant';
 import { ArtificialParticipant } from '../entity/ArtificialParticipant';
-import { Conversation } from '../entity/Conversation';
+import { Exchange } from '../entity/Exchange';
 import { HumanAssistant } from '../entity/HumanAssistant';
 import { HumanParticipant } from '../entity/HumanParticipant';
 import { Message } from '../entity/Message';
@@ -10,7 +10,7 @@ type DatabaseEntity =
   | ArtificialParticipant
   | HumanParticipant
   | HumanAssistant
-  | Conversation
+  | Exchange
   | Message;
 
 export default DatabaseEntity;

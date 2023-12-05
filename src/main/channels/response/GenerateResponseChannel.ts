@@ -7,7 +7,7 @@ import { GENERATE_RESPONSE_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
 import { AppDataSource } from '../../data-source';
-import { Conversation } from '../../entity/Conversation';
+import { Exchange } from '../../entity/Exchange';
 import { Message } from '../../entity/Message';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 import { messagesToPrompt } from '../../utils/messagesToPrompt';
@@ -32,7 +32,7 @@ export class GenerateResponseChannel implements IpcChannel {
     log.debug(`generating response for conversation:`, conversationId);
 
     // get repositories
-    const conversationRepository = AppDataSource.getRepository(Conversation);
+    const conversationRepository = AppDataSource.getRepository(Exchange);
     const messageRepository = AppDataSource.getRepository(Message);
 
     // get conversation
@@ -50,7 +50,7 @@ export class GenerateResponseChannel implements IpcChannel {
     const assistant = conversation?.assistant;
 
     const messages = await messageRepository.findBy({
-      conversation: { id: conversationId },
+      exchange: { id: conversationId },
     });
 
     // transform messages to prompt format
@@ -108,7 +108,7 @@ export class GenerateResponseChannel implements IpcChannel {
 
       const response = new Message();
       response.content = 'Thank you!';
-      response.conversation = conversationId;
+      response.exchange = conversationId;
       if (assistant) {
         response.sender = assistant;
       }
@@ -137,7 +137,7 @@ export class GenerateResponseChannel implements IpcChannel {
 
       const response = new Message();
       response.content = completion.choices[0].message.content || '';
-      response.conversation = conversationId;
+      response.exchange = conversationId;
 
       // todo: make dynamic
       response.sender = assistant;

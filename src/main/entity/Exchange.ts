@@ -1,0 +1,72 @@
+import {
+  AfterLoad,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { Agent } from './Agent';
+import { Message } from './Message';
+import { Trigger } from './Trigger';
+import {Interaction} from "./Interaction";
+
+@Entity()
+export class Exchange {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ default: '' })
+  name: string = '';
+
+  @Column({ default: '' })
+  description: string = '';
+
+  @Column({ default: '' })
+  instructions: string = '';
+
+  @Column({ default: false })
+  completed: boolean = false;
+
+  // note: array initialization is not allowed in relations
+  @ManyToOne(() => Interaction, (interaction) => interaction.exchanges, {
+    onDelete: 'CASCADE',
+  })
+  interaction: Relation<Interaction>;
+
+  // note: array initialization is not allowed in relations
+  @OneToMany(() => Message, (message) => message.exchange, { eager: true })
+  messages: Relation<Message>[];
+
+  @ManyToOne(() => Agent, { eager: true })
+  participant: Relation<Agent>;
+
+  @ManyToOne(() => Agent, { eager: true })
+  assistant: Relation<Agent>;
+
+  @ManyToMany(() => Trigger)
+  @JoinTable()
+  triggers: Trigger[];
+
+  @CreateDateColumn({ type: 'datetime' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'datetime' })
+  updatedAt: Date;
+
+  @AfterLoad()
+  getCreatedAt(): void {
+    this.createdAt = this.createdAt.toISOString();
+  }
+
+  @AfterLoad()
+  getUpdatedAt(): void {
+    this.updatedAt = this.updatedAt.toISOString();
+  }
+}

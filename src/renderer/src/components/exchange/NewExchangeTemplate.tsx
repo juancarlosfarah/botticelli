@@ -14,21 +14,13 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
-import log from 'electron-log/renderer';
-
-import { saveNewMessage } from '../Messages/MessagesSlice';
-import {
-  fetchAgents,
-  selectAssistants,
-  selectParticipants,
-} from '../agent/AgentsSlice';
+import { fetchAgents, selectAssistants } from '../agent/AgentsSlice';
 import { fetchTriggers, selectTriggers } from '../trigger/TriggersSlice';
-import { saveNewConversation } from './ConversationsSlice';
+import { saveNewExchangeTemplate } from './ExchangeTemplatesSlice';
 
-const NewConversation = (): ReactElement => {
+const NewExchangeTemplate = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const participants = useSelector(selectParticipants);
   const assistants = useSelector(selectAssistants);
   const availableTriggers = useSelector(selectTriggers);
 
@@ -36,7 +28,6 @@ const NewConversation = (): ReactElement => {
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
   const [cue, setCue] = useState<string>('');
-  const [participant, setParticipant] = useState<string | null>(null);
   const [assistant, setAssistant] = useState<string | null>(null);
   const [triggers, setTriggers] = useState<number | null>(null);
 
@@ -45,34 +36,32 @@ const NewConversation = (): ReactElement => {
     dispatch(fetchTriggers());
   }, []);
 
-  const handleNewConversation = async (): Promise<void> => {
+  const handleNewExchangeTemplate = async (): Promise<void> => {
     const { payload } = await dispatch(
-      saveNewConversation({
+      saveNewExchangeTemplate({
         name,
         description,
         instructions,
         assistant,
-        participant,
         triggers,
       }),
     );
-    log.debug(`saveNewConversation response.payload:`, payload);
     if (payload.id) {
-      if (cue) {
-        // debugging
-        log.debug(`handleNewConversation cue:`, cue);
+      // if (cue) {
+      //   // debugging
+      //   log.debug(`handleNewConversation cue:`, cue);
+      //
+      //   await dispatch(
+      //     saveNewMessage({
+      //       exchangeId: payload.id,
+      //       content: cue,
+      //       requiresResponse: false,
+      //       sender: assistant,
+      //     }),
+      //   );
+      // }
 
-        await dispatch(
-          saveNewMessage({
-            conversationId: payload.id,
-            content: cue,
-            requiresResponse: false,
-            sender: assistant,
-          }),
-        );
-      }
-
-      navigate(`/conversations/${payload.id}`);
+      navigate(`/exchanges/templates/${payload.id}`);
     }
   };
 
@@ -100,22 +89,15 @@ const NewConversation = (): ReactElement => {
     setCue(value);
   };
 
-  const handleChangeParticipant = (
-    event: SyntheticEvent | null,
-    newValue: string | null,
-  ): void => {
-    setParticipant(newValue);
-  };
-
   const handleChangeAssistant = (
-    event: SyntheticEvent | null,
+    _: SyntheticEvent | null,
     newValue: string | null,
   ): void => {
     setAssistant(newValue);
   };
 
   const handleChangeTriggers = (
-    event: SyntheticEvent | null,
+    _: SyntheticEvent | null,
     newValue: string | null,
   ): void => {
     setTriggers(newValue);
@@ -127,14 +109,14 @@ const NewConversation = (): ReactElement => {
         <FormLabel>Name</FormLabel>
         <Input value={name} onChange={handleChangeName} />
         <FormHelperText>
-          This is an internal name for this conversation.
+          This is an internal name for this exchange template.
         </FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal description for this conversation.
+          This is an internal description for this exchange template.
         </FormHelperText>
       </FormControl>
       <FormControl>
@@ -162,16 +144,6 @@ const NewConversation = (): ReactElement => {
         </Select>
       </FormControl>
       <FormControl>
-        <FormLabel>Participant</FormLabel>
-        <Select value={participant} onChange={handleChangeParticipant}>
-          {participants.map((agent) => (
-            <Option value={agent.id} key={agent.id}>
-              {agent.name}
-            </Option>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl>
         <FormLabel>Trigger</FormLabel>
         <Select value={triggers} onChange={handleChangeTriggers}>
           {availableTriggers.map((trigger) => (
@@ -181,9 +153,9 @@ const NewConversation = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewConversation}>Save</Button>
+      <Button onClick={handleNewExchangeTemplate}>Save</Button>
     </>
   );
 };
 
-export default NewConversation;
+export default NewExchangeTemplate;

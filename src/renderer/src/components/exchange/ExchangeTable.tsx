@@ -42,13 +42,13 @@ import _ from 'lodash';
 
 import { Order, getComparator, stableSort } from '../../utils/sort';
 import RowMenu from '../common/RowMenu';
-import { deleteConversation, selectConversations } from './ConversationsSlice';
+import { deleteOneExchange, selectAllExchanges } from './ExchangesSlice';
 
-export default function ConversationTable(): ReactElement {
+export default function ExchangeTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
 
-  const conversations = useSelector(selectConversations);
+  const exchanges = useSelector(selectAllExchanges);
 
   return (
     <React.Fragment>
@@ -87,20 +87,18 @@ export default function ConversationTable(): ReactElement {
                 <Checkbox
                   size="sm"
                   indeterminate={
-                    selected.length > 0 &&
-                    selected.length !== conversations.length
+                    selected.length > 0 && selected.length !== exchanges.length
                   }
-                  checked={selected.length === conversations.length}
+                  checked={selected.length === exchanges.length}
                   onChange={(event) => {
                     setSelected(
                       event.target.checked
-                        ? conversations.map((row) => row.id)
+                        ? exchanges.map((row) => row.id)
                         : [],
                     );
                   }}
                   color={
-                    selected.length > 0 ||
-                    selected.length === conversations.length
+                    selected.length > 0 || selected.length === exchanges.length
                       ? 'primary'
                       : undefined
                   }
@@ -118,68 +116,63 @@ export default function ConversationTable(): ReactElement {
             </tr>
           </thead>
           <tbody>
-            {stableSort(conversations, getComparator(order, 'id')).map(
-              (row) => (
-                <tr key={row.id}>
-                  <td style={{ textAlign: 'center', width: 120 }}>
-                    <Checkbox
-                      size="sm"
-                      checked={selected.includes(row.id)}
-                      color={selected.includes(row.id) ? 'primary' : undefined}
-                      onChange={(event) => {
-                        setSelected((ids) =>
-                          event.target.checked
-                            ? ids.concat(row.id)
-                            : ids.filter((itemId) => itemId !== row.id),
-                        );
-                      }}
-                      slotProps={{ checkbox: { sx: { textAlign: 'left' } } }}
-                      sx={{ verticalAlign: 'text-bottom' }}
-                    />
-                  </td>
-                  <td>
-                    <Typography level="body-xs">
-                      {_.truncate(row.name, 25)}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Typography level="body-xs">
-                      {_.truncate(row.description, 25)}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Typography level="body-xs">
-                      {row.messages?.length || 0}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Typography level="body-xs">
-                      {row?.assistant.name || '—'}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Typography level="body-xs">
-                      {row?.participant.name || '—'}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                      <Link
-                        level="body-xs"
-                        component={RouterLink}
-                        to={`/conversations/${row.id}`}
-                      >
-                        View
-                      </Link>
-                      <RowMenu
-                        rowId={row.id}
-                        deleteHandler={deleteConversation}
-                      />
-                    </Box>
-                  </td>
-                </tr>
-              ),
-            )}
+            {stableSort(exchanges, getComparator(order, 'id')).map((row) => (
+              <tr key={row.id}>
+                <td style={{ textAlign: 'center', width: 120 }}>
+                  <Checkbox
+                    size="sm"
+                    checked={selected.includes(row.id)}
+                    color={selected.includes(row.id) ? 'primary' : undefined}
+                    onChange={(event) => {
+                      setSelected((ids) =>
+                        event.target.checked
+                          ? ids.concat(row.id)
+                          : ids.filter((itemId) => itemId !== row.id),
+                      );
+                    }}
+                    slotProps={{ checkbox: { sx: { textAlign: 'left' } } }}
+                    sx={{ verticalAlign: 'text-bottom' }}
+                  />
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {_.truncate(row.name, 25)}
+                  </Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {_.truncate(row.description, 25)}
+                  </Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {row.messages?.length || 0}
+                  </Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {row?.assistant.name || '—'}
+                  </Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {row?.participant.name || '—'}
+                  </Typography>
+                </td>
+                <td>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <Link
+                      level="body-xs"
+                      component={RouterLink}
+                      to={`/exchanges/${row.id}`}
+                    >
+                      View
+                    </Link>
+                    <RowMenu rowId={row.id} deleteHandler={deleteOneExchange} />
+                  </Box>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Sheet>

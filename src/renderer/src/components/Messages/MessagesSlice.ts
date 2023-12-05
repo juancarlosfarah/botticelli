@@ -14,7 +14,7 @@ import log from 'electron-log/renderer';
 
 import { GENERATE_RESPONSE_CHANNEL } from '../../../../shared/channels';
 import { IpcService } from '../../services/IpcService';
-import { fetchConversation } from '../Conversations/ConversationsSlice';
+import { fetchExchange } from '../exchange/ExchangesSlice';
 
 export const messagesAdapter = createEntityAdapter();
 
@@ -90,7 +90,7 @@ export const generateResponse = createAsyncThunk(
       },
     );
 
-    dispatch(fetchConversation({ id: conversationId }));
+    dispatch(fetchExchange({ id: conversationId }));
 
     // debug
     log.debug(`generateResponse response:`, response);

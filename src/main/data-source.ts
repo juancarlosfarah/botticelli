@@ -5,7 +5,8 @@ import { Agent } from './entity/Agent';
 import { ArtificialAgent } from './entity/ArtificialAgent';
 import { ArtificialAssistant } from './entity/ArtificialAssistant';
 import { ArtificialParticipant } from './entity/ArtificialParticipant';
-import { Conversation } from './entity/Conversation';
+import { Exchange } from './entity/Exchange';
+import { ExchangeTemplate } from './entity/ExchangeTemplate';
 import { Experiment } from './entity/Experiment';
 import { HumanAgent } from './entity/HumanAgent';
 import { HumanAssistant } from './entity/HumanAssistant';
@@ -21,7 +22,8 @@ export const AppDataSource = new DataSource({
   logging: false,
   entities: [
     Agent,
-    Conversation,
+    Exchange,
+    ExchangeTemplate,
     Message,
     ArtificialAgent,
     ArtificialAssistant,

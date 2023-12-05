@@ -10,17 +10,17 @@ import {
 } from 'typeorm';
 
 import { Agent } from './Agent';
-import { Conversation } from './Conversation';
+import { Exchange } from './Exchange';
 
 @Entity()
 export class Message {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
+  @ManyToOne(() => Exchange, (exchange) => exchange.messages, {
     onDelete: 'CASCADE',
   })
-  conversation: Relation<Conversation>;
+  exchange: Relation<Exchange>;
 
   @Column({ default: '' })
   content: string;

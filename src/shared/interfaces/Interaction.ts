@@ -1,11 +1,11 @@
-import Conversation from './Conversation';
+import Exchange from './Exchange';
 
 type Interaction = {
   id: string;
   description: string;
   instructions: string;
   name: string;
-  conversations: Conversation[];
+  conversations: Exchange[];
 };
 
 export default Interaction;

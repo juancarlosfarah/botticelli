@@ -1,7 +1,7 @@
-export const POST_CONVERSATION_CHANNEL = 'conversation:post';
-export const GET_CONVERSATION_CHANNEL = 'conversation:get';
-export const GET_CONVERSATIONS_CHANNEL = 'conversations:get';
-export const DELETE_CONVERSATION_CHANNEL = 'conversation:delete';
+export const POST_ONE_EXCHANGE_CHANNEL = 'exchange:post:one';
+export const GET_ONE_EXCHANGE_CHANNEL = 'exchange:get:one';
+export const GET_MANY_EXCHANGES_CHANNEL = 'exchanges:get:many';
+export const DELETE_ONE_EXCHANGE_CHANNEL = 'exchange:delete:one';
 
 export const POST_MESSAGE_CHANNEL = 'message:post';
 export const GET_MESSAGE_CHANNEL = 'message:get';
@@ -58,3 +58,9 @@ export const POST_ONE_EXPERIMENT_CHANNEL = 'experiment:post:one';
 export const GET_MANY_EXPERIMENTS_CHANNEL = 'experiment:get:many';
 export const DELETE_ONE_EXPERIMENT_CHANNEL = 'experiment:delete:one';
 export const GET_ONE_EXPERIMENT_CHANNEL = 'experiment:get:one';
+
+export const POST_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:post:one';
+export const GET_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:get:one';
+export const GET_MANY_EXCHANGE_TEMPLATES_CHANNEL = 'exchange:template:get:many';
+export const DELETE_ONE_EXCHANGE_TEMPLATE_CHANNEL =
+  'exchange:template:delete:one';

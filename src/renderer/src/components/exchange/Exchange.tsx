@@ -10,34 +10,29 @@ import log from 'electron-log/renderer';
 import MessagesPane from '../Messages/MessagesPane';
 import { fetchMessages } from '../Messages/MessagesSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import {
-  fetchConversation,
-  selectConversationById,
-} from './ConversationsSlice';
+import { fetchExchange, selectExchangeById } from './ExchangesSlice';
 
-export default function Conversation(): ReactElement {
-  const { conversationId } = useParams();
+export default function Exchange(): ReactElement {
+  const { exchangeId } = useParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const query = { id: conversationId };
-    log.debug(`fetching conversation ${conversationId}`);
-    dispatch(fetchConversation(query));
-    dispatch(fetchMessages({ conversationId }));
-  }, [conversationId]);
+    const query = { id: exchangeId };
+    log.debug(`fetching exchange ${exchangeId}`);
+    dispatch(fetchExchange(query));
+    dispatch(fetchMessages({ exchangeId }));
+  }, [exchangeId]);
 
-  const conversation = useSelector((state) =>
-    selectConversationById(state, conversationId),
+  const exchange = useSelector((state) =>
+    selectExchangeById(state, exchangeId),
   );
 
-  if (!conversation) {
-    return <div>Conversation Not Found</div>;
+  if (!exchange) {
+    return <div>Exchange Not Found</div>;
   }
 
   // show first trigger only if triggers exist
-  const trigger = conversation?.triggers?.length
-    ? conversation.triggers[0]
-    : null;
+  const trigger = exchange?.triggers?.length ? exchange.triggers[0] : null;
 
   return (
     <>
@@ -53,33 +48,33 @@ export default function Conversation(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">Conversation</Typography>
+        <Typography level="h2">Exchange</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
         Name
       </Typography>
-      <Typography>{conversation.name}</Typography>
+      <Typography>{exchange.name}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Description
       </Typography>
-      <Typography>{conversation.description}</Typography>
+      <Typography>{exchange.description}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Instructions
       </Typography>
-      <Typography>{conversation.instructions}</Typography>
+      <Typography>{exchange.instructions}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Assistant
       </Typography>
-      <Typography>{conversation?.assistant?.name || '—'}</Typography>
+      <Typography>{exchange?.assistant?.name || '—'}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Participant
       </Typography>
-      <Typography>{conversation?.participant?.name || '—'}</Typography>
+      <Typography>{exchange?.participant?.name || '—'}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Trigger
       </Typography>
       <Typography>{trigger?.name || '—'}</Typography>
-      <MessagesPane conversation={conversation} />
+      <MessagesPane exchange={exchange} />
     </>
   );
 }

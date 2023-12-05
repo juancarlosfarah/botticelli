@@ -6,9 +6,6 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { StyledEngineProvider } from '@mui/joy/styles';
 
 import App from './App.tsx';
-import Conversation from './components/Conversations/Conversation.tsx';
-import Conversations from './components/Conversations/Conversations.tsx';
-import NewConversation from './components/Conversations/NewConversation';
 import Agent from './components/agent/Agent';
 import Agents from './components/agent/Agents';
 import NewAgent from './components/agent/NewAgent';
@@ -24,6 +21,11 @@ import NewHumanAssistant from './components/agent/human/assistant/NewHumanAssist
 import HumanParticipant from './components/agent/human/participant/HumanParticipant';
 import HumanParticipants from './components/agent/human/participant/HumanParticipants';
 import NewHumanParticipant from './components/agent/human/participant/NewHumanParticipant';
+import Exchange from './components/exchange/Exchange.tsx';
+import ExchangeTemplate from './components/exchange/ExchangeTemplate';
+import ExchangeTemplates from './components/exchange/ExchangeTemplates';
+import Exchanges from './components/exchange/Exchanges.tsx';
+import NewExchangeTemplate from './components/exchange/NewExchangeTemplate';
 import Experiment from './components/experiment/Experiment';
 import Experiments from './components/experiment/Experiments';
 import NewExperiment from './components/experiment/NewExperiment';
@@ -54,16 +56,24 @@ const router = createBrowserRouter([
         element: <Experiment />,
       },
       {
-        path: 'conversations',
-        element: <Conversations />,
+        path: 'exchanges',
+        element: <Exchanges />,
       },
       {
-        path: 'conversations/new',
-        element: <NewConversation />,
+        path: 'exchanges/:exchangeId',
+        element: <Exchange />,
       },
       {
-        path: 'conversations/:conversationId',
-        element: <Conversation />,
+        path: 'exchanges/templates',
+        element: <ExchangeTemplates />,
+      },
+      {
+        path: 'exchanges/templates/new',
+        element: <NewExchangeTemplate />,
+      },
+      {
+        path: 'exchanges/templates/:exchangeTemplateId',
+        element: <ExchangeTemplate />,
       },
       {
         path: 'interactions',

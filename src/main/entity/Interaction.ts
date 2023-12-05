@@ -3,10 +3,15 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
 } from 'typeorm';
 
-import { Conversation } from './Conversation';
+import { Agent } from './Agent';
+import { Exchange } from './Exchange';
+import { ExchangeTemplate } from './ExchangeTemplate';
 
 @Entity()
 export class Interaction {
@@ -22,8 +27,23 @@ export class Interaction {
   @Column({ default: '' })
   instructions: string = '';
 
+  @ManyToOne(() => Agent, { eager: true })
+  participant: Relation<Agent>;
+
   // note: array initialization is not allowed in relations
-  @ManyToMany(() => Conversation)
+  @OneToMany(() => Exchange, (exchange) => exchange.interaction, {
+    eager: true,
+  })
+  exchanges: Relation<Exchange[]>;
+
+  // @Column({ type: 'array' })
+  // exchangeOrder: string[];
+
+  @Column({ type: 'uuid', default: null })
+  currentExchange: string;
+
+  // note: array initialization is not allowed in relations
+  @ManyToMany(() => ExchangeTemplate)
   @JoinTable()
-  conversations: Conversation[];
+  exchangeTemplates: ExchangeTemplate[];
 }

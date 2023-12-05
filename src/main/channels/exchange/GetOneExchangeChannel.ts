@@ -3,14 +3,14 @@ import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
-import { GET_CONVERSATION_CHANNEL } from '../../../shared/channels';
+import { GET_ONE_EXCHANGE_CHANNEL } from '../../../shared/channels';
 import { AppDataSource } from '../../data-source';
-import { Conversation } from '../../entity/Conversation';
+import { Exchange } from '../../entity/Exchange';
 import { GetOneChannel } from '../common/GetOneChannel';
 
-export class GetConversationChannel extends GetOneChannel {
+export class GetOneExchangeChannel extends GetOneChannel {
   constructor() {
-    super({ name: GET_CONVERSATION_CHANNEL, entity: Conversation });
+    super({ name: GET_ONE_EXCHANGE_CHANNEL, entity: Exchange });
   }
 
   async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {

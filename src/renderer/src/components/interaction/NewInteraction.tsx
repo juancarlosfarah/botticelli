@@ -20,17 +20,14 @@ import Textarea from '@mui/joy/Textarea';
 
 import log from 'electron-log/renderer';
 
-import {
-  fetchConversations,
-  selectConversations,
-} from '../Conversations/ConversationsSlice';
+import { fetchExchanges, selectAllExchanges } from '../exchange/ExchangesSlice';
 import { saveNewInteraction } from './InteractionsSlice';
 
 const NewInteraction = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const availableConversations = useSelector(selectConversations);
+  const availableConversations = useSelector(selectAllExchanges);
 
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
@@ -38,7 +35,7 @@ const NewInteraction = (): ReactElement => {
   const [conversations, setConversations] = useState<string[]>([]);
 
   useEffect(() => {
-    dispatch(fetchConversations());
+    dispatch(fetchExchanges());
   }, []);
 
   const handleNewInteraction = async (): Promise<void> => {

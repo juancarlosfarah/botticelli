@@ -28,7 +28,7 @@ export class GetMessagesChannel implements IpcChannel {
 
     const messageRepository = AppDataSource.getRepository(Message);
     const messages = await messageRepository.findBy({
-      conversation: { id: conversationId },
+      exchange: { id: conversationId },
     });
 
     // debug
