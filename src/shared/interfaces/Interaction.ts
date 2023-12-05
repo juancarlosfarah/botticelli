@@ -1,6 +1,6 @@
 import Conversation from './Conversation';
 
-type Trigger = {
+type Interaction = {
   id: string;
   description: string;
   instructions: string;
@@ -8,4 +8,4 @@ type Trigger = {
   conversations: Conversation[];
 };
 
-export default Trigger;
+export default Interaction;

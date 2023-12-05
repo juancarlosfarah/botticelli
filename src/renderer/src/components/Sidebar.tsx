@@ -8,6 +8,7 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded';
+import ScienceIcon from '@mui/icons-material/Science';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import RobotIcon from '@mui/icons-material/SmartToy';
@@ -129,6 +130,20 @@ export default function Sidebar(): ReactElement {
               <HomeRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Home</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem>
+            <ListItemButton
+              selected={pathname === '/experiments'}
+              role="menuitem"
+              component={Link}
+              to="/experiments"
+            >
+              <ScienceIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Experiments</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>

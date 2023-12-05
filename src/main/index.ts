@@ -27,6 +27,10 @@ import { DeleteConversationChannel } from './channels/conversation/DeleteConvers
 import { GetConversationChannel } from './channels/conversation/GetConversationChannel';
 import { GetConversationsChannel } from './channels/conversation/GetConversationsChannel';
 import { PostConversationChannel } from './channels/conversation/PostConversationChannel';
+import { DeleteOneExperimentChannel } from './channels/experiment/DeleteOneExperimentChannel';
+import { GetManyExperimentsChannel } from './channels/experiment/GetManyExperimentsChannel';
+import { GetOneExperimentChannel } from './channels/experiment/GetOneExperimentChannel';
+import { PostOneExperimentChannel } from './channels/experiment/PostOneExperimentChannel';
 import { DeleteOneInteractionChannel } from './channels/interaction/DeleteOneInteractionChannel';
 import { GetManyInteractionsChannel } from './channels/interaction/GetManyInteractionsChannel';
 import { GetOneInteractionChannel } from './channels/interaction/GetOneInteractionChannel';
@@ -186,4 +190,9 @@ new Main().init([
   new GetOneInteractionChannel(),
   new GetManyInteractionsChannel(),
   new DeleteOneInteractionChannel(),
+  // experiments
+  new PostOneExperimentChannel(),
+  new GetOneExperimentChannel(),
+  new GetManyExperimentsChannel(),
+  new DeleteOneExperimentChannel(),
 ]);

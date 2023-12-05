@@ -6,6 +6,7 @@ import { ArtificialAgent } from './entity/ArtificialAgent';
 import { ArtificialAssistant } from './entity/ArtificialAssistant';
 import { ArtificialParticipant } from './entity/ArtificialParticipant';
 import { Conversation } from './entity/Conversation';
+import { Experiment } from './entity/Experiment';
 import { HumanAgent } from './entity/HumanAgent';
 import { HumanAssistant } from './entity/HumanAssistant';
 import { HumanParticipant } from './entity/HumanParticipant';
@@ -30,6 +31,7 @@ export const AppDataSource = new DataSource({
     HumanAssistant,
     Trigger,
     Interaction,
+    Experiment,
   ],
   migrations: [],
   subscribers: [],

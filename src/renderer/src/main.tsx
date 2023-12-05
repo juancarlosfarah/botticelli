@@ -24,6 +24,9 @@ import NewHumanAssistant from './components/agent/human/assistant/NewHumanAssist
 import HumanParticipant from './components/agent/human/participant/HumanParticipant';
 import HumanParticipants from './components/agent/human/participant/HumanParticipants';
 import NewHumanParticipant from './components/agent/human/participant/NewHumanParticipant';
+import Experiment from './components/experiment/Experiment';
+import Experiments from './components/experiment/Experiments';
+import NewExperiment from './components/experiment/NewExperiment';
 import Interaction from './components/interaction/Interaction';
 import Interactions from './components/interaction/Interactions';
 import NewInteraction from './components/interaction/NewInteraction';
@@ -38,6 +41,18 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
+      {
+        path: 'experiments',
+        element: <Experiments />,
+      },
+      {
+        path: 'experiments/new',
+        element: <NewExperiment />,
+      },
+      {
+        path: 'experiments/:experimentId',
+        element: <Experiment />,
+      },
       {
         path: 'conversations',
         element: <Conversations />,

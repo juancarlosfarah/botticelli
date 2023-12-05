@@ -9,7 +9,6 @@ import Typography from '@mui/joy/Typography';
 
 import log from 'electron-log/renderer';
 
-import { fetchMessages } from '../Messages/MessagesSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchInteraction, selectInteractionById } from './InteractionsSlice';
 
@@ -21,7 +20,6 @@ export default function Interaction(): ReactElement {
     const query = { id: interactionId };
     log.debug(`fetching interaction ${interactionId}`);
     dispatch(fetchInteraction(query));
-    dispatch(fetchMessages({ interactionId }));
   }, [interactionId]);
 
   const interaction = useSelector((state) =>
