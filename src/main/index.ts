@@ -27,6 +27,10 @@ import { DeleteConversationChannel } from './channels/conversation/DeleteConvers
 import { GetConversationChannel } from './channels/conversation/GetConversationChannel';
 import { GetConversationsChannel } from './channels/conversation/GetConversationsChannel';
 import { PostConversationChannel } from './channels/conversation/PostConversationChannel';
+import { DeleteOneInteractionChannel } from './channels/interaction/DeleteOneInteractionChannel';
+import { GetManyInteractionsChannel } from './channels/interaction/GetManyInteractionsChannel';
+import { GetOneInteractionChannel } from './channels/interaction/GetOneInteractionChannel';
+import { PostOneInteractionChannel } from './channels/interaction/PostOneInteractionChannel';
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
@@ -177,4 +181,9 @@ new Main().init([
   new GetOneTriggerChannel(),
   new GetManyTriggersChannel(),
   new DeleteOneTriggerChannel(),
+  // interactions
+  new PostOneInteractionChannel(),
+  new GetOneInteractionChannel(),
+  new GetManyInteractionsChannel(),
+  new DeleteOneInteractionChannel(),
 ]);

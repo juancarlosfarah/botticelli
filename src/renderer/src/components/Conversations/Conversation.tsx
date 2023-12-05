@@ -53,9 +53,13 @@ export default function Conversation(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">{`Conversation #${conversationId}`}</Typography>
+        <Typography level="h2">Conversation</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
+        Name
+      </Typography>
+      <Typography>{conversation.name}</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
         Description
       </Typography>
       <Typography>{conversation.description}</Typography>

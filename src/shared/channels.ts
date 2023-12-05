@@ -46,3 +46,9 @@ export const POST_ONE_TRIGGER_CHANNEL = 'trigger:post:one';
 export const GET_MANY_TRIGGERS_CHANNEL = 'trigger:get:many';
 export const DELETE_ONE_TRIGGER_CHANNEL = 'trigger:delete:one';
 export const GET_ONE_TRIGGER_CHANNEL = 'trigger:get:one';
+
+// interactions
+export const POST_ONE_INTERACTION_CHANNEL = 'interaction:post:one';
+export const GET_MANY_INTERACTIONS_CHANNEL = 'interaction:get:many';
+export const DELETE_ONE_INTERACTION_CHANNEL = 'interaction:delete:one';
+export const GET_ONE_INTERACTION_CHANNEL = 'interaction:get:one';

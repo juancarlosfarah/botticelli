@@ -9,6 +9,7 @@ import { Conversation } from './entity/Conversation';
 import { HumanAgent } from './entity/HumanAgent';
 import { HumanAssistant } from './entity/HumanAssistant';
 import { HumanParticipant } from './entity/HumanParticipant';
+import { Interaction } from './entity/Interaction';
 import { Message } from './entity/Message';
 import { Trigger } from './entity/Trigger';
 
@@ -28,6 +29,7 @@ export const AppDataSource = new DataSource({
     HumanParticipant,
     HumanAssistant,
     Trigger,
+    Interaction,
   ],
   migrations: [],
   subscribers: [],

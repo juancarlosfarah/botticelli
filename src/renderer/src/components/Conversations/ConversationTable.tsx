@@ -107,7 +107,7 @@ export default function ConversationTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-
+              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 100, padding: '12px 6px' }}>
                 Number of Messages
@@ -136,6 +136,11 @@ export default function ConversationTable(): ReactElement {
                       slotProps={{ checkbox: { sx: { textAlign: 'left' } } }}
                       sx={{ verticalAlign: 'text-bottom' }}
                     />
+                  </td>
+                  <td>
+                    <Typography level="body-xs">
+                      {_.truncate(row.name, 25)}
+                    </Typography>
                   </td>
                   <td>
                     <Typography level="body-xs">

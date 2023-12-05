@@ -1,4 +1,3 @@
-import log from 'electron-log/main';
 import {
   AfterLoad,
   Column,
@@ -21,6 +20,9 @@ import { Trigger } from './Trigger';
 export class Conversation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ default: '' })
+  name: string = '';
 
   @Column({ default: '' })
   description: string = '';

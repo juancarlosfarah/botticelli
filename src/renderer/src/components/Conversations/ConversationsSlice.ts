@@ -52,6 +52,7 @@ export const fetchConversations = createAsyncThunk(
 export const saveNewConversation = createAsyncThunk<
   Conversation,
   {
+    name: string;
     description: string;
     instructions: string;
     assistant: Agent;
@@ -60,11 +61,19 @@ export const saveNewConversation = createAsyncThunk<
   }
 >(
   'conversations/saveNewConversation',
-  async ({ description, instructions, assistant, participant, triggers }) => {
+  async ({
+    name,
+    description,
+    instructions,
+    assistant,
+    participant,
+    triggers,
+  }) => {
     const response = await IpcService.send<{ conversation: any }>(
       POST_CONVERSATION_CHANNEL,
       {
         params: {
+          name,
           description,
           instructions,
           assistant,

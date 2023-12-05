@@ -1,17 +1,20 @@
 import {
   Column,
   Entity,
-  OneToMany,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
-  Relation,
 } from 'typeorm';
 
 import { Conversation } from './Conversation';
 
 @Entity()
 export class Interaction {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ default: '' })
+  name: string = '';
 
   @Column({ default: '' })
   description: string = '';
@@ -20,8 +23,7 @@ export class Interaction {
   instructions: string = '';
 
   // note: array initialization is not allowed in relations
-  @OneToMany(() => Conversation, (conversation) => conversation.interaction, {
-    eager: true,
-  })
-  conversations: Relation<Conversation>[];
+  @ManyToMany(() => Conversation)
+  @JoinTable()
+  conversations: Conversation[];
 }

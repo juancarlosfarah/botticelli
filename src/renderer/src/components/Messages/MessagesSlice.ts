@@ -126,7 +126,9 @@ const messagesSlice = createSlice({
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
         // debug
-        log.debug(`fetchMessages.fulfilled:`, action.payload);
+        log.debug(
+          `fetchMessages.fulfilled: ${action.payload?.length} messages`,
+        );
         messagesAdapter.setAll(state, action.payload);
         state.status = 'idle';
       })

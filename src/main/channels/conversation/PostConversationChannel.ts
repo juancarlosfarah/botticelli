@@ -22,12 +22,19 @@ export class PostConversationChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, instructions, assistant, participant, triggers } =
-      request.params;
+    const {
+      name,
+      description,
+      instructions,
+      assistant,
+      participant,
+      triggers,
+    } = request.params;
 
     log.debug(`linking triggers: ${triggers}`);
 
     const conversation = new Conversation();
+    conversation.name = name;
     conversation.description = description;
     conversation.instructions = instructions;
 

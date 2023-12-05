@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import Input from '@mui/joy/Input';
 import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
@@ -31,6 +32,7 @@ const NewConversation = (): ReactElement => {
   const assistants = useSelector(selectAssistants);
   const availableTriggers = useSelector(selectTriggers);
 
+  const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
   const [cue, setCue] = useState<string>('');
@@ -46,6 +48,7 @@ const NewConversation = (): ReactElement => {
   const handleNewConversation = async (): Promise<void> => {
     const { payload } = await dispatch(
       saveNewConversation({
+        name,
         description,
         instructions,
         assistant,
@@ -71,6 +74,11 @@ const NewConversation = (): ReactElement => {
 
       navigate(`/conversations/${payload.id}`);
     }
+  };
+
+  const handleChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
+    const name = event.target.value;
+    setName(name);
   };
 
   const handleChangeDescription = (
@@ -116,10 +124,17 @@ const NewConversation = (): ReactElement => {
   return (
     <>
       <FormControl>
+        <FormLabel>Name</FormLabel>
+        <Input value={name} onChange={handleChangeName} />
+        <FormHelperText>
+          This is an internal name for this conversation.
+        </FormHelperText>
+      </FormControl>
+      <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this conversation.
+          This is an internal description for this conversation.
         </FormHelperText>
       </FormControl>
       <FormControl>

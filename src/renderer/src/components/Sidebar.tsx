@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
@@ -128,6 +129,20 @@ export default function Sidebar(): ReactElement {
               <HomeRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Home</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem>
+            <ListItemButton
+              selected={pathname === '/interactions'}
+              role="menuitem"
+              component={Link}
+              to="/interactions"
+            >
+              <AssignmentIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Interactions</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
