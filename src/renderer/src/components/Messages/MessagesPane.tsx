@@ -55,6 +55,7 @@ export default function MessagesPane({
           // height: { xs: 'calc(100dvh - var(--Header-height))', lg: '100dvh' },
           display: 'flex',
           flexDirection: 'column',
+          backgroundColor: 'white',
         }}
       >
         {/*<MessagesPaneHeader sender={conversation.sender} />*/}

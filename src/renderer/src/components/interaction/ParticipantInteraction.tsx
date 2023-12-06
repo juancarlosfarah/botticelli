@@ -45,7 +45,7 @@ export default function ParticipantInteraction(): ReactElement {
       {interaction.completed ? (
         <Box
           sx={{
-            height: { xs: 'calc(100dvh - var(--Header-height))', lg: '100dvh' },
+            // height: { xs: 'calc(100dvh - var(--Header-height))', lg: '100dvh' },
             display: 'flex',
             flexDirection: 'column',
             textAlign: 'center',
