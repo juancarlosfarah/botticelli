@@ -44,6 +44,7 @@ const NewExchangeTemplate = (): ReactElement => {
         instructions,
         assistant,
         triggers,
+        cue,
       }),
     );
     if (payload.id) {

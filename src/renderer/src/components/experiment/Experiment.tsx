@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
+import Chip from '@mui/joy/Chip';
 import Link from '@mui/joy/Link';
 import Sheet from '@mui/joy/Sheet';
 import Table from '@mui/joy/Table';
@@ -38,6 +39,7 @@ export default function Experiment(): ReactElement {
 
   const participants = experiment.participants || [];
   const interactionTemplates = experiment.interactionTemplates || [];
+  const interactions = experiment.interactions || [];
 
   return (
     <>
@@ -115,13 +117,27 @@ export default function Experiment(): ReactElement {
                     {_.truncate(row.name, 25)}
                   </Typography>
                 </td>
-                {interactionTemplates.map((interactionTemplate) => {
-                  return (
-                    <td key={interactionTemplate.id}>
-                      {interactionTemplate.name || '—'}
-                    </td>
-                  );
-                })}
+                {interactions
+                  .filter(
+                    (interaction) => interaction?.participant?.id === row?.id,
+                  )
+                  .map((interaction) => {
+                    return (
+                      <td key={interaction.id}>
+                        {interaction.exchanges.map((exchange) => {
+                          return (
+                            <Chip
+                              variant="soft"
+                              color="primary"
+                              key={exchange.id}
+                            >
+                              {exchange.name}
+                            </Chip>
+                          );
+                        })}
+                      </td>
+                    );
+                  })}
               </tr>
             ))}
           </tbody>

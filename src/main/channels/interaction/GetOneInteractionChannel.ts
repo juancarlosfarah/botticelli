@@ -34,7 +34,7 @@ export class GetOneInteractionChannel extends GetOneChannel {
       where: {
         ...query,
       },
-      relations: { exchanges: true },
+      relations: { exchanges: true, experiment: true },
       take: 1,
     });
 

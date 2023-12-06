@@ -16,11 +16,11 @@ import MessagesPaneHeader from './MessagesPaneHeader';
 import { saveNewMessage, selectMessages } from './MessagesSlice';
 
 type MessagesPaneProps = {
-  conversation: MessageProps[];
+  exchange: MessageProps[];
 };
 
 export default function MessagesPane({
-  conversation,
+  exchange,
 }: MessagesPaneProps): React.ReactElement {
   const status = useSelector((state) => state.messages.status);
 
@@ -29,7 +29,7 @@ export default function MessagesPane({
   const dispatch = useDispatch();
   const messages = useSelector(selectMessages);
 
-  const conversationId = conversation.id;
+  const conversationId = exchange.id;
 
   return (
     <>
@@ -81,7 +81,7 @@ export default function MessagesPane({
             {status === 'loading' && <MessageLoader />}
           </Stack>
         </Box>
-        {conversation.completed ? (
+        {exchange.completed ? (
           <Button sx={{ m: 1 }}>Next</Button>
         ) : (
           <MessageInput

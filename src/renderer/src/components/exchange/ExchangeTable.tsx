@@ -151,12 +151,12 @@ export default function ExchangeTable(): ReactElement {
                 </td>
                 <td>
                   <Typography level="body-xs">
-                    {row?.assistant.name || '—'}
+                    {row?.assistant?.name || '—'}
                   </Typography>
                 </td>
                 <td>
                   <Typography level="body-xs">
-                    {row?.participant.name || '—'}
+                    {row?.interaction?.participant?.name || '—'}
                   </Typography>
                 </td>
                 <td>

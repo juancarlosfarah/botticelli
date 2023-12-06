@@ -100,7 +100,7 @@ const NewExperiment = (): ReactElement => {
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>InteractionTemplates</FormLabel>
+        <FormLabel>Interactions</FormLabel>
         <Select
           multiple
           value={interactionTemplates}

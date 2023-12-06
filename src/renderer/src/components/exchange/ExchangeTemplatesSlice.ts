@@ -51,10 +51,11 @@ export const saveNewExchangeTemplate = createAsyncThunk<
     instructions: string;
     assistant: Agent;
     triggers: number;
+    cue: string;
   }
 >(
   'exchangeTemplates/saveNewExchangeTemplate',
-  async ({ name, description, instructions, assistant, triggers }) => {
+  async ({ name, description, instructions, assistant, triggers, cue }) => {
     return await IpcService.send<{ exchangeTemplate: any }>(
       POST_ONE_EXCHANGE_TEMPLATE_CHANNEL,
       {
@@ -64,6 +65,7 @@ export const saveNewExchangeTemplate = createAsyncThunk<
           instructions,
           assistant,
           triggers,
+          cue,
         },
       },
     );

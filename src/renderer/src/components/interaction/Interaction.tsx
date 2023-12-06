@@ -50,14 +50,22 @@ export default function Interaction(): ReactElement {
         Name
       </Typography>
       <Typography>{interaction.name}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Description
       </Typography>
       <Typography>{interaction.description}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Instructions
       </Typography>
       <Typography>{interaction.instructions}</Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Experiment
+      </Typography>
+      <Typography>{interaction?.experiment?.name || '—'}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Exchanges
       </Typography>

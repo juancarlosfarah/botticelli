@@ -32,6 +32,9 @@ export class Exchange {
   @Column({ default: '' })
   instructions: string = '';
 
+  @Column({ default: '' })
+  cue: string = '';
+
   @Column({ default: false })
   completed: boolean = false;
 
@@ -44,9 +47,6 @@ export class Exchange {
   // note: array initialization is not allowed in relations
   @OneToMany(() => Message, (message) => message.exchange, { eager: true })
   messages: Relation<Message>[];
-
-  @ManyToOne(() => Agent, { eager: true })
-  participant: Relation<Agent>;
 
   @ManyToOne(() => Agent, { eager: true })
   assistant: Relation<Agent>;

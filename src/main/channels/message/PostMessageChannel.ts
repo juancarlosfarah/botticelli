@@ -21,22 +21,16 @@ export class PostMessageChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { conversationId, content, sender } = request.params;
+    const { exchangeId, content, sender } = request.params;
 
     // debug
-    log.debug(`posting message:`, content, `for conversation`, conversationId);
+    log.debug(`posting message:`, content, `for exchange`, exchangeId);
 
     const messageRepository = AppDataSource.getRepository(Message);
     const message = new Message();
     message.content = content;
-    message.exchange = conversationId;
-
-    // todo: make dynamic
-    if (sender) {
-      message.sender = sender;
-    } else {
-      message.sender = 2;
-    }
+    message.exchange = exchangeId;
+    message.sender = sender;
 
     const { id } = await messageRepository.save(message);
 

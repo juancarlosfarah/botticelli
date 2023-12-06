@@ -69,7 +69,7 @@ export default function Exchange(): ReactElement {
       <Typography sx={{ mt: 1 }} level="title-md">
         Participant
       </Typography>
-      <Typography>{exchange?.participant?.name || '—'}</Typography>
+      <Typography>{exchange?.interaction?.participant?.name || '—'}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Trigger
       </Typography>

@@ -50,6 +50,7 @@ export const saveNewExchange = createAsyncThunk<
     name: string;
     description: string;
     instructions: string;
+    cue: string;
     assistant: Agent;
     participant: Agent;
     triggers: number;
@@ -63,6 +64,7 @@ export const saveNewExchange = createAsyncThunk<
     assistant,
     participant,
     triggers,
+    cue,
   }) => {
     const response = await IpcService.send<{ exchange: any }>(
       POST_ONE_EXCHANGE_CHANNEL,
@@ -74,6 +76,7 @@ export const saveNewExchange = createAsyncThunk<
           assistant,
           participant,
           triggers,
+          cue,
         },
       },
     );

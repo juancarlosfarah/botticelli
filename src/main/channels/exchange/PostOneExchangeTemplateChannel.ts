@@ -25,7 +25,7 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { name, description, instructions, assistant, triggers } =
+    const { name, description, instructions, assistant, cue, triggers } =
       request.params;
 
     log.debug(`linking triggers: ${triggers}`);
@@ -34,6 +34,7 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
     exchangeTemplate.name = name;
     exchangeTemplate.description = description;
     exchangeTemplate.instructions = instructions;
+    exchangeTemplate.cue = cue;
 
     const agentRepository = AppDataSource.getRepository(Agent);
     const savedAssistant = await agentRepository.findOneBy({ id: assistant });

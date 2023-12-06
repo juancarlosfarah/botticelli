@@ -82,6 +82,7 @@ export default function InteractionTable(): ReactElement {
               </th>
               <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>Participant</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
             </tr>
           </thead>
@@ -112,6 +113,11 @@ export default function InteractionTable(): ReactElement {
                 <td>
                   <Typography level="body-xs">
                     {_.truncate(row.description, 25)}
+                  </Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {row?.participant?.name || '—'}
                   </Typography>
                 </td>
                 <td>

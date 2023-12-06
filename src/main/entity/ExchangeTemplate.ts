@@ -28,6 +28,9 @@ export class ExchangeTemplate {
   @Column({ default: '' })
   instructions: string = '';
 
+  @Column({ default: '' })
+  cue: string = '';
+
   @ManyToOne(() => Agent, { eager: true })
   assistant: Relation<Agent>;
 
