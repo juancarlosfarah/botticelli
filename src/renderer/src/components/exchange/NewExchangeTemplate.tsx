@@ -48,20 +48,6 @@ const NewExchangeTemplate = (): ReactElement => {
       }),
     );
     if (payload.id) {
-      // if (cue) {
-      //   // debugging
-      //   log.debug(`handleNewConversation cue:`, cue);
-      //
-      //   await dispatch(
-      //     saveNewMessage({
-      //       exchangeId: payload.id,
-      //       content: cue,
-      //       requiresResponse: false,
-      //       sender: assistant,
-      //     }),
-      //   );
-      // }
-
       navigate(`/exchanges/templates/${payload.id}`);
     }
   };

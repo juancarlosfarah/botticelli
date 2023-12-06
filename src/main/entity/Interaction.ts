@@ -29,6 +29,9 @@ export class Interaction {
   @Column({ default: '' })
   instructions: string = '';
 
+  @Column({ default: false })
+  completed: boolean = false;
+
   @ManyToOne(() => Agent, { eager: true })
   // @ts-ignore: array initialization is not allowed in relations
   participant: Relation<Agent>;

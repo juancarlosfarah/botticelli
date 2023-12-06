@@ -135,6 +135,14 @@ export default function Experiment(): ReactElement {
                             </Chip>
                           );
                         })}
+                        <Link
+                          level="body-xs"
+                          component={RouterLink}
+                          sx={{ ml: 1 }}
+                          to={`/experiments/${experimentId}/participants/${row.id}/interactions/${interaction.id}`}
+                        >
+                          View
+                        </Link>
                       </td>
                     );
                   })}

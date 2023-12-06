@@ -74,7 +74,11 @@ export default function Exchange(): ReactElement {
         Trigger
       </Typography>
       <Typography>{trigger?.name || '—'}</Typography>
-      <MessagesPane exchange={exchange} />
+      <MessagesPane
+        exchange={exchange}
+        interactionId={exchange?.interaction?.id}
+        participantId={exchange?.interaction?.participant.id}
+      />
     </>
   );
 }

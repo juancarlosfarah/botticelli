@@ -8,6 +8,7 @@ import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
 import { AppDataSource } from '../../data-source';
 import { Exchange } from '../../entity/Exchange';
+import { Interaction } from '../../entity/Interaction';
 import { Message } from '../../entity/Message';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 import { messagesToPrompt } from '../../utils/messagesToPrompt';
@@ -26,31 +27,32 @@ export class GenerateResponseChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { conversationId } = request.params;
+    const { exchangeId } = request.params;
 
     // debug
-    log.debug(`generating response for conversation:`, conversationId);
+    log.debug(`generating response for exchange:`, exchangeId);
 
     // get repositories
-    const conversationRepository = AppDataSource.getRepository(Exchange);
+    const exchangeRepository = AppDataSource.getRepository(Exchange);
     const messageRepository = AppDataSource.getRepository(Message);
+    const interactionRepository = AppDataSource.getRepository(Interaction);
 
-    // get conversation
-    const instances = await conversationRepository.find({
-      where: { id: conversationId },
-      relations: { triggers: true },
+    // get exchange
+    const instances = await exchangeRepository.find({
+      where: { id: exchangeId },
+      relations: { triggers: true, interaction: true },
       take: 1,
     });
-    const conversation = instances?.length ? instances[0] : null;
+    const exchange = instances?.length ? instances[0] : null;
 
-    // todo: handle null conversation
+    // todo: handle null exchange
 
-    const instructions = conversation?.instructions || '';
+    const instructions = exchange?.instructions || '';
 
-    const assistant = conversation?.assistant;
+    const assistant = exchange?.assistant;
 
     const messages = await messageRepository.findBy({
-      exchange: { id: conversationId },
+      exchange: { id: exchangeId },
     });
 
     // transform messages to prompt format
@@ -63,12 +65,17 @@ export class GenerateResponseChannel implements IpcChannel {
     });
 
     // evaluate
-    const triggers = conversation?.triggers || [];
+    const triggers = exchange?.triggers || [];
 
-    // completing conversation manually
-    log.debug(`evaluating conversation`, conversationId);
+    // completing exchange manually
+    log.debug(`evaluating exchange`, exchangeId);
     const evaluations: string[] = [];
+
+    if (triggers.length === 0) {
+      log.warn(`empty triggers`);
+    }
     for (const trigger of triggers) {
+      log.debug(`evaluating trigger`, trigger.id);
       const evaluator = trigger.evaluator;
       const criteria = trigger.criteria;
       const evaluation = await openAi.chat.completions.create({
@@ -92,7 +99,7 @@ export class GenerateResponseChannel implements IpcChannel {
 
     let completed = false;
     evaluations.forEach((evaluation) => {
-      // completing conversation manually
+      // completing exchange manually
       log.debug(`evaluation result:`, evaluation);
       if (evaluation === 'Yes') {
         completed = true;
@@ -100,24 +107,36 @@ export class GenerateResponseChannel implements IpcChannel {
     });
 
     if (completed) {
-      // completing conversation manually
-      log.debug(`manually completing conversation`, conversationId);
+      // completing exchange manually
+      log.debug(`manually completing exchange`, exchangeId);
 
-      conversation.completed = true;
-      await conversationRepository.save(conversation);
+      exchange.completed = true;
+      await exchangeRepository.save(exchange);
 
-      const response = new Message();
-      response.content = 'Thank you!';
-      response.exchange = conversationId;
-      if (assistant) {
-        response.sender = assistant;
+      const interaction = await interactionRepository.findOneBy({
+        id: exchange.interaction.id,
+      });
+
+      if (interaction) {
+        interaction.currentExchange = exchange.next;
+        if (!exchange.next) {
+          interaction.completed = true;
+        }
+        await interactionRepository.save(interaction);
       }
-      const { id } = await messageRepository.save(response);
-      const savedMessage = await messageRepository.findOneBy({ id });
 
-      // debug
-      log.debug(`manually completed conversation:`, savedMessage);
-      event.sender.send(request.responseChannel, instanceToPlain(savedMessage));
+      // const response = new Message();
+      // response.content = 'Thank you!';
+      // response.exchange = exchangeId;
+      // if (assistant) {
+      //   response.sender = assistant;
+      // }
+      // const { id } = await messageRepository.save(response);
+      // const savedMessage = await messageRepository.findOneBy({ id });
+      //
+      // // debug
+      // log.debug(`manually completed exchange:`, savedMessage);
+      event.sender.send(request.responseChannel, null);
     } else {
       // debug
       log.debug(`requesting completion with instructions:`, instructions);
@@ -137,7 +156,7 @@ export class GenerateResponseChannel implements IpcChannel {
 
       const response = new Message();
       response.content = completion.choices[0].message.content || '';
-      response.exchange = conversationId;
+      response.exchange = exchangeId;
 
       // todo: make dynamic
       response.sender = assistant;

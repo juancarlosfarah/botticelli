@@ -8,6 +8,8 @@ type Interaction = {
   description: string;
   instructions: string;
   name: string;
+  currentExchange: string;
+  completed: boolean;
   experiment: Experiment;
   template: InteractionTemplate;
   participant: Agent;

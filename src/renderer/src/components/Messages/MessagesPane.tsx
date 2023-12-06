@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/joy/Box';
@@ -9,39 +10,51 @@ import Typography from '@mui/joy/Typography';
 
 import { ChatProps, MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
+import { fetchExchange, selectExchangeById } from '../exchange/ExchangesSlice';
+import { fetchInteraction } from '../interaction/InteractionsSlice';
 import MessageLoader from '../layout/MessageLoader';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import MessagesPaneHeader from './MessagesPaneHeader';
-import { saveNewMessage, selectMessages } from './MessagesSlice';
+import { fetchMessages, saveNewMessage, selectMessages } from './MessagesSlice';
 
 type MessagesPaneProps = {
-  exchange: MessageProps[];
+  exchangeId: string;
+  participantId: number;
+  interactionId: string;
 };
 
 export default function MessagesPane({
-  exchange,
+  exchangeId,
+  interactionId,
+  participantId,
 }: MessagesPaneProps): React.ReactElement {
+  useEffect(() => {
+    dispatch(fetchExchange({ id: exchangeId }));
+    dispatch(fetchMessages({ exchangeId: exchangeId }));
+  }, [exchangeId]);
+
   const status = useSelector((state) => state.messages.status);
 
   const [textAreaValue, setTextAreaValue] = React.useState('');
 
   const dispatch = useDispatch();
   const messages = useSelector(selectMessages);
+  const exchange = useSelector((state) =>
+    selectExchangeById(state, exchangeId),
+  );
 
-  const conversationId = exchange.id;
+  if (!exchange) {
+    return <>Exchange Not Found</>;
+  }
 
   return (
     <>
-      <Typography sx={{ mt: 1 }} level="title-md">
-        Messages
-      </Typography>
       <Sheet
         sx={{
-          height: { xs: 'calc(100dvh - var(--Header-height))', lg: '100dvh' },
+          // height: { xs: 'calc(100dvh - var(--Header-height))', lg: '100dvh' },
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: 'background.level1',
         }}
       >
         {/*<MessagesPaneHeader sender={conversation.sender} />*/}
@@ -58,7 +71,7 @@ export default function MessagesPane({
         >
           <Stack spacing={2} justifyContent="flex-end">
             {messages.map((message: MessageProps, index: number) => {
-              const isYou = message?.sender?.id === 2;
+              const isYou = message?.sender?.id === parseInt(participantId);
 
               return (
                 <Stack
@@ -71,28 +84,39 @@ export default function MessagesPane({
                   <ChatBubble
                     variant={isYou ? 'sent' : 'received'}
                     content={message.content}
-                    timestamp={message.updatedAt.toString()}
+                    // timestamp={message.updatedAt.toString()}
                     attachment={false}
                     sender={isYou ? 'You' : message?.sender}
                   />
                 </Stack>
               );
             })}
-            {status === 'loading' && <MessageLoader />}
+            {status === 'loading' && (
+              <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  spacing={2}
+                  sx={{ mb: 0.25 }}
+                >
+                  <MessageLoader />
+                </Stack>
+              </Box>
+            )}
           </Stack>
         </Box>
-        {exchange.completed ? (
-          <Button sx={{ m: 1 }}>Next</Button>
-        ) : (
+        {!exchange.completed && (
           <MessageInput
             textAreaValue={textAreaValue}
             setTextAreaValue={setTextAreaValue}
             onSubmit={(): void => {
               dispatch(
                 saveNewMessage({
-                  conversationId,
+                  interactionId,
+                  exchangeId,
                   content: textAreaValue,
                   evaluate: true,
+                  sender: participantId,
                 }),
               );
             }}

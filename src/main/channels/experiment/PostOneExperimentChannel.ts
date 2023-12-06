@@ -3,6 +3,7 @@ import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
+import _ from 'lodash';
 import { In } from 'typeorm';
 
 import { AppDataSource } from '../../data-source';
@@ -11,6 +12,7 @@ import { Exchange } from '../../entity/Exchange';
 import { Experiment } from '../../entity/Experiment';
 import { Interaction } from '../../entity/Interaction';
 import { InteractionTemplate } from '../../entity/InteractionTemplate';
+import { Message } from '../../entity/Message';
 import { PostOneChannel } from '../common/PostOneChannel';
 
 export class PostOneExperimentChannel extends PostOneChannel {
@@ -41,6 +43,7 @@ export class PostOneExperimentChannel extends PostOneChannel {
     const interactionRepository = AppDataSource.getRepository(Interaction);
     const agentRepository = AppDataSource.getRepository(Agent);
     const exchangeRepository = AppDataSource.getRepository(Exchange);
+    const messageRepository = AppDataSource.getRepository(Message);
 
     // interactions
     log.debug(`linking ${interactionTemplates?.length} interactions`);
@@ -48,7 +51,11 @@ export class PostOneExperimentChannel extends PostOneChannel {
       where: {
         id: In(interactionTemplates),
       },
-      relations: { exchangeTemplates: true },
+      relations: {
+        exchangeTemplates: {
+          triggers: true,
+        },
+      },
     });
 
     experiment.interactionTemplates = savedInteractionTemplates;
@@ -67,10 +74,16 @@ export class PostOneExperimentChannel extends PostOneChannel {
     const savedInteractions: Interaction[] = [];
 
     // each participant gets their own interaction for each interaction template
-    if (savedParticipants.length) {
-      for (const savedParticipant of savedParticipants) {
-        if (savedInteractionTemplates.length) {
-          for (const savedInteractionTemplate of savedInteractionTemplates) {
+    if (savedInteractionTemplates.length) {
+      for (const savedInteractionTemplate of savedInteractionTemplates) {
+        // todo: add order
+        const exchangeTemplates = _.orderBy(
+          savedInteractionTemplate.exchangeTemplates,
+          'createdAt',
+          'desc',
+        );
+        if (savedParticipants.length) {
+          for (const savedParticipant of savedParticipants) {
             // basic interaction data
             const interaction = new Interaction();
             interaction.name = savedInteractionTemplate.name;
@@ -84,12 +97,13 @@ export class PostOneExperimentChannel extends PostOneChannel {
               await interactionRepository.save(interaction);
             log.debug(`saved interaction ${savedInteraction.id}`);
 
-            const exchangeTemplates =
-              savedInteractionTemplate.exchangeTemplates;
             log.debug(`creating exchanges from templates:`, exchangeTemplates);
             const savedExchanges: Exchange[] = [];
 
-            if (exchangeTemplates.length) {
+            const numExchanges = exchangeTemplates.length;
+            if (numExchanges) {
+              let exchangeTemplateNumber = numExchanges - 1;
+              let exchangeNumber = 0;
               // create an exchange from each of the interaction's exchange templates
               for (const exchangeTemplate of exchangeTemplates) {
                 const exchange = new Exchange();
@@ -101,10 +115,31 @@ export class PostOneExperimentChannel extends PostOneChannel {
                 exchange.assistant = exchangeTemplate.assistant;
                 exchange.description = exchangeTemplate.description;
                 exchange.interaction = savedInteraction;
+                if (exchangeTemplateNumber < numExchanges - 1) {
+                  exchange.next = savedExchanges[exchangeNumber - 1].id;
+                }
+                exchangeNumber++;
+                exchangeTemplateNumber--;
                 const savedExchange = await exchangeRepository.save(exchange);
                 log.debug(`saved exchange ${savedExchange.id}`);
                 savedExchanges.push(savedExchange);
+
+                // todo: do this when the exchange is started
+                if (exchange.cue) {
+                  // debugging
+                  log.debug(`creating cue:`, exchange.cue);
+                  const message = new Message();
+                  message.exchange = savedExchange;
+                  message.content = exchange.cue;
+                  message.sender = exchange.assistant;
+                  await messageRepository.save(message);
+                }
               }
+            }
+            // todo: do this when the interaction is started
+            if (savedExchanges.length) {
+              savedInteraction.currentExchange =
+                savedExchanges[savedExchanges.length - 1].id;
             }
             // note: no need to save the exchanges back on the interaction
             savedInteraction =

@@ -21,14 +21,14 @@ export class GetMessagesChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { conversationId } = request.params;
+    const { exchangeId } = request.params;
 
     // debug
-    log.debug(`getting messages for conversation:`, conversationId);
+    log.debug(`getting messages for exchange:`, exchangeId);
 
     const messageRepository = AppDataSource.getRepository(Message);
     const messages = await messageRepository.findBy({
-      exchange: { id: conversationId },
+      exchange: { id: exchangeId },
     });
 
     // debug

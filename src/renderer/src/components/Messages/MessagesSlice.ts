@@ -15,6 +15,7 @@ import log from 'electron-log/renderer';
 import { GENERATE_RESPONSE_CHANNEL } from '../../../../shared/channels';
 import { IpcService } from '../../services/IpcService';
 import { fetchExchange } from '../exchange/ExchangesSlice';
+import { fetchInteraction } from '../interaction/InteractionsSlice';
 
 export const messagesAdapter = createEntityAdapter();
 
@@ -42,11 +43,11 @@ export const fetchMessage = createAsyncThunk(
 
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',
-  async ({ conversationId }) => {
+  async ({ exchangeId }) => {
     const response = await IpcService.send<{ messages: any }>(
       GET_MESSAGES_CHANNEL,
       {
-        params: { conversationId },
+        params: { exchangeId },
       },
     );
     return response;
@@ -55,20 +56,23 @@ export const fetchMessages = createAsyncThunk(
 
 export const saveNewMessage = createAsyncThunk(
   'messages/saveNewMessage',
-  async ({ conversationId, content, evaluate, sender }, { dispatch }) => {
+  async (
+    { interactionId, exchangeId, content, evaluate, sender },
+    { dispatch },
+  ) => {
     // debugging
-    log.debug(`saveNewMessage:`, conversationId, content);
+    log.debug(`saveNewMessage:`, exchangeId, content);
 
     const response = await IpcService.send<{ message: any }>(
       POST_MESSAGE_CHANNEL,
       {
-        params: { conversationId, content, sender },
+        params: { exchangeId, content, sender },
       },
     );
 
     // generate a response
     if (evaluate) {
-      dispatch(generateResponse({ conversationId }));
+      dispatch(generateResponse({ exchangeId, interactionId }));
     }
 
     // debug
@@ -79,18 +83,19 @@ export const saveNewMessage = createAsyncThunk(
 
 export const generateResponse = createAsyncThunk(
   'messages/generateResponse',
-  async ({ conversationId }, { dispatch }) => {
+  async ({ exchangeId, interactionId }, { dispatch }) => {
     // debug
-    log.debug(`generateResponse:`, conversationId);
+    log.debug(`generateResponse:`, exchangeId);
 
     const response = await IpcService.send<{ message: any }>(
       GENERATE_RESPONSE_CHANNEL,
       {
-        params: { conversationId },
+        params: { exchangeId },
       },
     );
 
-    dispatch(fetchExchange({ id: conversationId }));
+    dispatch(fetchExchange({ id: exchangeId }));
+    dispatch(fetchInteraction({ id: interactionId }));
 
     // debug
     log.debug(`generateResponse response:`, response);
@@ -140,7 +145,9 @@ const messagesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(generateResponse.fulfilled, (state, action) => {
-        messagesAdapter.addOne(state, action.payload);
+        if (action.payload) {
+          messagesAdapter.addOne(state, action.payload);
+        }
         state.status = 'idle';
       })
       .addCase(deleteMessage.fulfilled, messagesAdapter.removeOne);

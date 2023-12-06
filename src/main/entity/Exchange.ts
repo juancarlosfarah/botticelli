@@ -54,6 +54,9 @@ export class Exchange {
   @ManyToOne(() => ExchangeTemplate)
   template: Relation<ExchangeTemplate>;
 
+  @Column({ type: 'uuid', default: null })
+  next: string;
+
   @ManyToMany(() => Trigger)
   @JoinTable()
   triggers: Trigger[];

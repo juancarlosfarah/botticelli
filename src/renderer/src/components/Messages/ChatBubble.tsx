@@ -34,9 +34,11 @@ export default function ChatBubble({
         <Typography level="body-xs">
           {sender === 'You' ? sender : sender.name}
         </Typography>
-        <Typography level="body-xs">
-          {getFormattedTime(timestamp, 'en')}
-        </Typography>
+        {timestamp && (
+          <Typography level="body-xs">
+            {getFormattedTime(timestamp, 'en')}
+          </Typography>
+        )}
       </Stack>
       {attachment ? (
         <Sheet
@@ -73,9 +75,6 @@ export default function ChatBubble({
               borderRadius: 'lg',
               borderTopRightRadius: isSent ? 0 : 'lg',
               borderTopLeftRadius: isSent ? 'lg' : 0,
-              backgroundColor: isSent
-                ? 'var(--joy-palette-primary-solidBg)'
-                : 'background.body',
             }}
           >
             <Typography
