@@ -38,8 +38,10 @@ export default function Experiment(): ReactElement {
   }
 
   const participants = experiment.participants || [];
-  const interactionTemplates = experiment.interactionTemplates || [];
+  let interactionTemplates = experiment.interactionTemplates || [];
   const interactions = experiment.interactions || [];
+
+  interactionTemplates = _.orderBy(interactionTemplates, 'name', 'asc');
 
   return (
     <>
@@ -117,14 +119,17 @@ export default function Experiment(): ReactElement {
                     {_.truncate(row.name, 25)}
                   </Typography>
                 </td>
-                {interactions
-                  .filter(
+                {_.orderBy(
+                  interactions.filter(
                     (interaction) => interaction?.participant?.id === row?.id,
-                  )
-                  .map((interaction) => {
-                    return (
-                      <td key={interaction.id}>
-                        {interaction.exchanges.map((exchange) => {
+                  ),
+                  'name',
+                  'asc',
+                ).map((interaction) => {
+                  return (
+                    <td key={interaction.id}>
+                      {_.orderBy(interaction.exchanges, 'name', 'asc').map(
+                        (exchange) => {
                           return (
                             <Chip
                               variant="soft"
@@ -134,18 +139,19 @@ export default function Experiment(): ReactElement {
                               {exchange.name}
                             </Chip>
                           );
-                        })}
-                        <Link
-                          level="body-xs"
-                          component={RouterLink}
-                          sx={{ ml: 1 }}
-                          to={`/experiments/${experimentId}/participants/${row.id}/interactions/${interaction.id}`}
-                        >
-                          View
-                        </Link>
-                      </td>
-                    );
-                  })}
+                        },
+                      )}
+                      <Link
+                        level="body-xs"
+                        component={RouterLink}
+                        sx={{ ml: 1 }}
+                        to={`/experiments/${experimentId}/participants/${row.id}/interactions/${interaction.id}`}
+                      >
+                        View
+                      </Link>
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
