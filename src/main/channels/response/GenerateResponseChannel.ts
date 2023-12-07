@@ -92,7 +92,7 @@ export class GenerateResponseChannel implements IpcChannel {
             content: `Conversation: ${messagesToText(messages)}`,
           },
         ],
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4',
       });
       evaluations.push(evaluation.choices[0].message.content || '');
     }
@@ -148,7 +148,7 @@ export class GenerateResponseChannel implements IpcChannel {
           { role: 'system', content: instructions },
           ...prompt,
         ],
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4',
       });
 
       // debug
