@@ -38,7 +38,7 @@ export default function ParticipantInteraction(): ReactElement {
         aria-label="Back"
         component={RouterLink}
         to={`/experiments/${experimentId}`}
-        sx={{ position: 'fixed', top: '1rem', right: '1rem' }}
+        sx={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 10000 }}
       >
         <CloseIcon />
       </Link>

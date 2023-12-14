@@ -29,6 +29,8 @@ build/
 tmp/
 temp/
 out
+results/
 
 # data
 database.sqlite
+*.sqlite
