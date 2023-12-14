@@ -163,17 +163,17 @@ export default function Sidebar(): ReactElement {
               )}
             >
               <List sx={{ gap: 0.5 }}>
-                <ListItemButton
-                  sx={{ mt: 0.5 }}
-                  selected={pathname === '/interactions'}
-                  role="menuitem"
-                  component={Link}
-                  to="/interactions"
-                >
-                  <ListItemContent>
-                    <Typography level="body-sm">Interactions</Typography>
-                  </ListItemContent>
-                </ListItemButton>
+                {/*<ListItemButton*/}
+                {/*  sx={{ mt: 0.5 }}*/}
+                {/*  selected={pathname === '/interactions'}*/}
+                {/*  role="menuitem"*/}
+                {/*  component={Link}*/}
+                {/*  to="/interactions"*/}
+                {/*>*/}
+                {/*  <ListItemContent>*/}
+                {/*    <Typography level="body-sm">Interactions</Typography>*/}
+                {/*  </ListItemContent>*/}
+                {/*</ListItemButton>*/}
                 <ListItemButton
                   sx={{ mt: 0.5 }}
                   selected={pathname === '/interactions/templates'}
@@ -204,17 +204,17 @@ export default function Sidebar(): ReactElement {
               )}
             >
               <List sx={{ gap: 0.5 }}>
-                <ListItemButton
-                  sx={{ mt: 0.5 }}
-                  selected={pathname === '/exchanges'}
-                  role="menuitem"
-                  component={Link}
-                  to="/exchanges"
-                >
-                  <ListItemContent>
-                    <Typography level="body-sm">Exchanges</Typography>
-                  </ListItemContent>
-                </ListItemButton>
+                {/*<ListItemButton*/}
+                {/*  sx={{ mt: 0.5 }}*/}
+                {/*  selected={pathname === '/exchanges'}*/}
+                {/*  role="menuitem"*/}
+                {/*  component={Link}*/}
+                {/*  to="/exchanges"*/}
+                {/*>*/}
+                {/*  <ListItemContent>*/}
+                {/*    <Typography level="body-sm">Exchanges</Typography>*/}
+                {/*  </ListItemContent>*/}
+                {/*</ListItemButton>*/}
                 <ListItemButton
                   sx={{ mt: 0.5 }}
                   selected={pathname === '/exchanges/templates'}

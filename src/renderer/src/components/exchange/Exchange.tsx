@@ -1,8 +1,9 @@
 import { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
+import Link from '@mui/joy/Link';
 import Typography from '@mui/joy/Typography';
 
 import log from 'electron-log/renderer';
@@ -71,11 +72,27 @@ export default function Exchange(): ReactElement {
       </Typography>
       <Typography>{exchange?.interaction?.participant?.name || '—'}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
+        Interaction
+      </Typography>
+      <Typography>
+        {exchange?.interaction ? (
+          <Link
+            level="body-md"
+            component={RouterLink}
+            to={`/interactions/${exchange.interaction.id}`}
+          >
+            {exchange.interaction.name}
+          </Link>
+        ) : (
+          '—'
+        )}
+      </Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
         Trigger
       </Typography>
       <Typography>{trigger?.name || '—'}</Typography>
       <MessagesPane
-        exchange={exchange}
+        exchangeId={exchange.id}
         interactionId={exchange?.interaction?.id}
         participantId={exchange?.interaction?.participant.id}
       />

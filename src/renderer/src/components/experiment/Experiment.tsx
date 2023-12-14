@@ -130,13 +130,18 @@ export default function Experiment(): ReactElement {
                     <td key={interaction.id}>
                       {_.orderBy(interaction.exchanges, 'name', 'asc').map(
                         (exchange) => {
+                          const color = exchange.completed
+                            ? 'success'
+                            : 'primary';
                           return (
                             <Chip
                               variant="soft"
-                              color="primary"
+                              color={color}
                               key={exchange.id}
                             >
-                              {exchange.name}
+                              <Typography level="body-xs">
+                                {exchange.name}
+                              </Typography>
                             </Chip>
                           );
                         },
@@ -146,6 +151,14 @@ export default function Experiment(): ReactElement {
                         component={RouterLink}
                         sx={{ ml: 1 }}
                         to={`/experiments/${experimentId}/participants/${row.id}/interactions/${interaction.id}`}
+                      >
+                        Start
+                      </Link>
+                      <Link
+                        level="body-xs"
+                        component={RouterLink}
+                        sx={{ ml: 1 }}
+                        to={`/interactions/${interaction.id}`}
                       >
                         View
                       </Link>
