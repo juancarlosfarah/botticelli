@@ -17,6 +17,10 @@ import { DeleteOneArtificialAssistantChannel } from './channels/agent/artificial
 import { GetManyArtificialAssistantChannel } from './channels/agent/artificial/assistant/GetManyArtificialAssistantChannel';
 import { GetOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/GetOneArtificialAssistantChannel';
 import { PostOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/PostOneArtificialAssistantChannel';
+import { DeleteOneArtificialEvaluatorChannel } from './channels/agent/artificial/evaluator/DeleteOneArtificialEvaluatorChannel';
+import { GetManyArtificialEvaluatorsChannel } from './channels/agent/artificial/evaluator/GetManyArtificialEvaluatorsChannel';
+import { GetOneArtificialEvaluatorChannel } from './channels/agent/artificial/evaluator/GetOneArtificialEvaluatorChannel';
+import { PostOneArtificialEvaluatorChannel } from './channels/agent/artificial/evaluator/PostOneArtificialEvaluatorChannel';
 import { DeleteOneArtificialParticipantChannel } from './channels/agent/artificial/participant/DeleteOneArtificialParticipantChannel';
 import { GetManyArtificialParticipantsChannel } from './channels/agent/artificial/participant/GetManyArtificialParticipantsChannel';
 import { GetOneArtificialParticipantChannel } from './channels/agent/artificial/participant/GetOneArtificialParticipantChannel';
@@ -187,6 +191,11 @@ new Main().init([
   new GetOneArtificialParticipantChannel(),
   new GetManyArtificialParticipantsChannel(),
   new DeleteOneArtificialParticipantChannel(),
+  //   |_ evaluator
+  new PostOneArtificialEvaluatorChannel(),
+  new GetOneArtificialEvaluatorChannel(),
+  new GetManyArtificialEvaluatorsChannel(),
+  new DeleteOneArtificialEvaluatorChannel(),
   // |_ human
   //   |_ assistant
   new PostOneHumanAssistantChannel(),

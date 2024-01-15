@@ -1,7 +1,7 @@
+import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { IpcMainEvent } from 'electron';
 import { EntityTarget, ObjectLiteral } from 'typeorm';
 
-import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 
 type PostOneChannelType = {

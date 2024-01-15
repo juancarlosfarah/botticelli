@@ -287,6 +287,17 @@ export default function Sidebar(): ReactElement {
                       </ListItemButton>
                       <ListItemButton
                         sx={{ mt: 0.5 }}
+                        selected={pathname === '/agents/artificial/evaluators'}
+                        role="menuitem"
+                        component={Link}
+                        to="/agents/artificial/evaluators"
+                      >
+                        <ListItemContent>
+                          <Typography level="body-sm">Evaluators</Typography>
+                        </ListItemContent>
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ mt: 0.5 }}
                         selected={
                           pathname === '/agents/artificial/participants'
                         }

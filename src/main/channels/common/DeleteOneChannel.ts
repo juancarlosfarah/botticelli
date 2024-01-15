@@ -1,9 +1,9 @@
+import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 import { EntityTarget, ObjectLiteral } from 'typeorm';
 
-import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 

@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { Agent } from './entity/Agent';
 import { ArtificialAgent } from './entity/ArtificialAgent';
 import { ArtificialAssistant } from './entity/ArtificialAssistant';
+import { ArtificialEvaluator } from './entity/ArtificialEvaluator';
 import { ArtificialParticipant } from './entity/ArtificialParticipant';
 import { Exchange } from './entity/Exchange';
 import { ExchangeTemplate } from './entity/ExchangeTemplate';
@@ -29,6 +30,7 @@ export const AppDataSource = new DataSource({
     ArtificialAgent,
     ArtificialAssistant,
     ArtificialParticipant,
+    ArtificialEvaluator,
     HumanAgent,
     HumanParticipant,
     HumanAssistant,

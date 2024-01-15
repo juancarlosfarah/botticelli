@@ -16,14 +16,14 @@ import Textarea from '@mui/joy/Textarea';
 
 import log from 'electron-log/renderer';
 
-import { fetchAgents, selectAssistants } from '../agent/AgentsSlice';
+import { fetchAgents, selectEvaluators } from '../agent/AgentsSlice';
 import { saveNewTrigger } from './TriggersSlice';
 
 const NewTrigger = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const evaluators = useSelector(selectAssistants);
+  const evaluators = useSelector(selectEvaluators);
 
   const [description, setDescription] = useState('');
   const [criteria, setCriteria] = useState('');
@@ -95,7 +95,7 @@ const NewTrigger = (): ReactElement => {
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Assistant</FormLabel>
+        <FormLabel>Evaluator</FormLabel>
         <Select value={evaluator} onChange={handleChangeEvaluator}>
           {evaluators.map((agent) => (
             <Option value={agent.id} key={agent.id}>

@@ -4,7 +4,7 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
-import Agent from '@shared/interfaces/ArtificialAssistant';
+import Agent from '@shared/interfaces/Agent';
 import log from 'electron-log/renderer';
 
 import {
@@ -13,6 +13,7 @@ import {
   GET_AGENT_CHANNEL,
   POST_AGENT_CHANNEL,
   POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
+  POST_ONE_ARTIFICIAL_EVALUATOR_CHANNEL,
   POST_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL,
   POST_ONE_HUMAN_ASSISTANT_CHANNEL,
   POST_ONE_HUMAN_PARTICIPANT_CHANNEL,
@@ -79,6 +80,22 @@ export const saveNewArtificialParticipant = createAsyncThunk<
 >('agents/artificial/participant/saveNew', async ({ description, name }) => {
   const response = await IpcService.send<{ agent: any }>(
     POST_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL,
+    {
+      params: {
+        description,
+        name,
+      },
+    },
+  );
+  return response;
+});
+
+export const saveNewArtificialEvaluator = createAsyncThunk<
+  Agent,
+  { description: string; instructions: string }
+>('agents/artificial/evaluator/saveNew', async ({ description, name }) => {
+  const response = await IpcService.send<{ agent: any }>(
+    POST_ONE_ARTIFICIAL_EVALUATOR_CHANNEL,
     {
       params: {
         description,
@@ -162,6 +179,10 @@ const agentsSlice = createSlice({
         const agent = action.payload;
         agentsAdapter.addOne(state, agent);
       })
+      .addCase(saveNewArtificialEvaluator.fulfilled, (state, action) => {
+        const agent = action.payload;
+        agentsAdapter.addOne(state, agent);
+      })
       .addCase(saveNewHumanAssistant.fulfilled, (state, action) => {
         const agent = action.payload;
         agentsAdapter.addOne(state, agent);
@@ -197,6 +218,14 @@ export const selectAssistants = createSelector(selectAgents, (agents) =>
   }),
 );
 
+export const selectEvaluators = createSelector(selectAgents, (agents) =>
+  agents.filter((agent) => {
+    return (
+      agent.type === 'ArtificialEvaluator' || agent.type === 'HumanEvaluator'
+    );
+  }),
+);
+
 export const selectParticipants = createSelector(selectAgents, (agents) =>
   agents.filter((agent) => {
     return (
@@ -211,6 +240,14 @@ export const selectArtificialAssistants = createSelector(
   (agents) =>
     agents.filter((agent) => {
       return agent.type === 'ArtificialAssistant';
+    }),
+);
+
+export const selectArtificialEvaluators = createSelector(
+  selectAgents,
+  (agents) =>
+    agents.filter((agent) => {
+      return agent.type === 'ArtificialEvaluator';
     }),
 );
 

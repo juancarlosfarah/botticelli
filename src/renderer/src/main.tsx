@@ -12,6 +12,9 @@ import NewAgent from './components/agent/NewAgent';
 import ArtificialAssistant from './components/agent/artificial/assistant/ArtificialAssistant';
 import ArtificialAssistants from './components/agent/artificial/assistant/ArtificialAssistants';
 import NewArtificialAssistant from './components/agent/artificial/assistant/NewArtificialAssistant';
+import ArtificialEvaluator from './components/agent/artificial/evaluator/ArtificialEvaluator';
+import ArtificialEvaluators from './components/agent/artificial/evaluator/ArtificialEvaluators';
+import NewArtificialEvaluator from './components/agent/artificial/evaluator/NewArtificialEvaluator';
 import ArtificialParticipant from './components/agent/artificial/participant/ArtificialParticipant';
 import ArtificialParticipants from './components/agent/artificial/participant/ArtificialParticipants';
 import NewArtificialParticipant from './components/agent/artificial/participant/NewArtificialParticipant';
@@ -153,6 +156,19 @@ const router = createBrowserRouter([
         path: 'agents/artificial/participants/:agentId',
         element: <ArtificialParticipant />,
       },
+      // artificial evaluators
+      {
+        path: 'agents/artificial/evaluators',
+        element: <ArtificialEvaluators />,
+      },
+      {
+        path: 'agents/artificial/evaluators/new',
+        element: <NewArtificialEvaluator />,
+      },
+      {
+        path: 'agents/artificial/evaluators/:agentId',
+        element: <ArtificialEvaluator />,
+      },
       // human assistants
       {
         path: 'agents/human/assistants',
@@ -166,7 +182,7 @@ const router = createBrowserRouter([
         path: 'agents/human/assistants/:agentId',
         element: <HumanAssistant />,
       },
-      // artificial participants
+      // human participants
       {
         path: 'agents/human/participants',
         element: <HumanParticipants />,
