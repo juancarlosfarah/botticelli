@@ -6,7 +6,8 @@ import InteractionTemplate from './InteractionTemplate';
 type Interaction = {
   id: string;
   description: string;
-  instructions: string;
+  modelInstructions: string;
+  participantInstructions: string;
   name: string;
   currentExchange: string;
   completed: boolean;

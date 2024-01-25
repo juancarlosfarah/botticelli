@@ -7,8 +7,10 @@ import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
 
+import InteractionTemplateType from '@shared/interfaces/InteractionTemplate';
 import log from 'electron-log/renderer';
 
+import { AppDispatch } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import {
   fetchInteractionTemplate,
@@ -17,7 +19,11 @@ import {
 
 export default function InteractionTemplate(): ReactElement {
   const { interactionTemplateId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
+  if (typeof interactionTemplateId === 'undefined') {
+    return <div>Interaction Not Found</div>;
+  }
 
   useEffect(() => {
     const query = { id: interactionTemplateId };
@@ -25,8 +31,8 @@ export default function InteractionTemplate(): ReactElement {
     dispatch(fetchInteractionTemplate(query));
   }, [interactionTemplateId]);
 
-  const interactionTemplate = useSelector((state) =>
-    selectInteractionTemplateById(state, interactionTemplateId),
+  const interactionTemplate: InteractionTemplateType | undefined = useSelector(
+    (state) => selectInteractionTemplateById(state, interactionTemplateId),
   );
 
   if (!interactionTemplate) {
@@ -61,9 +67,14 @@ export default function InteractionTemplate(): ReactElement {
       <Typography>{interactionTemplate.description}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Instructions
+        Model Instructions
       </Typography>
-      <Typography>{interactionTemplate.instructions}</Typography>
+      <Typography>{interactionTemplate.modelInstructions}</Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Participant Instructions
+      </Typography>
+      <Typography>{interactionTemplate.participantInstructions}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         Exchange Templates

@@ -8,14 +8,20 @@ import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
 
+import InteractionType from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
 
+import { AppDispatch } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchInteraction, selectInteractionById } from './InteractionsSlice';
 
 export default function Interaction(): ReactElement {
   const { interactionId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
+  if (typeof interactionId === 'undefined') {
+    return <div>Interaction Not Found</div>;
+  }
 
   useEffect(() => {
     const query = { id: interactionId };
@@ -23,7 +29,7 @@ export default function Interaction(): ReactElement {
     dispatch(fetchInteraction(query));
   }, [interactionId]);
 
-  const interaction = useSelector((state) =>
+  const interaction: InteractionType | undefined = useSelector((state) =>
     selectInteractionById(state, interactionId),
   );
 
@@ -58,9 +64,14 @@ export default function Interaction(): ReactElement {
       <Typography>{interaction.description}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Instructions
+        Model Instructions
       </Typography>
-      <Typography>{interaction.instructions}</Typography>
+      <Typography>{interaction.modelInstructions}</Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Participant Instructions
+      </Typography>
+      <Typography>{interaction.participantInstructions}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         Experiment

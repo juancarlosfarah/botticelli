@@ -1,4 +1,5 @@
 import { POST_ONE_INTERACTION_TEMPLATE_CHANNEL } from '@shared/channels';
+import { InteractionTemplateParams } from '@shared/interfaces/InteractionTemplate';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
@@ -18,20 +19,35 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
     });
   }
 
-  async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
+  async handle(
+    event: IpcMainEvent,
+    request: IpcRequest<InteractionTemplateParams>,
+  ): Promise<void> {
     log.debug(`handling ${this.getName()}...`);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, instructions, name, exchangeTemplates } =
-      request.params;
+    // todo: return error
+    if (!request.params) {
+      event.sender.send(request.responseChannel, {});
+      return;
+    }
+
+    const {
+      description,
+      modelInstructions,
+      participantInstructions,
+      name,
+      exchangeTemplates,
+    } = request.params;
 
     const interactionTemplate = new InteractionTemplate();
     interactionTemplate.name = name;
     interactionTemplate.description = description;
-    interactionTemplate.instructions = instructions;
+    interactionTemplate.modelInstructions = modelInstructions;
+    interactionTemplate.participantInstructions = participantInstructions;
 
     const interactionTemplateRepository =
       AppDataSource.getRepository(InteractionTemplate);

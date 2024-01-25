@@ -26,16 +26,16 @@ export class InteractionTemplate {
   description: string = '';
 
   @Column({ default: '' })
-  instructions: string = '';
+  modelInstructions: string = '';
+
+  @Column({ default: '' })
+  participantInstructions: string = '';
 
   @ManyToOne(() => Agent, { eager: true })
   participant: Relation<Agent>;
 
   // @Column({ type: 'array' })
   // exchangeOrder: string[];
-
-  @Column({ type: 'uuid', default: null })
-  currentExchange: string;
 
   // note: array initialization is not allowed in relations
   @ManyToMany(() => ExchangeTemplate)

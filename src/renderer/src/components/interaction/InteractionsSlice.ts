@@ -15,7 +15,7 @@ import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
 
-const interactionsAdapter = createEntityAdapter();
+const interactionsAdapter = createEntityAdapter<Interaction>();
 
 const initialState = interactionsAdapter.getInitialState({
   status: 'idle',
@@ -24,6 +24,7 @@ const initialState = interactionsAdapter.getInitialState({
 // thunk functions
 export const fetchInteraction = createAsyncThunk(
   'interactions/fetchInteraction',
+  // todo: give type to `query`
   async (query) => {
     const response = await IpcService.send<{ interaction: any }>(
       GET_ONE_INTERACTION_CHANNEL,

@@ -15,7 +15,7 @@ import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
 
-const interactionTemplatesAdapter = createEntityAdapter();
+const interactionTemplatesAdapter = createEntityAdapter<InteractionTemplate>();
 
 const initialState = interactionTemplatesAdapter.getInitialState({
   status: 'idle',
@@ -53,19 +53,27 @@ export const saveNewInteractionTemplate = createAsyncThunk<
   {
     name: string;
     description: string;
-    instructions: string;
+    modelInstructions: string;
+    participantInstructions: string;
     exchangeTemplates: string[];
   }
 >(
   'interactionTemplates/saveNewInteractionTemplate',
-  async ({ description, instructions, name, exchangeTemplates }) => {
+  async ({
+    description,
+    modelInstructions,
+    participantInstructions,
+    name,
+    exchangeTemplates,
+  }) => {
     const response = await IpcService.send<{ interactionTemplate: any }>(
       POST_ONE_INTERACTION_TEMPLATE_CHANNEL,
       {
         params: {
           name,
           description,
-          instructions,
+          modelInstructions,
+          participantInstructions,
           exchangeTemplates,
         },
       },

@@ -1,5 +1,5 @@
-export interface IpcRequest {
+export interface IpcRequest<T> {
   responseChannel?: string;
 
-  params?: object;
+  params?: T;
 }

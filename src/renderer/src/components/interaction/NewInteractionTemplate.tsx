@@ -33,7 +33,8 @@ const NewInteractionTemplate = (): ReactElement => {
   const availableExchangeTemplates = useSelector(selectAllExchangeTemplates);
 
   const [description, setDescription] = useState('');
-  const [instructions, setInstructions] = useState('');
+  const [modelInstructions, setModelInstructions] = useState('');
+  const [participantInstructions, setParticipantInstructions] = useState('');
   const [name, setName] = useState<string>('');
   const [exchangeTemplates, setExchangeTemplates] = useState<string[]>([]);
 
@@ -46,7 +47,8 @@ const NewInteractionTemplate = (): ReactElement => {
       saveNewInteractionTemplate({
         name,
         description,
-        instructions,
+        modelInstructions,
+        participantInstructions,
         exchangeTemplates,
       }),
     );
@@ -61,11 +63,18 @@ const NewInteractionTemplate = (): ReactElement => {
     setDescription(value);
   };
 
-  const handleChangeInstructions = (
+  const handleChangeModelInstructions = (
     event: ChangeEvent<HTMLTextAreaElement>,
   ): void => {
     const value = event.target.value;
-    setInstructions(value);
+    setModelInstructions(value);
+  };
+
+  const handleChangeParticipantInstructions = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ): void => {
+    const value = event.target.value;
+    setParticipantInstructions(value);
   };
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -95,10 +104,24 @@ const NewInteractionTemplate = (): ReactElement => {
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Instructions</FormLabel>
-        <Textarea value={instructions} onChange={handleChangeInstructions} />
+        <FormLabel>Model Instructions</FormLabel>
+        <Textarea
+          value={modelInstructions}
+          onChange={handleChangeModelInstructions}
+        />
         <FormHelperText>
           These are the instructions that will be sent to the language model.
+        </FormHelperText>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Participant Instructions</FormLabel>
+        <Textarea
+          value={participantInstructions}
+          onChange={handleChangeParticipantInstructions}
+        />
+        <FormHelperText>
+          These are the instructions that will be shown to participants at the
+          start of the interaction.
         </FormHelperText>
       </FormControl>
       <FormControl>
