@@ -25,12 +25,11 @@ export class PostOneInteractionChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, instructions, name, exchanges } = request.params;
+    const { description, name, exchanges } = request.params;
 
     const interaction = new Interaction();
     interaction.name = name;
     interaction.description = description;
-    interaction.instructions = instructions;
 
     const interactionRepository = AppDataSource.getRepository(Interaction);
     const exchangeRepository = AppDataSource.getRepository(Exchange);
@@ -41,13 +40,6 @@ export class PostOneInteractionChannel extends PostOneChannel {
     });
 
     await interactionRepository.save(interaction);
-
-    // const instances = await interactionRepository.find({
-    //   where: { id },
-    //   relations: { conversations: true },
-    //   take: 1,
-    // });
-    // const instance = instances?.length ? instances[0] : null;
 
     event.sender.send(request.responseChannel, instanceToPlain(interaction));
   }

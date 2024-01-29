@@ -70,6 +70,7 @@ export const DELETE_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:delete:one';
 export const GET_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:get:one';
+export const START_INTERACTION_CHANNEL = 'interaction:start';
 
 // interactions
 export const POST_ONE_EXPERIMENT_CHANNEL = 'experiment:post:one';

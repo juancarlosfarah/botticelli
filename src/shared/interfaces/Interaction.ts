@@ -11,6 +11,22 @@ type Interaction = {
   name: string;
   currentExchange: string;
   completed: boolean;
+  started: boolean;
+  experiment: Experiment;
+  template: InteractionTemplate;
+  participant: Agent;
+  exchanges: Exchange[];
+  startedAt: Date;
+  completedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type NewInteractionParams = {
+  description: string;
+  modelInstructions: string;
+  participantInstructions: string;
+  name: string;
   experiment: Experiment;
   template: InteractionTemplate;
   participant: Agent;

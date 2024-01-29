@@ -27,7 +27,13 @@ export class Interaction {
   description: string = '';
 
   @Column({ default: '' })
-  instructions: string = '';
+  modelInstructions: string = '';
+
+  @Column({ default: '' })
+  participantInstructions: string = '';
+
+  @Column({ default: false })
+  started: boolean = false;
 
   @Column({ default: false })
   completed: boolean = false;
@@ -57,6 +63,12 @@ export class Interaction {
   @ManyToOne(() => InteractionTemplate)
   // @ts-ignore: array initialization is not allowed in relations
   template: Relation<InteractionTemplate>;
+
+  @Column({ default: null, type: 'datetime' })
+  startedAt: Date;
+
+  @Column({ default: null, type: 'datetime' })
+  completedAt: Date;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

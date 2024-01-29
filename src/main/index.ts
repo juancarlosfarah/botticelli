@@ -47,6 +47,7 @@ import { GetOneInteractionChannel } from './channels/interaction/GetOneInteracti
 import { GetOneInteractionTemplateChannel } from './channels/interaction/GetOneInteractionTemplateChannel';
 import { PostOneInteractionChannel } from './channels/interaction/PostOneInteractionChannel';
 import { PostOneInteractionTemplateChannel } from './channels/interaction/PostOneInteractionTemplateChannel';
+import { StartInteractionChannel } from './channels/interaction/StartInteractionChannel';
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
@@ -211,6 +212,7 @@ new Main().init([
   new GetOneInteractionChannel(),
   new GetManyInteractionsChannel(),
   new DeleteOneInteractionChannel(),
+  new StartInteractionChannel(),
   new PostOneInteractionTemplateChannel(),
   new GetOneInteractionTemplateChannel(),
   new GetManyInteractionTemplatesChannel(),

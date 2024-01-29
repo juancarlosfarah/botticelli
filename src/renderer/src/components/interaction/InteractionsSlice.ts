@@ -10,9 +10,15 @@ import {
   GET_ONE_INTERACTION_CHANNEL,
   POST_ONE_INTERACTION_CHANNEL,
 } from '@shared/channels';
+import { START_INTERACTION_CHANNEL } from '@shared/channels';
 import Interaction from '@shared/interfaces/Interaction';
+import { NewInteractionParams } from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
 
+import Agent from '../../../../shared/interfaces/Agent';
+import Exchange from '../../../../shared/interfaces/Exchange';
+import Experiment from '../../../../shared/interfaces/Experiment';
+import InteractionTemplate from '../../../../shared/interfaces/InteractionTemplate';
 import { IpcService } from '../../services/IpcService';
 
 const interactionsAdapter = createEntityAdapter<Interaction>();
@@ -51,26 +57,43 @@ export const fetchInteractions = createAsyncThunk(
 
 export const saveNewInteraction = createAsyncThunk<
   Interaction,
-  {
-    name: string;
-    description: string;
-    instructions: string;
-    conversations: string[];
-  }
+  NewInteractionParams
 >(
   'interactions/saveNewInteraction',
-  async ({ description, instructions, name, conversations }) => {
-    const response = await IpcService.send<{ interaction: any }>(
+  async ({
+    name,
+    description,
+    // modelInstructions,
+    // participantInstructions,
+    // experiment,
+    // template,
+    // participant,
+    exchanges,
+  }) => {
+    const response = await IpcService.send<{ interaction: Interaction }>(
       POST_ONE_INTERACTION_CHANNEL,
       {
         params: {
           name,
           description,
-          instructions,
-          conversations,
+          exchanges,
         },
       },
     );
+    return response;
+  },
+);
+
+export const startInteraction = createAsyncThunk<Interaction, string>(
+  'interactions/startInteraction',
+  async (id) => {
+    const response = await IpcService.send<{ interaction: Interaction }>(
+      START_INTERACTION_CHANNEL,
+      {
+        params: { id },
+      },
+    );
+    log.debug(response);
     return response;
   },
 );
@@ -79,7 +102,7 @@ export const deleteInteraction = createAsyncThunk<
   string | number,
   string | number
 >('interactions/deleteInteraction', async (id) => {
-  const response = await IpcService.send<{ interaction: any }>(
+  const response = await IpcService.send<{ interaction: Interaction }>(
     DELETE_ONE_INTERACTION_CHANNEL,
     {
       params: { id },
@@ -107,6 +130,9 @@ const interactionsSlice = createSlice({
       .addCase(fetchInteraction.pending, (state) => {
         state.status = 'loading';
       })
+      .addCase(startInteraction.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(fetchInteraction.fulfilled, (state, action) => {
         interactionsAdapter.setOne(state, action.payload);
         state.status = 'idle';
@@ -114,6 +140,10 @@ const interactionsSlice = createSlice({
       .addCase(saveNewInteraction.fulfilled, (state, action) => {
         const interaction = action.payload;
         interactionsAdapter.addOne(state, interaction);
+      })
+      .addCase(startInteraction.fulfilled, (state, action) => {
+        interactionsAdapter.setOne(state, action.payload);
+        state.status = 'idle';
       })
       .addCase(deleteInteraction.fulfilled, interactionsAdapter.removeOne);
   },

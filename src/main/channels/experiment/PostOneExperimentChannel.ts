@@ -89,7 +89,10 @@ export class PostOneExperimentChannel extends PostOneChannel {
             interaction.name = savedInteractionTemplate.name;
             interaction.description = savedInteractionTemplate.description;
             interaction.participant = savedParticipant;
-            interaction.instructions = savedInteractionTemplate.instructions;
+            interaction.modelInstructions =
+              savedInteractionTemplate.modelInstructions;
+            interaction.participantInstructions =
+              savedInteractionTemplate.participantInstructions;
             interaction.template = savedInteractionTemplate;
             interaction.experiment = savedExperiment;
 
