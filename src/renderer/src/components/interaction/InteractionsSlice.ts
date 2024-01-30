@@ -15,10 +15,6 @@ import Interaction from '@shared/interfaces/Interaction';
 import { NewInteractionParams } from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
 
-import Agent from '../../../../shared/interfaces/Agent';
-import Exchange from '../../../../shared/interfaces/Exchange';
-import Experiment from '../../../../shared/interfaces/Experiment';
-import InteractionTemplate from '../../../../shared/interfaces/InteractionTemplate';
 import { IpcService } from '../../services/IpcService';
 
 const interactionsAdapter = createEntityAdapter<Interaction>();
@@ -28,11 +24,11 @@ const initialState = interactionsAdapter.getInitialState({
 });
 
 // thunk functions
-export const fetchInteraction = createAsyncThunk(
+export const fetchInteraction = createAsyncThunk<Interaction>(
   'interactions/fetchInteraction',
   // todo: give type to `query`
   async (query) => {
-    const response = await IpcService.send<{ interaction: any }>(
+    const response = await IpcService.send<{ interaction: Interaction }>(
       GET_ONE_INTERACTION_CHANNEL,
       {
         params: { query },

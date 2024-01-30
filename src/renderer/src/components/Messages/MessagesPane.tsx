@@ -3,19 +3,20 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
-import Typography from '@mui/joy/Typography';
 
-import { ChatProps, MessageProps } from '../../types';
+import { AppDispatch } from '../../store';
+import { MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
-import { fetchExchange, selectExchangeById } from '../exchange/ExchangesSlice';
-import { fetchInteraction } from '../interaction/InteractionsSlice';
+import {
+  fetchExchange,
+  selectExchangeById,
+  startExchange,
+} from '../exchange/ExchangesSlice';
 import MessageLoader from '../layout/MessageLoader';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-import MessagesPaneHeader from './MessagesPaneHeader';
 import { fetchMessages, saveNewMessage, selectMessages } from './MessagesSlice';
 
 type MessagesPaneProps = {
@@ -29,20 +30,25 @@ export default function MessagesPane({
   interactionId,
   participantId,
 }: MessagesPaneProps): React.ReactElement {
-  useEffect(() => {
-    dispatch(fetchExchange({ id: exchangeId }));
-    dispatch(fetchMessages({ exchangeId: exchangeId }));
-  }, [exchangeId]);
-
   const status = useSelector((state) => state.messages.status);
 
   const [textAreaValue, setTextAreaValue] = React.useState('');
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const messages = useSelector(selectMessages);
   const exchange = useSelector((state) =>
     selectExchangeById(state, exchangeId),
   );
+
+  useEffect(() => {
+    dispatch(fetchExchange({ id: exchangeId }));
+    dispatch(fetchMessages({ exchangeId: exchangeId }));
+  }, [exchangeId]);
+  useEffect((): void => {
+    if (exchange && !exchange.started) {
+      dispatch(startExchange(exchangeId));
+    }
+  }, [exchange]);
 
   if (!exchange) {
     return <>Exchange Not Found</>;

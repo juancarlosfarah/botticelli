@@ -2,6 +2,7 @@ export const POST_ONE_EXCHANGE_CHANNEL = 'exchange:post:one';
 export const GET_ONE_EXCHANGE_CHANNEL = 'exchange:get:one';
 export const GET_MANY_EXCHANGES_CHANNEL = 'exchanges:get:many';
 export const DELETE_ONE_EXCHANGE_CHANNEL = 'exchange:delete:one';
+export const START_EXCHANGE_CHANNEL = 'exchange:start';
 
 export const POST_MESSAGE_CHANNEL = 'message:post';
 export const GET_MESSAGE_CHANNEL = 'message:get';

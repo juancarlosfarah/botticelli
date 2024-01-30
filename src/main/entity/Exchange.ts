@@ -38,6 +38,9 @@ export class Exchange {
   @Column({ default: false })
   completed: boolean = false;
 
+  @Column({ default: false })
+  started: boolean = false;
+
   // note: array initialization is not allowed in relations
   @ManyToOne(() => Interaction, (interaction) => interaction.exchanges, {
     onDelete: 'CASCADE',
@@ -60,6 +63,12 @@ export class Exchange {
   @ManyToMany(() => Trigger)
   @JoinTable()
   triggers: Trigger[];
+
+  @Column({ default: null, type: 'datetime' })
+  startedAt: Date;
+
+  @Column({ default: null, type: 'datetime' })
+  completedAt: Date;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

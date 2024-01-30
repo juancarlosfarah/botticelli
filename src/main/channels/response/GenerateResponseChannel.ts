@@ -46,6 +46,9 @@ export class GenerateResponseChannel implements IpcChannel {
     const exchange = instances?.length ? instances[0] : null;
 
     // todo: handle null exchange
+    if (!exchange) {
+      return;
+    }
 
     const instructions = exchange?.instructions || '';
 
@@ -111,6 +114,7 @@ export class GenerateResponseChannel implements IpcChannel {
       log.debug(`manually completing exchange`, exchangeId);
 
       exchange.completed = true;
+      exchange.completedAt = new Date();
       await exchangeRepository.save(exchange);
 
       const interaction = await interactionRepository.findOneBy({
@@ -121,6 +125,7 @@ export class GenerateResponseChannel implements IpcChannel {
         interaction.currentExchange = exchange.next;
         if (!exchange.next) {
           interaction.completed = true;
+          interaction.completedAt = new Date();
         }
         await interactionRepository.save(interaction);
       }

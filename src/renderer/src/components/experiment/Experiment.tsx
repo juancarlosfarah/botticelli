@@ -9,6 +9,7 @@ import Link from '@mui/joy/Link';
 import Sheet from '@mui/joy/Sheet';
 import Table from '@mui/joy/Table';
 import Typography from '@mui/joy/Typography';
+import { ColorPaletteProp } from '@mui/joy/styles';
 
 import log from 'electron-log/renderer';
 import _ from 'lodash';
@@ -130,9 +131,13 @@ export default function Experiment(): ReactElement {
                     <td key={interaction.id}>
                       {_.orderBy(interaction.exchanges, 'name', 'asc').map(
                         (exchange) => {
-                          const color = exchange.completed
-                            ? 'success'
-                            : 'primary';
+                          let color: ColorPaletteProp = 'primary';
+                          if (exchange.started) {
+                            color = 'warning';
+                          }
+                          if (exchange.completed) {
+                            color = 'success';
+                          }
                           return (
                             <Chip
                               variant="soft"

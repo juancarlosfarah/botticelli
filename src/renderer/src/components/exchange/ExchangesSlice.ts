@@ -9,23 +9,30 @@ import {
   GET_MANY_EXCHANGES_CHANNEL,
   GET_ONE_EXCHANGE_CHANNEL,
   POST_ONE_EXCHANGE_CHANNEL,
+  START_EXCHANGE_CHANNEL,
 } from '@shared/channels';
 import Agent from '@shared/interfaces/Agent';
 import Exchange from '@shared/interfaces/Exchange';
+import {
+  ExchangeQuery,
+  ExchangeResponse,
+  ExchangesResponse,
+} from '@shared/interfaces/Exchange';
+import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
 
-const exchangesAdapter = createEntityAdapter();
+const exchangesAdapter = createEntityAdapter<Exchange>();
 
 const initialState = exchangesAdapter.getInitialState({
   status: 'idle',
 });
 
 // thunk functions
-export const fetchExchange = createAsyncThunk(
+export const fetchExchange = createAsyncThunk<ExchangeResponse, ExchangeQuery>(
   'exchanges/fetchExchange',
   async (query) => {
-    const response = await IpcService.send<{ exchange: any }>(
+    const response = await IpcService.send<{ exchange: Exchange }>(
       GET_ONE_EXCHANGE_CHANNEL,
       {
         params: { query },
@@ -35,17 +42,17 @@ export const fetchExchange = createAsyncThunk(
   },
 );
 
-export const fetchExchanges = createAsyncThunk(
+export const fetchExchanges = createAsyncThunk<ExchangesResponse>(
   'exchanges/fetchExchanges',
   async () => {
-    return await IpcService.send<{ exchanges: any }>(
+    return await IpcService.send<{ exchanges: Exchange[] }>(
       GET_MANY_EXCHANGES_CHANNEL,
     );
   },
 );
 
 export const saveNewExchange = createAsyncThunk<
-  Exchange,
+  ExchangeResponse,
   {
     name: string;
     description: string;
@@ -66,7 +73,7 @@ export const saveNewExchange = createAsyncThunk<
     triggers,
     cue,
   }) => {
-    const response = await IpcService.send<{ exchange: any }>(
+    const response = await IpcService.send<{ exchange: Exchange }>(
       POST_ONE_EXCHANGE_CHANNEL,
       {
         params: {
@@ -84,15 +91,29 @@ export const saveNewExchange = createAsyncThunk<
   },
 );
 
-export const deleteOneExchange = createAsyncThunk<
-  string | number,
-  string | number
->('exchanges/deleteExchange', async (id) => {
-  await IpcService.send<{ exchange: any }>(DELETE_ONE_EXCHANGE_CHANNEL, {
-    params: { id },
-  });
-  return id;
-});
+export const startExchange = createAsyncThunk<ExchangeResponse, string>(
+  'exchanges/startExchange',
+  async (id) => {
+    const response = await IpcService.send<{ exchange: Exchange }>(
+      START_EXCHANGE_CHANNEL,
+      {
+        params: { id },
+      },
+    );
+    log.debug(response);
+    return response;
+  },
+);
+
+export const deleteOneExchange = createAsyncThunk<string, string>(
+  'exchanges/deleteExchange',
+  async (id) => {
+    await IpcService.send<{ exchange: Exchange }>(DELETE_ONE_EXCHANGE_CHANNEL, {
+      params: { id },
+    });
+    return id;
+  },
+);
 
 const exchangesSlice = createSlice({
   name: 'exchanges',
@@ -112,7 +133,14 @@ const exchangesSlice = createSlice({
       .addCase(fetchExchange.pending, (state) => {
         state.status = 'loading';
       })
+      .addCase(startExchange.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(fetchExchange.fulfilled, (state, action) => {
+        exchangesAdapter.setOne(state, action.payload);
+        state.status = 'idle';
+      })
+      .addCase(startExchange.fulfilled, (state, action) => {
         exchangesAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })

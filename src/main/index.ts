@@ -35,6 +35,7 @@ import { GetOneExchangeChannel } from './channels/exchange/GetOneExchangeChannel
 import { GetOneExchangeTemplateChannel } from './channels/exchange/GetOneExchangeTemplateChannel';
 import { PostOneExchangeChannel } from './channels/exchange/PostOneExchangeChannel';
 import { PostOneExchangeTemplateChannel } from './channels/exchange/PostOneExchangeTemplateChannel';
+import { StartExchangeChannel } from './channels/exchange/StartExchangeChannel';
 import { DeleteOneExperimentChannel } from './channels/experiment/DeleteOneExperimentChannel';
 import { GetManyExperimentsChannel } from './channels/experiment/GetManyExperimentsChannel';
 import { GetOneExperimentChannel } from './channels/experiment/GetOneExperimentChannel';
@@ -173,6 +174,7 @@ new Main().init([
   new GetManyExchangesChannel(),
   new DeleteOneExchangeChannel(),
   new GetOneExchangeChannel(),
+  new StartExchangeChannel(),
   // messages
   new PostMessageChannel(),
   new GetMessagesChannel(),
