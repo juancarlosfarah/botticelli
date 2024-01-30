@@ -1,7 +1,7 @@
 import Agent from './Agent';
 
 type Trigger = {
-  id: number;
+  id: string;
   description: string;
   criteria: string;
   name: string;

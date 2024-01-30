@@ -14,8 +14,8 @@ import { Exchange } from './Exchange';
 
 @Entity()
 export class Message {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => Exchange, (exchange) => exchange.messages, {
     onDelete: 'CASCADE',

@@ -15,8 +15,8 @@ import { Message } from './Message';
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class Agent {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ default: '' })
   name: string = '';

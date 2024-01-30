@@ -1,8 +1,8 @@
 export interface Message {
+  id: string;
   content: string;
-  id: number;
-  user: {
-    id: number;
+  sender: {
+    id: string;
     type: string;
   };
   updatedAt: string;

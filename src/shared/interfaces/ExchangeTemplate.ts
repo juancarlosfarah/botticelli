@@ -2,7 +2,7 @@ import Agent from './Agent';
 import Trigger from './Trigger';
 
 type ExchangeTemplate = {
-  id: number;
+  id: string;
   name: string;
   description: string;
   instructions: string;

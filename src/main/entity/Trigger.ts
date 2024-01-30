@@ -13,8 +13,8 @@ import { Agent } from './Agent';
 
 @Entity()
 export class Trigger {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ default: '' })
   name: string = '';
