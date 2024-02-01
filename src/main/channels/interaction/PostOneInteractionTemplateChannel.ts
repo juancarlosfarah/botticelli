@@ -4,11 +4,11 @@ import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
-import { In } from 'typeorm';
 
 import { AppDataSource } from '../../data-source';
 import { ExchangeTemplate } from '../../entity/ExchangeTemplate';
 import { InteractionTemplate } from '../../entity/InteractionTemplate';
+import { InteractionTemplateExchangeTemplate } from '../../entity/InteractionTemplateExchangeTemplate';
 import { PostOneChannel } from '../common/PostOneChannel';
 
 export class PostOneInteractionTemplateChannel extends PostOneChannel {
@@ -53,21 +53,38 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
       AppDataSource.getRepository(InteractionTemplate);
     const exchangeTemplateRepository =
       AppDataSource.getRepository(ExchangeTemplate);
+    const interactionTemplateExchangeTemplateRepository =
+      AppDataSource.getRepository(InteractionTemplateExchangeTemplate);
 
     log.debug(`linking exchange templates:`, exchangeTemplates);
-    interactionTemplate.exchangeTemplates =
-      await exchangeTemplateRepository.findBy({
-        id: In(exchangeTemplates),
+
+    const savedInteractionTemplate =
+      await interactionTemplateRepository.save(interactionTemplate);
+
+    const interactionTemplateExchangeTemplates: InteractionTemplateExchangeTemplate[] =
+      [];
+
+    let index = 0;
+    for (const exchangeTemplateId of exchangeTemplates) {
+      const interactionTemplateExchangeTemplate =
+        new InteractionTemplateExchangeTemplate();
+      interactionTemplateExchangeTemplate.order = index;
+      const exchangeTemplate = await exchangeTemplateRepository.findOneBy({
+        id: exchangeTemplateId,
       });
-
-    await interactionTemplateRepository.save(interactionTemplate);
-
-    // const instances = await interactionTemplateRepository.find({
-    //   where: { id },
-    //   relations: { conversations: true },
-    //   take: 1,
-    // });
-    // const instance = instances?.length ? instances[0] : null;
+      if (exchangeTemplate) {
+        interactionTemplateExchangeTemplate.exchangeTemplate = exchangeTemplate;
+      }
+      interactionTemplateExchangeTemplate.interactionTemplate =
+        savedInteractionTemplate;
+      interactionTemplateExchangeTemplates.push(
+        interactionTemplateExchangeTemplate,
+      );
+      index++;
+    }
+    await interactionTemplateExchangeTemplateRepository.save(
+      interactionTemplateExchangeTemplates,
+    );
 
     event.sender.send(
       request.responseChannel,

@@ -127,9 +127,12 @@ export default function Experiment(): ReactElement {
                   'name',
                   'asc',
                 ).map((interaction) => {
+                  const viewParticipantInteractionText = !interaction.started
+                    ? 'Start'
+                    : 'Resume';
                   return (
                     <td key={interaction.id}>
-                      {_.orderBy(interaction.exchanges, 'name', 'asc').map(
+                      {_.orderBy(interaction.exchanges, 'order', 'asc').map(
                         (exchange) => {
                           let color: ColorPaletteProp = 'primary';
                           if (exchange.started) {
@@ -139,34 +142,46 @@ export default function Experiment(): ReactElement {
                             color = 'success';
                           }
                           return (
-                            <Chip
-                              variant="soft"
-                              color={color}
-                              key={exchange.id}
-                            >
-                              <Typography level="body-xs">
-                                {exchange.name}
-                              </Typography>
-                            </Chip>
+                            <tr key={exchange.id}>
+                              <td style={{ border: 'none' }}>
+                                <Chip
+                                  variant="soft"
+                                  color={color}
+                                  key={exchange.id}
+                                >
+                                  <Typography level="body-xs">
+                                    {exchange.name}
+                                  </Typography>
+                                </Chip>
+                              </td>
+                            </tr>
                           );
                         },
                       )}
-                      <Link
-                        level="body-xs"
-                        component={RouterLink}
-                        sx={{ ml: 1 }}
-                        to={`/experiments/${experimentId}/participants/${row.id}/interactions/${interaction.id}`}
-                      >
-                        Start
-                      </Link>
-                      <Link
-                        level="body-xs"
-                        component={RouterLink}
-                        sx={{ ml: 1 }}
-                        to={`/interactions/${interaction.id}`}
-                      >
-                        View
-                      </Link>
+                      <tr>
+                        {!interaction.completed && (
+                          <td>
+                            <Link
+                              level="body-xs"
+                              component={RouterLink}
+                              sx={{ ml: 1 }}
+                              to={`/experiments/${experimentId}/participants/${row.id}/interactions/${interaction.id}`}
+                            >
+                              {viewParticipantInteractionText}
+                            </Link>
+                          </td>
+                        )}
+                        <td>
+                          <Link
+                            level="body-xs"
+                            component={RouterLink}
+                            sx={{ ml: 1 }}
+                            to={`/interactions/${interaction.id}`}
+                          >
+                            View
+                          </Link>
+                        </td>
+                      </tr>
                     </td>
                   );
                 })}

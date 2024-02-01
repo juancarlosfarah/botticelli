@@ -1,4 +1,4 @@
-import ExchangeTemplate from './ExchangeTemplate';
+import InteractionTemplateExchangeTemplate from './InteractionTemplateExchangeTemplate';
 
 type InteractionTemplate = {
   id: string;
@@ -6,7 +6,7 @@ type InteractionTemplate = {
   description: string;
   modelInstructions: string;
   participantInstructions: string;
-  exchangeTemplates: ExchangeTemplate[];
+  exchangeTemplates: InteractionTemplateExchangeTemplate[];
 };
 
 export type InteractionTemplateParams = {
@@ -14,7 +14,8 @@ export type InteractionTemplateParams = {
   description: string;
   modelInstructions: string;
   participantInstructions: string;
-  exchangeTemplates: ExchangeTemplate[];
+  // ids of exchange templates
+  exchangeTemplates: string[];
 };
 
 export default InteractionTemplate;

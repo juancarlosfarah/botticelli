@@ -53,7 +53,9 @@ export class PostOneExperimentChannel extends PostOneChannel {
       },
       relations: {
         exchangeTemplates: {
-          triggers: true,
+          exchangeTemplate: {
+            triggers: true,
+          },
         },
       },
     });
@@ -76,12 +78,14 @@ export class PostOneExperimentChannel extends PostOneChannel {
     // each participant gets their own interaction for each interaction template
     if (savedInteractionTemplates.length) {
       for (const savedInteractionTemplate of savedInteractionTemplates) {
-        // todo: add order
-        const exchangeTemplates = _.orderBy(
+        // we want to save the templates in reverse (desc) order to create a linked list
+        const interactionTemplateExchangeTemplates = _.orderBy(
           savedInteractionTemplate.exchangeTemplates,
-          'createdAt',
+          'order',
           'desc',
         );
+
+        // interactions are linked to a specific participant
         if (savedParticipants.length) {
           for (const savedParticipant of savedParticipants) {
             // basic interaction data
@@ -100,29 +104,41 @@ export class PostOneExperimentChannel extends PostOneChannel {
               await interactionRepository.save(interaction);
             log.debug(`saved interaction ${savedInteraction.id}`);
 
-            log.debug(`creating exchanges from templates:`, exchangeTemplates);
+            log.debug(
+              `creating exchanges from templates:`,
+              interactionTemplateExchangeTemplates,
+            );
             const savedExchanges: Exchange[] = [];
 
-            const numExchanges = exchangeTemplates.length;
+            // number of exchanges is defined by the length of the join table
+            const numExchanges = interactionTemplateExchangeTemplates.length;
             if (numExchanges) {
-              let exchangeTemplateNumber = numExchanges - 1;
-              let exchangeNumber = 0;
+              let savedExchangeNumber = 0;
               // create an exchange from each of the interaction's exchange templates
-              for (const exchangeTemplate of exchangeTemplates) {
+              for (const interactionTemplateExchangeTemplate of interactionTemplateExchangeTemplates) {
+                // this number will descend throughout the loop
+                const exchangeTemplateNumber =
+                  interactionTemplateExchangeTemplate.order;
+                const exchangeTemplate =
+                  interactionTemplateExchangeTemplate.exchangeTemplate;
                 const exchange = new Exchange();
                 exchange.template = exchangeTemplate;
                 exchange.name = exchangeTemplate.name;
                 exchange.instructions = exchangeTemplate.instructions;
                 exchange.cue = exchangeTemplate.cue;
+                exchange.order = exchangeTemplateNumber;
                 exchange.triggers = exchangeTemplate.triggers;
                 exchange.assistant = exchangeTemplate.assistant;
                 exchange.description = exchangeTemplate.description;
                 exchange.interaction = savedInteraction;
+
+                // if not the last exchange, link next exchange, which is
+                // the previously saved exchange, as exchanges are saved in
+                // reverse order
                 if (exchangeTemplateNumber < numExchanges - 1) {
-                  exchange.next = savedExchanges[exchangeNumber - 1].id;
+                  exchange.next = savedExchanges[savedExchangeNumber - 1].id;
                 }
-                exchangeNumber++;
-                exchangeTemplateNumber--;
+                savedExchangeNumber++;
                 const savedExchange = await exchangeRepository.save(exchange);
                 log.debug(`saved exchange ${savedExchange.id}`);
                 savedExchanges.push(savedExchange);

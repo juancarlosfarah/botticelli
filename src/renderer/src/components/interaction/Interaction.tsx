@@ -10,6 +10,7 @@ import Typography from '@mui/joy/Typography';
 
 import InteractionType from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
+import _ from 'lodash';
 
 import { AppDispatch } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
@@ -36,6 +37,9 @@ export default function Interaction(): ReactElement {
   if (!interaction) {
     return <div>Interaction Not Found</div>;
   }
+
+  // get exchanges from an interaction
+  const exchanges = interaction?.exchanges || [];
 
   return (
     <>
@@ -94,7 +98,7 @@ export default function Interaction(): ReactElement {
         Exchanges
       </Typography>
       <List component="ol" marker="decimal">
-        {interaction?.exchanges?.map((exchange) => {
+        {_.orderBy(exchanges, 'order', 'asc').map((exchange) => {
           return (
             <ListItem key={exchange.id}>
               <Link

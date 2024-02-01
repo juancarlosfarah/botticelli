@@ -10,6 +10,7 @@ type Exchange = {
   description: string;
   instructions: string;
   cue: string;
+  order: number;
   messages: Message[];
   assistant: Agent;
   interaction: Interaction;

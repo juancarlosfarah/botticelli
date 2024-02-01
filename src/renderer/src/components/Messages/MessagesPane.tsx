@@ -23,12 +23,14 @@ type MessagesPaneProps = {
   exchangeId: string;
   participantId: number;
   interactionId: string;
+  readOnly?: boolean;
 };
 
 export default function MessagesPane({
   exchangeId,
   interactionId,
   participantId,
+  readOnly = false,
 }: MessagesPaneProps): React.ReactElement {
   const status = useSelector((state) => state.messages.status);
 
@@ -45,7 +47,8 @@ export default function MessagesPane({
     dispatch(fetchMessages({ exchangeId: exchangeId }));
   }, [exchangeId]);
   useEffect((): void => {
-    if (exchange && !exchange.started) {
+    // do not start if this is readonly
+    if (!readOnly && exchange && !exchange.started) {
       dispatch(startExchange(exchangeId));
     }
   }, [exchange]);
@@ -112,7 +115,7 @@ export default function MessagesPane({
             )}
           </Stack>
         </Box>
-        {!exchange.completed && (
+        {!(readOnly || exchange.completed) && (
           <MessageInput
             textAreaValue={textAreaValue}
             setTextAreaValue={setTextAreaValue}

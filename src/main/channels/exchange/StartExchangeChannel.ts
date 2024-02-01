@@ -33,13 +33,23 @@ export class StartExchangeChannel extends StartChannel<Exchange> {
 
     const { id } = request.params;
 
-    const exchangeRepository = AppDataSource.getRepository(Exchange);
-    const exchange = await exchangeRepository.findOneBy({ id });
+    const query = { id };
+
+    const repository = AppDataSource.getRepository(this.entity);
+    const instances = await repository.find({
+      where: {
+        ...query,
+      },
+      relations: { triggers: true, interaction: true },
+      take: 1,
+    });
+
+    const exchange = instances?.length ? instances[0] : null;
 
     if (exchange) {
       exchange.started = true;
       exchange.startedAt = new Date();
-      await exchangeRepository.save(exchange);
+      await repository.save(exchange);
     }
 
     // todo: error handling

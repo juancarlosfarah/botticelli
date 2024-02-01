@@ -103,6 +103,7 @@ export default function ParticipantInteraction(): ReactElement {
           interactionId={interactionId}
           exchangeId={interaction.currentExchange}
           participantId={participantId}
+          readOnly={false}
         />
       )}
     </>

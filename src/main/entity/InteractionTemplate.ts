@@ -3,16 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Agent } from './Agent';
-import { ExchangeTemplate } from './ExchangeTemplate';
+import { InteractionTemplateExchangeTemplate } from './InteractionTemplateExchangeTemplate';
 
 @Entity()
 export class InteractionTemplate {
@@ -38,9 +37,13 @@ export class InteractionTemplate {
   // exchangeOrder: string[];
 
   // note: array initialization is not allowed in relations
-  @ManyToMany(() => ExchangeTemplate)
-  @JoinTable()
-  exchangeTemplates: ExchangeTemplate[];
+  @OneToMany(
+    () => InteractionTemplateExchangeTemplate,
+    (interactionTemplateExchangeTemplate) =>
+      interactionTemplateExchangeTemplate.interactionTemplate,
+    { eager: true },
+  )
+  exchangeTemplates: Relation<InteractionTemplateExchangeTemplate[]>;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

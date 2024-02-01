@@ -35,6 +35,9 @@ export class Exchange {
   @Column({ default: '' })
   cue: string = '';
 
+  @Column({ default: 0 })
+  order: number;
+
   @Column({ default: false })
   completed: boolean = false;
 

@@ -88,6 +88,10 @@ export default function Exchange(): ReactElement {
         )}
       </Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
+        Order
+      </Typography>
+      <Typography>{exchange?.order ?? '—'}</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
         Trigger
       </Typography>
       <Typography>{trigger?.name || '—'}</Typography>
@@ -95,6 +99,7 @@ export default function Exchange(): ReactElement {
         exchangeId={exchange.id}
         interactionId={exchange?.interaction?.id}
         participantId={exchange?.interaction?.participant.id}
+        readOnly
       />
     </>
   );

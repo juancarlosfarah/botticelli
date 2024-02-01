@@ -34,7 +34,12 @@ export class GetOneInteractionTemplateChannel extends GetOneChannel {
       where: {
         ...query,
       },
-      relations: { exchangeTemplates: true },
+      relations: {
+        exchangeTemplates: {
+          exchangeTemplate: true,
+          interactionTemplate: true,
+        },
+      },
       take: 1,
     });
 

@@ -8,7 +8,9 @@ import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
 
 import InteractionTemplateType from '@shared/interfaces/InteractionTemplate';
+import InteractionTemplateExchangeTemplate from '@shared/interfaces/InteractionTemplateExchangeTemplate';
 import log from 'electron-log/renderer';
+import _ from 'lodash';
 
 import { AppDispatch } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
@@ -38,6 +40,8 @@ export default function InteractionTemplate(): ReactElement {
   if (!interactionTemplate) {
     return <div>Interaction Template Not Found</div>;
   }
+
+  const exchangeTemplates = interactionTemplate?.exchangeTemplates || [];
 
   return (
     <>
@@ -80,13 +84,15 @@ export default function InteractionTemplate(): ReactElement {
         Exchange Templates
       </Typography>
       <List component="ol" marker="decimal">
-        {interactionTemplate?.exchangeTemplates?.map((exchangeTemplate) => {
-          return (
-            <ListItem key={exchangeTemplate.id}>
-              {exchangeTemplate.name || '—'}
-            </ListItem>
-          );
-        }) || '—'}
+        {_.orderBy(exchangeTemplates, 'order').map(
+          (exchangeTemplate: InteractionTemplateExchangeTemplate) => {
+            return (
+              <ListItem key={exchangeTemplate?.exchangeTemplate?.id}>
+                {exchangeTemplate?.exchangeTemplate?.name || '—'}
+              </ListItem>
+            );
+          },
+        ) || '—'}
       </List>
     </>
   );
