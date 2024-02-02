@@ -10,73 +10,74 @@ import {
   GET_ONE_EXCHANGE_TEMPLATE_CHANNEL,
   POST_ONE_EXCHANGE_TEMPLATE_CHANNEL,
 } from '@shared/channels';
-import Agent from '@shared/interfaces/Agent';
 import ExchangeTemplate from '@shared/interfaces/ExchangeTemplate';
+import {
+  DeleteOneExchangeParams,
+  GetManyExchangeTemplateResponse,
+  GetOneExchangeTemplateParams,
+  GetOneExchangeTemplateResponse,
+  PostOneExchangeTemplateParams,
+  PostOneExchangeTemplateResponse,
+} from '@shared/interfaces/ExchangeTemplate';
 
 import { IpcService } from '../../services/IpcService';
+import { RootState } from '../../store';
 
-const exchangeTemplatesAdapter = createEntityAdapter();
+const exchangeTemplatesAdapter = createEntityAdapter<ExchangeTemplate>();
 
 const initialState = exchangeTemplatesAdapter.getInitialState({
   status: 'idle',
 });
 
 // thunk functions
-export const fetchExchangeTemplate = createAsyncThunk(
-  'exchangeTemplates/fetchExchangeTemplate',
-  async (query) => {
-    return await IpcService.send<{ exchangeTemplate: any }>(
-      GET_ONE_EXCHANGE_TEMPLATE_CHANNEL,
-      {
-        params: { query },
-      },
-    );
-  },
-);
+export const fetchExchangeTemplate = createAsyncThunk<
+  GetOneExchangeTemplateResponse,
+  GetOneExchangeTemplateParams
+>('exchangeTemplates/fetchExchangeTemplate', async (query) => {
+  return await IpcService.send<ExchangeTemplate, GetOneExchangeTemplateParams>(
+    GET_ONE_EXCHANGE_TEMPLATE_CHANNEL,
+    {
+      params: query,
+    },
+  );
+});
 
-export const fetchExchangeTemplates = createAsyncThunk(
-  'exchangeTemplates/fetchExchangeTemplates',
-  async () => {
-    return await IpcService.send<{ exchangeTemplates: any }>(
-      GET_MANY_EXCHANGE_TEMPLATES_CHANNEL,
-    );
-  },
-);
+export const fetchExchangeTemplates = createAsyncThunk<
+  GetManyExchangeTemplateResponse,
+  void
+>('exchangeTemplates/fetchExchangeTemplates', async () => {
+  return await IpcService.send<ExchangeTemplate[]>(
+    GET_MANY_EXCHANGE_TEMPLATES_CHANNEL,
+  );
+});
 
 export const saveNewExchangeTemplate = createAsyncThunk<
-  ExchangeTemplate,
-  {
-    name: string;
-    description: string;
-    instructions: string;
-    assistant: Agent;
-    triggers: number;
-    cue: string;
-  }
+  PostOneExchangeTemplateResponse,
+  PostOneExchangeTemplateParams
 >(
   'exchangeTemplates/saveNewExchangeTemplate',
   async ({ name, description, instructions, assistant, triggers, cue }) => {
-    return await IpcService.send<{ exchangeTemplate: any }>(
-      POST_ONE_EXCHANGE_TEMPLATE_CHANNEL,
-      {
-        params: {
-          name,
-          description,
-          instructions,
-          assistant,
-          triggers,
-          cue,
-        },
+    return (await IpcService.send<
+      PostOneExchangeTemplateResponse,
+      PostOneExchangeTemplateParams
+    >(POST_ONE_EXCHANGE_TEMPLATE_CHANNEL, {
+      params: {
+        name,
+        description,
+        instructions,
+        assistant,
+        triggers,
+        cue,
       },
-    );
+    })) as PostOneExchangeTemplateResponse;
   },
 );
 
 export const deleteOneExchangeTemplate = createAsyncThunk<
-  string | number,
-  string | number
+  string,
+  DeleteOneExchangeParams
 >('exchangeTemplates/deleteExchangeTemplate', async (id) => {
-  await IpcService.send<{ exchangeTemplate: any }>(
+  await IpcService.send<ExchangeTemplate, { id }>(
     DELETE_ONE_EXCHANGE_TEMPLATE_CHANNEL,
     {
       params: { id },
@@ -100,7 +101,7 @@ const exchangeTemplatesSlice = createSlice({
         exchangeTemplatesAdapter.setAll(state, action.payload);
         state.status = 'idle';
       })
-      .addCase(fetchExchangeTemplate.pending, (state, action) => {
+      .addCase(fetchExchangeTemplate.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchExchangeTemplate.fulfilled, (state, action) => {
@@ -124,7 +125,9 @@ export default exchangeTemplatesSlice.reducer;
 export const {
   selectAll: selectAllExchangeTemplates,
   selectById: selectExchangeTemplateById,
-} = exchangeTemplatesAdapter.getSelectors((state) => state.exchangeTemplates);
+} = exchangeTemplatesAdapter.getSelectors(
+  (state: RootState) => state.exchangeTemplates,
+);
 
 export const selectExchangeTemplateIds = createSelector(
   // First, pass one or more "input selector" functions:

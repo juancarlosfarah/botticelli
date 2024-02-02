@@ -21,10 +21,20 @@ import {
 } from './ExchangeTemplatesSlice';
 
 export default function ExchangeTemplateTable(): ReactElement {
-  const [order, setOrder] = React.useState<Order>('desc');
+  const [order, setOrder] = React.useState<Order>('asc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
 
   const exchangeTemplates = useSelector(selectAllExchangeTemplates);
+
+  const handleSetOrder = (): void => {
+    if (order === 'desc') {
+      setOrder('asc');
+    } else if (order === 'asc') {
+      setOrder('desc');
+    } else {
+      setOrder('asc');
+    }
+  };
 
   return (
     <React.Fragment>
@@ -67,7 +77,7 @@ export default function ExchangeTemplateTable(): ReactElement {
                     selected.length !== exchangeTemplates.length
                   }
                   checked={selected.length === exchangeTemplates.length}
-                  onChange={(event) => {
+                  onChange={(event): void => {
                     setSelected(
                       event.target.checked
                         ? exchangeTemplates.map((row) => row.id)
@@ -83,13 +93,15 @@ export default function ExchangeTemplateTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>
+                <Link onClick={handleSetOrder}>Name</Link>
+              </th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
             </tr>
           </thead>
           <tbody>
-            {stableSort(exchangeTemplates, getComparator(order, 'id')).map(
+            {stableSort(exchangeTemplates, getComparator(order, 'name')).map(
               (row) => (
                 <tr key={row.id}>
                   <td style={{ textAlign: 'center', width: 120 }}>
@@ -97,7 +109,7 @@ export default function ExchangeTemplateTable(): ReactElement {
                       size="sm"
                       checked={selected.includes(row.id)}
                       color={selected.includes(row.id) ? 'primary' : undefined}
-                      onChange={(event) => {
+                      onChange={(event): void => {
                         setSelected((ids) =>
                           event.target.checked
                             ? ids.concat(row.id)

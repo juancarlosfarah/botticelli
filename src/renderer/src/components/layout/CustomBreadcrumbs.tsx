@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
@@ -5,13 +6,8 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import Box from '@mui/joy/Box';
 import Breadcrumbs from '@mui/joy/Breadcrumbs';
 import Link from '@mui/joy/Link';
-import Typography from '@mui/joy/Typography';
 
-type Props = {
-  entityName: string;
-};
-
-const CustomBreadcrumbs = ({ entityName }: Props) => {
+const CustomBreadcrumbs = (): ReactElement => {
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -40,9 +36,6 @@ const CustomBreadcrumbs = ({ entityName }: Props) => {
           {/*>*/}
           {/*  Dashboard*/}
           {/*</Link>*/}
-          {/*<Typography color="primary" fontWeight={500} fontSize={12}>*/}
-          {/*  {entityName}*/}
-          {/*</Typography>*/}
         </Breadcrumbs>
       </Box>
     </>

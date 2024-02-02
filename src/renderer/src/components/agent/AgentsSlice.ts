@@ -20,7 +20,7 @@ import {
 } from '../../../../shared/channels';
 import { IpcService } from '../../services/IpcService';
 
-const agentsAdapter = createEntityAdapter();
+const agentsAdapter = createEntityAdapter<Agent>();
 
 const initialState = agentsAdapter.getInitialState({
   status: 'idle',

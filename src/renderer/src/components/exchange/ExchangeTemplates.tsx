@@ -4,12 +4,13 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import Button from '@mui/joy/Button';
 
+import { AppDispatch } from '../../store';
 import ExchangeTemplateList from './ExchangeTemplateList';
 import ExchangeTemplateTable from './ExchangeTemplateTable.tsx';
 import { fetchExchangeTemplates } from './ExchangeTemplatesSlice';
 
 export default function ExchangeTemplates(): JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(fetchExchangeTemplates());

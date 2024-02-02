@@ -16,7 +16,7 @@ import {
 import Agent from '../../../../shared/interfaces/Agent';
 import { IpcService } from '../../services/IpcService';
 
-const triggersAdapter = createEntityAdapter();
+const triggersAdapter = createEntityAdapter<Trigger>();
 
 const initialState = triggersAdapter.getInitialState({
   status: 'idle',

@@ -7,6 +7,7 @@ import Typography from '@mui/joy/Typography';
 
 import log from 'electron-log/renderer';
 
+import { AppDispatch, RootState } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import {
   fetchExchangeTemplate,
@@ -15,7 +16,11 @@ import {
 
 export default function ExchangeTemplate(): ReactElement {
   const { exchangeTemplateId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
+  if (!exchangeTemplateId) {
+    return <div>Invalid Exchange Template ID</div>;
+  }
 
   useEffect(() => {
     const query = { id: exchangeTemplateId };
@@ -23,12 +28,12 @@ export default function ExchangeTemplate(): ReactElement {
     dispatch(fetchExchangeTemplate(query));
   }, [exchangeTemplateId]);
 
-  const exchangeTemplate = useSelector((state) =>
+  const exchangeTemplate = useSelector((state: RootState) =>
     selectExchangeTemplateById(state, exchangeTemplateId),
   );
 
   if (!exchangeTemplate) {
-    return <div>ExchangeTemplate Not Found</div>;
+    return <div>Exchange Template Not Found</div>;
   }
 
   // show first trigger only if triggers exist
@@ -50,7 +55,7 @@ export default function ExchangeTemplate(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">ExchangeTemplate</Typography>
+        <Typography level="h2">Exchange Template</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
         Name
@@ -64,6 +69,10 @@ export default function ExchangeTemplate(): ReactElement {
         Instructions
       </Typography>
       <Typography>{exchangeTemplate.instructions}</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Cue
+      </Typography>
+      <Typography>{exchangeTemplate.cue}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Assistant
       </Typography>

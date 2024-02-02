@@ -14,12 +14,13 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
+import { AppDispatch } from '../../store';
 import { fetchAgents, selectAssistants } from '../agent/AgentsSlice';
 import { fetchTriggers, selectTriggers } from '../trigger/TriggersSlice';
 import { saveNewExchangeTemplate } from './ExchangeTemplatesSlice';
 
 const NewExchangeTemplate = (): ReactElement => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const assistants = useSelector(selectAssistants);
   const availableTriggers = useSelector(selectTriggers);
@@ -29,7 +30,7 @@ const NewExchangeTemplate = (): ReactElement => {
   const [instructions, setInstructions] = useState('');
   const [cue, setCue] = useState<string>('');
   const [assistant, setAssistant] = useState<string | null>(null);
-  const [triggers, setTriggers] = useState<number | null>(null);
+  const [triggers, setTriggers] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -37,7 +38,7 @@ const NewExchangeTemplate = (): ReactElement => {
   }, []);
 
   const handleNewExchangeTemplate = async (): Promise<void> => {
-    const { payload } = await dispatch(
+    const resultAction = await dispatch(
       saveNewExchangeTemplate({
         name,
         description,
@@ -47,8 +48,10 @@ const NewExchangeTemplate = (): ReactElement => {
         cue,
       }),
     );
-    if (payload.id) {
-      navigate(`/exchanges/templates/${payload.id}`);
+
+    if (saveNewExchangeTemplate.fulfilled.match(resultAction)) {
+      const exchangeTemplate = resultAction.payload;
+      navigate(`/exchanges/templates/${exchangeTemplate.id}`);
     }
   };
 
