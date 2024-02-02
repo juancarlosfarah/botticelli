@@ -42,7 +42,7 @@ export default function Experiment(): ReactElement {
   let interactionTemplates = experiment.interactionTemplates || [];
   const interactions = experiment.interactions || [];
 
-  interactionTemplates = _.orderBy(interactionTemplates, 'name', 'asc');
+  interactionTemplates = _.orderBy(interactionTemplates, 'order', 'asc');
 
   return (
     <>
@@ -84,7 +84,7 @@ export default function Experiment(): ReactElement {
         }}
       >
         <Table
-          aria-labelledby="tableTitle"
+          aria-labelledby="experiment table"
           stickyHeader
           hoverRow
           sx={{
@@ -103,10 +103,10 @@ export default function Experiment(): ReactElement {
               {interactionTemplates.map((interactionTemplate) => {
                 return (
                   <th
-                    key={interactionTemplate.id}
+                    key={interactionTemplate.interactionTemplate.id}
                     style={{ width: 100, padding: '12px 6px' }}
                   >
-                    {interactionTemplate.name || '—'}
+                    {interactionTemplate.interactionTemplate.name || '—'}
                   </th>
                 );
               })}
@@ -124,7 +124,7 @@ export default function Experiment(): ReactElement {
                   interactions.filter(
                     (interaction) => interaction?.participant?.id === row?.id,
                   ),
-                  'name',
+                  'order',
                   'asc',
                 ).map((interaction) => {
                   const viewParticipantInteractionText = !interaction.started
@@ -158,30 +158,32 @@ export default function Experiment(): ReactElement {
                           );
                         },
                       )}
-                      <tr>
-                        {!interaction.completed && (
+                      <table>
+                        <tr>
+                          {!interaction.completed && (
+                            <td>
+                              <Link
+                                level="body-xs"
+                                component={RouterLink}
+                                sx={{ ml: 1 }}
+                                to={`/experiments/${experimentId}/participants/${row.id}/interactions/${interaction.id}`}
+                              >
+                                {viewParticipantInteractionText}
+                              </Link>
+                            </td>
+                          )}
                           <td>
                             <Link
                               level="body-xs"
                               component={RouterLink}
                               sx={{ ml: 1 }}
-                              to={`/experiments/${experimentId}/participants/${row.id}/interactions/${interaction.id}`}
+                              to={`/interactions/${interaction.id}`}
                             >
-                              {viewParticipantInteractionText}
+                              View
                             </Link>
                           </td>
-                        )}
-                        <td>
-                          <Link
-                            level="body-xs"
-                            component={RouterLink}
-                            sx={{ ml: 1 }}
-                            to={`/interactions/${interaction.id}`}
-                          >
-                            View
-                          </Link>
-                        </td>
-                      </tr>
+                        </tr>
+                      </table>
                     </td>
                   );
                 })}

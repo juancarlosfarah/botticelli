@@ -9,7 +9,7 @@ type InteractionTemplate = {
   exchangeTemplates: InteractionTemplateExchangeTemplate[];
 };
 
-export type InteractionTemplateParams = {
+export type PostOneInteractionTemplateParams = {
   name: string;
   description: string;
   modelInstructions: string;

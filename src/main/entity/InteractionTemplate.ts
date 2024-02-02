@@ -33,10 +33,6 @@ export class InteractionTemplate {
   @ManyToOne(() => Agent, { eager: true })
   participant: Relation<Agent>;
 
-  // @Column({ type: 'array' })
-  // exchangeOrder: string[];
-
-  // note: array initialization is not allowed in relations
   @OneToMany(
     () => InteractionTemplateExchangeTemplate,
     (interactionTemplateExchangeTemplate) =>

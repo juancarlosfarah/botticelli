@@ -1,5 +1,5 @@
 import { POST_ONE_INTERACTION_TEMPLATE_CHANNEL } from '@shared/channels';
-import { InteractionTemplateParams } from '@shared/interfaces/InteractionTemplate';
+import { PostOneInteractionTemplateParams } from '@shared/interfaces/InteractionTemplate';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
@@ -21,7 +21,7 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
 
   async handle(
     event: IpcMainEvent,
-    request: IpcRequest<InteractionTemplateParams>,
+    request: IpcRequest<PostOneInteractionTemplateParams>,
   ): Promise<void> {
     log.debug(`handling ${this.getName()}...`);
 

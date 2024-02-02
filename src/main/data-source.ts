@@ -9,6 +9,7 @@ import { ArtificialParticipant } from './entity/ArtificialParticipant';
 import { Exchange } from './entity/Exchange';
 import { ExchangeTemplate } from './entity/ExchangeTemplate';
 import { Experiment } from './entity/Experiment';
+import { ExperimentInteractionTemplate } from './entity/ExperimentInteractionTemplate';
 import { HumanAgent } from './entity/HumanAgent';
 import { HumanAssistant } from './entity/HumanAssistant';
 import { HumanParticipant } from './entity/HumanParticipant';
@@ -40,6 +41,7 @@ export const AppDataSource = new DataSource({
     InteractionTemplate,
     Experiment,
     InteractionTemplateExchangeTemplate,
+    ExperimentInteractionTemplate,
   ],
   migrations: [],
   subscribers: [],

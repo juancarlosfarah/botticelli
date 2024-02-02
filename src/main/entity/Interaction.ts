@@ -39,29 +39,25 @@ export class Interaction {
   completed: boolean = false;
 
   @ManyToOne(() => Agent, { eager: true })
-  // @ts-ignore: array initialization is not allowed in relations
   participant: Relation<Agent>;
 
   @OneToMany(() => Exchange, (exchange) => exchange.interaction, {
     eager: true,
   })
-  // @ts-ignore: array initialization is not allowed in relations
   exchanges: Relation<Exchange[]>;
 
   @ManyToOne(() => Experiment, (experiment) => experiment.interactions, {
     onDelete: 'CASCADE',
   })
-  // @ts-ignore: array initialization is not allowed in relations
   experiment: Relation<Experiment>;
 
-  // @Column({ type: 'array' })
-  // exchangeOrder: string[];
+  @Column({ default: 0 })
+  order: number = 0;
 
   @Column({ type: 'uuid', default: null })
   currentExchange: string;
 
   @ManyToOne(() => InteractionTemplate)
-  // @ts-ignore: array initialization is not allowed in relations
   template: Relation<InteractionTemplate>;
 
   @Column({ default: null, type: 'datetime' })

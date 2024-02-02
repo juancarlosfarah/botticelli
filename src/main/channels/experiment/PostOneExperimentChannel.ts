@@ -1,4 +1,5 @@
 import { POST_ONE_EXPERIMENT_CHANNEL } from '@shared/channels';
+import { PostOneExperimentParams } from '@shared/interfaces/Experiment';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
@@ -10,6 +11,7 @@ import { AppDataSource } from '../../data-source';
 import { Agent } from '../../entity/Agent';
 import { Exchange } from '../../entity/Exchange';
 import { Experiment } from '../../entity/Experiment';
+import { ExperimentInteractionTemplate } from '../../entity/ExperimentInteractionTemplate';
 import { Interaction } from '../../entity/Interaction';
 import { InteractionTemplate } from '../../entity/InteractionTemplate';
 import { Message } from '../../entity/Message';
@@ -23,12 +25,33 @@ export class PostOneExperimentChannel extends PostOneChannel {
     });
   }
 
-  async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
+  async handle(
+    event: IpcMainEvent,
+    request: IpcRequest<PostOneExperimentParams>,
+  ): Promise<void> {
     log.debug(`handling ${this.getName()}...`);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
+
+    // todo: error handling
+    if (!request.params) {
+      event.sender.send(request.responseChannel, {});
+      return;
+    }
+
+    // repositories
+    const experimentRepository = AppDataSource.getRepository(Experiment);
+    const interactionTemplateRepository =
+      AppDataSource.getRepository(InteractionTemplate);
+    const interactionRepository = AppDataSource.getRepository(Interaction);
+    const agentRepository = AppDataSource.getRepository(Agent);
+    const exchangeRepository = AppDataSource.getRepository(Exchange);
+    const messageRepository = AppDataSource.getRepository(Message);
+    const experimentInteractionTemplateRepository = AppDataSource.getRepository(
+      ExperimentInteractionTemplate,
+    );
 
     const { description, interactionTemplates, name, participants } =
       request.params;
@@ -37,31 +60,6 @@ export class PostOneExperimentChannel extends PostOneChannel {
     experiment.name = name;
     experiment.description = description;
 
-    const experimentRepository = AppDataSource.getRepository(Experiment);
-    const interactionTemplateRepository =
-      AppDataSource.getRepository(InteractionTemplate);
-    const interactionRepository = AppDataSource.getRepository(Interaction);
-    const agentRepository = AppDataSource.getRepository(Agent);
-    const exchangeRepository = AppDataSource.getRepository(Exchange);
-    const messageRepository = AppDataSource.getRepository(Message);
-
-    // interactions
-    log.debug(`linking ${interactionTemplates?.length} interactions`);
-    const savedInteractionTemplates = await interactionTemplateRepository.find({
-      where: {
-        id: In(interactionTemplates),
-      },
-      relations: {
-        exchangeTemplates: {
-          exchangeTemplate: {
-            triggers: true,
-          },
-        },
-      },
-    });
-
-    experiment.interactionTemplates = savedInteractionTemplates;
-
     // participants
     log.debug(`linking ${participants?.length} participants`);
     const savedParticipants = await agentRepository.findBy({
@@ -69,15 +67,47 @@ export class PostOneExperimentChannel extends PostOneChannel {
     });
     experiment.participants = savedParticipants;
 
-    // save the experiment with basic properties
-    let savedExperiment = await experimentRepository.save(experiment);
+    // save the experiment with basic properties (name, description, participants)
+    const savedExperiment = await experimentRepository.save(experiment);
 
-    // accumulate saved interactions
-    const savedInteractions: Interaction[] = [];
+    // interactions
+    log.debug(`linking ${interactionTemplates?.length} interactions`);
 
-    // each participant gets their own interaction for each interaction template
-    if (savedInteractionTemplates.length) {
-      for (const savedInteractionTemplate of savedInteractionTemplates) {
+    // accumulate interaction templates retrieved from database
+    const savedInteractionTemplates: InteractionTemplate[] = [];
+    // accumulate experiment interaction templates to be saved in the database
+    const experimentInteractionTemplates: ExperimentInteractionTemplate[] = [];
+
+    // assuming interaction templates are received in order
+    let interactionTemplateIndex = 0;
+    for (const interactionTemplateId of interactionTemplates) {
+      const experimentInteractionTemplate = new ExperimentInteractionTemplate();
+      experimentInteractionTemplate.order = interactionTemplateIndex;
+      // todo: don't go back to database
+      const dbResponse = await interactionTemplateRepository.find({
+        where: {
+          id: interactionTemplateId,
+        },
+        relations: {
+          exchangeTemplates: {
+            exchangeTemplate: {
+              triggers: true,
+            },
+          },
+        },
+        take: 1,
+      });
+
+      const savedInteractionTemplate = dbResponse?.length
+        ? dbResponse[0]
+        : null;
+
+      // if interaction template is found in the database, proceed with saving process
+      if (savedInteractionTemplate) {
+        experimentInteractionTemplate.interactionTemplate =
+          savedInteractionTemplate;
+        savedInteractionTemplates.push(savedInteractionTemplate);
+
         // we want to save the templates in reverse (desc) order to create a linked list
         const interactionTemplateExchangeTemplates = _.orderBy(
           savedInteractionTemplate.exchangeTemplates,
@@ -99,6 +129,7 @@ export class PostOneExperimentChannel extends PostOneChannel {
               savedInteractionTemplate.participantInstructions;
             interaction.template = savedInteractionTemplate;
             interaction.experiment = savedExperiment;
+            interaction.order = interactionTemplateIndex;
 
             let savedInteraction =
               await interactionRepository.save(interaction);
@@ -163,14 +194,19 @@ export class PostOneExperimentChannel extends PostOneChannel {
             // note: no need to save the exchanges back on the interaction
             savedInteraction =
               await interactionRepository.save(savedInteraction);
-            savedInteractions.push(savedInteraction);
           }
         }
       }
+      experimentInteractionTemplate.experiment = savedExperiment;
+      experimentInteractionTemplates.push(experimentInteractionTemplate);
+
+      // update index
+      interactionTemplateIndex++;
     }
 
-    // note: no need to save the interactions back on the experiment
-    savedExperiment = await experimentRepository.save(savedExperiment);
+    await experimentInteractionTemplateRepository.save(
+      experimentInteractionTemplates,
+    );
 
     event.sender.send(
       request.responseChannel,

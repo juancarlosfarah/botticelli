@@ -1,4 +1,5 @@
 import { GET_ONE_EXPERIMENT_CHANNEL } from '@shared/channels';
+import { GetOneExperimentQuery } from '@shared/interfaces/Experiment';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
@@ -16,7 +17,10 @@ export class GetOneExperimentChannel extends GetOneChannel {
     });
   }
 
-  async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
+  async handle(
+    event: IpcMainEvent,
+    request: IpcRequest<GetOneExperimentQuery>,
+  ): Promise<void> {
     log.debug(`handling ${this.name}...`);
 
     if (!request.responseChannel) {
@@ -24,6 +28,11 @@ export class GetOneExperimentChannel extends GetOneChannel {
     }
 
     // todo: error handling
+    if (!request.params) {
+      event.sender.send(request.responseChannel, {});
+      return;
+    }
+
     const query = request?.params?.query;
 
     // debugging
@@ -36,7 +45,9 @@ export class GetOneExperimentChannel extends GetOneChannel {
       },
       relations: {
         participants: true,
-        interactionTemplates: true,
+        interactionTemplates: {
+          interactionTemplate: true,
+        },
         interactions: true,
       },
       take: 1,

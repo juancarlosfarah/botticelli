@@ -35,8 +35,8 @@ export class Exchange {
   @Column({ default: '' })
   cue: string = '';
 
-  @Column({ default: 0 })
-  order: number;
+  @Column({ default: 0, nullable: true })
+  order: number = 0;
 
   @Column({ default: false })
   completed: boolean = false;
@@ -50,9 +50,8 @@ export class Exchange {
   })
   interaction: Relation<Interaction>;
 
-  // note: array initialization is not allowed in relations
   @OneToMany(() => Message, (message) => message.exchange, { eager: true })
-  messages: Relation<Message>[];
+  messages: Relation<Message[]>;
 
   @ManyToOne(() => Agent, { eager: true })
   assistant: Relation<Agent>;
