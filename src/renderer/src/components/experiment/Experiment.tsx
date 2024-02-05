@@ -103,10 +103,10 @@ export default function Experiment(): ReactElement {
               {interactionTemplates.map((interactionTemplate) => {
                 return (
                   <th
-                    key={interactionTemplate.interactionTemplate.id}
+                    key={interactionTemplate?.interactionTemplate?.id}
                     style={{ width: 100, padding: '12px 6px' }}
                   >
-                    {interactionTemplate.interactionTemplate.name || '—'}
+                    {interactionTemplate?.interactionTemplate?.name || '—'}
                   </th>
                 );
               })}
