@@ -10,14 +10,15 @@ import {
   GET_MESSAGE_CHANNEL,
   POST_MESSAGE_CHANNEL,
 } from '@shared/channels';
+import { GENERATE_RESPONSE_CHANNEL } from '@shared/channels';
+import { Message } from '@shared/interfaces/Message';
 import log from 'electron-log/renderer';
 
-import { GENERATE_RESPONSE_CHANNEL } from '../../../../shared/channels';
 import { IpcService } from '../../services/IpcService';
 import { fetchExchange } from '../exchange/ExchangesSlice';
 import { fetchInteraction } from '../interaction/InteractionsSlice';
 
-export const messagesAdapter = createEntityAdapter();
+export const messagesAdapter = createEntityAdapter<Message>();
 
 const initialState = messagesAdapter.getInitialState({
   status: 'idle',
@@ -35,7 +36,7 @@ export const fetchMessage = createAsyncThunk(
     );
 
     // debugging
-    log.debug(`fetchMessage response:`, response);
+    log.debug(`fetchMessage response`);
 
     return response;
   },
@@ -76,7 +77,7 @@ export const saveNewMessage = createAsyncThunk(
     }
 
     // debug
-    log.debug(`saveNewMessage response:`, response);
+    log.debug(`saveNewMessage response`);
     return response;
   },
 );
@@ -98,7 +99,7 @@ export const generateResponse = createAsyncThunk(
     dispatch(fetchInteraction({ id: interactionId }));
 
     // debug
-    log.debug(`generateResponse response:`, response);
+    log.debug(`generateResponse response`);
 
     return response;
   },
@@ -107,13 +108,10 @@ export const generateResponse = createAsyncThunk(
 export const deleteMessage = createAsyncThunk(
   'messages/deleteMessage',
   async (id) => {
-    const response = await IpcService.send<{ message: any }>(
-      DELETE_MESSAGE_CHANNEL,
-      {
-        params: { id },
-      },
-    );
-    log.debug(`deleteMessage response:`, response);
+    await IpcService.send<{ message: any }>(DELETE_MESSAGE_CHANNEL, {
+      params: { id },
+    });
+    log.debug(`deleteMessage response`);
     return id;
   },
 );

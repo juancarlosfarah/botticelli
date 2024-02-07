@@ -37,7 +37,7 @@ export class PostMessageChannel implements IpcChannel {
     const savedResponse = await messageRepository.findOneBy({ id });
 
     // debug
-    log.debug(`posted message:`, savedResponse);
+    log.debug(`posted message ${savedResponse?.id}`);
 
     event.sender.send(request.responseChannel, instanceToPlain(savedResponse));
   }

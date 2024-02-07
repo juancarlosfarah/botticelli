@@ -1,10 +1,11 @@
+import { GENERATE_RESPONSE_CHANNEL } from '@shared/channels';
+import { IpcRequest } from '@shared/interfaces/IpcRequest';
+import { GenerateResponseParams } from '@shared/interfaces/Message';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
-import OpenAi from 'openai';
+import OpenAi, { OpenAI } from 'openai';
 
-import { GENERATE_RESPONSE_CHANNEL } from '../../../shared/channels';
-import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
 import { AppDataSource } from '../../data-source';
 import { Exchange } from '../../entity/Exchange';
@@ -15,63 +16,32 @@ import { messagesToPrompt } from '../../utils/messagesToPrompt';
 import { messagesToText } from '../../utils/messagesToText';
 
 export class GenerateResponseChannel implements IpcChannel {
+  private openAi: OpenAI;
+
   getName(): string {
     return GENERATE_RESPONSE_CHANNEL;
   }
 
-  async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
-    // debug
-    log.debug(`handling ${this.getName()}...`);
-
-    if (!request.responseChannel) {
-      request.responseChannel = `${this.getName()}:response`;
-    }
-
-    const { exchangeId } = request.params;
-
-    // debug
-    log.debug(`generating response for exchange:`, exchangeId);
-
-    // get repositories
-    const exchangeRepository = AppDataSource.getRepository(Exchange);
-    const messageRepository = AppDataSource.getRepository(Message);
-    const interactionRepository = AppDataSource.getRepository(Interaction);
-
-    // get exchange
-    const instances = await exchangeRepository.find({
-      where: { id: exchangeId },
-      relations: { triggers: true, interaction: true },
-      take: 1,
-    });
-    const exchange = instances?.length ? instances[0] : null;
-
-    // todo: handle null exchange
-    if (!exchange) {
-      return;
-    }
-
-    const instructions = exchange?.instructions || '';
-
-    const assistant = exchange?.assistant;
-
-    const messages = await messageRepository.findBy({
-      exchange: { id: exchangeId },
-    });
-
-    // transform messages to prompt format
-    const prompt = messagesToPrompt(messages);
-
-    //
-    const openAi = new OpenAi({
+  setUpOpenAi(): void {
+    // set up OpenAI connection
+    this.openAi = new OpenAi({
       organization: OPENAI_ORG_ID,
       apiKey: OPENAI_API_KEY,
     });
+  }
+
+  async evaluate(exchange: Exchange, messages: Message[]): Promise<boolean> {
+    log.debug(`evaluating exchange`, exchange?.id);
+
+    if (!this.openAi) {
+      this.setUpOpenAi();
+    }
 
     // evaluate
     const triggers = exchange?.triggers || [];
+    const instructions = exchange?.instructions || '';
+    const assistant = exchange?.assistant;
 
-    // completing exchange manually
-    log.debug(`evaluating exchange`, exchangeId);
     const evaluations: string[] = [];
 
     if (triggers.length === 0) {
@@ -81,7 +51,7 @@ export class GenerateResponseChannel implements IpcChannel {
       log.debug(`evaluating trigger`, trigger.id);
       const evaluator = trigger.evaluator;
       const criteria = trigger.criteria;
-      const evaluation = await openAi.chat.completions.create({
+      const evaluation = await this.openAi.chat.completions.create({
         messages: [
           { role: 'system', content: evaluator.description },
           { role: 'user', content: criteria },
@@ -109,45 +79,97 @@ export class GenerateResponseChannel implements IpcChannel {
       }
     });
 
-    if (completed) {
-      // completing exchange manually
-      log.debug(`manually completing exchange`, exchangeId);
+    return completed;
+  }
 
-      exchange.completed = true;
-      exchange.completedAt = new Date();
-      await exchangeRepository.save(exchange);
+  async completeExchange(exchange: Exchange): Promise<void> {
+    log.debug(`manually completing exchange`, exchange?.id);
 
-      const interaction = await interactionRepository.findOneBy({
-        id: exchange.interaction.id,
-      });
+    const exchangeRepository = AppDataSource.getRepository(Exchange);
+    const interactionRepository = AppDataSource.getRepository(Interaction);
 
-      if (interaction) {
-        interaction.currentExchange = exchange.next;
-        if (!exchange.next) {
-          interaction.completed = true;
-          interaction.completedAt = new Date();
-        }
-        await interactionRepository.save(interaction);
+    exchange.completed = true;
+    exchange.completedAt = new Date();
+    await exchangeRepository.save(exchange);
+
+    const interaction = await interactionRepository.findOneBy({
+      id: exchange.interaction.id,
+    });
+
+    if (interaction) {
+      interaction.currentExchange = exchange.next;
+      if (!exchange.next) {
+        interaction.completed = true;
+        interaction.completedAt = new Date();
       }
+      await interactionRepository.save(interaction);
+    }
+  }
 
-      // const response = new Message();
-      // response.content = 'Thank you!';
-      // response.exchange = exchangeId;
-      // if (assistant) {
-      //   response.sender = assistant;
-      // }
-      // const { id } = await messageRepository.save(response);
-      // const savedMessage = await messageRepository.findOneBy({ id });
-      //
-      // // debug
-      // log.debug(`manually completed exchange:`, savedMessage);
+  async handle(
+    event: IpcMainEvent,
+    request: IpcRequest<GenerateResponseParams>,
+  ): Promise<void> {
+    // debug
+    log.debug(`handling ${this.getName()}...`);
+
+    if (!this.openAi) {
+      this.setUpOpenAi();
+    }
+
+    if (!request.responseChannel) {
+      request.responseChannel = `${this.getName()}:response`;
+    }
+
+    // todo: handle null params
+    if (!request?.params?.exchangeId) {
+      return;
+    }
+
+    const { exchangeId } = request.params;
+
+    // debug
+    log.debug(`generating response for exchange`, exchangeId);
+
+    // get repositories
+    const exchangeRepository = AppDataSource.getRepository(Exchange);
+    const messageRepository = AppDataSource.getRepository(Message);
+
+    // get exchange
+    const instances = await exchangeRepository.find({
+      where: { id: exchangeId },
+      relations: { triggers: true, interaction: true },
+      take: 1,
+    });
+    const exchange = instances?.length ? instances[0] : null;
+
+    // todo: handle null exchange
+    if (!exchange) {
+      return;
+    }
+
+    const instructions = exchange?.instructions || '';
+
+    const assistant = exchange?.assistant;
+
+    const messages = await messageRepository.findBy({
+      exchange: { id: exchangeId },
+    });
+
+    const completed = await this.evaluate(exchange, messages);
+
+    if (completed) {
+      await this.completeExchange(exchange);
       event.sender.send(request.responseChannel, null);
     } else {
       // debug
       log.debug(`requesting completion with instructions:`, instructions);
-      log.debug(`assisted by:`, assistant);
+      log.debug(`assisted by:`, assistant.id);
 
-      const completion = await openAi.chat.completions.create({
+      // transform messages to prompt format
+      const prompt = messagesToPrompt(messages);
+
+      const completion = await this.openAi.chat.completions.create({
         messages: [
           { role: 'system', content: assistant.description },
           { role: 'system', content: instructions },
@@ -157,21 +179,32 @@ export class GenerateResponseChannel implements IpcChannel {
       });
 
       // debug
-      log.debug(`received completion:`, completion);
+      log.debug(`received completion`);
 
+      // create new message out of prompt
       const response = new Message();
       response.content = completion.choices[0].message.content || '';
       response.exchange = exchangeId;
-
-      // todo: make dynamic
       response.sender = assistant;
 
       const { id } = await messageRepository.save(response);
 
       const savedMessage = await messageRepository.findOneBy({ id });
 
-      // debug
-      log.debug(`generated response:`, savedMessage);
+      // evaluate again, after the response has been generated
+      if (savedMessage) {
+        // debug
+        log.debug(`generated response:`, savedMessage?.id);
+        const completed = await this.evaluate(exchange, [
+          ...messages,
+          savedMessage,
+        ]);
+
+        if (completed) {
+          await this.completeExchange(exchange);
+        }
+      }
+
       event.sender.send(request.responseChannel, instanceToPlain(savedMessage));
     }
   }

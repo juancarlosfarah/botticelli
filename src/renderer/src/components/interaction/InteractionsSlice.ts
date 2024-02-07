@@ -36,7 +36,7 @@ export const fetchInteraction = createAsyncThunk<Interaction>(
     );
 
     // debugging
-    log.debug(response);
+    log.debug(`fetchInteraction response`);
 
     return response;
   },
@@ -89,7 +89,7 @@ export const startInteraction = createAsyncThunk<Interaction, string>(
         params: { id },
       },
     );
-    log.debug(response);
+    log.debug(`startInteraction response`);
     return response;
   },
 );
@@ -98,13 +98,13 @@ export const deleteInteraction = createAsyncThunk<
   string | number,
   string | number
 >('interactions/deleteInteraction', async (id) => {
-  const response = await IpcService.send<{ interaction: Interaction }>(
+  await IpcService.send<{ interaction: Interaction }>(
     DELETE_ONE_INTERACTION_CHANNEL,
     {
       params: { id },
     },
   );
-  log.debug(response);
+  log.debug(`deleteInteraction response`);
   return id;
 });
 

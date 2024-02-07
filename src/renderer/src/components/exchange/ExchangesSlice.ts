@@ -100,7 +100,7 @@ export const startExchange = createAsyncThunk<ExchangeResponse, string>(
         params: { id },
       },
     );
-    log.debug(response);
+    log.debug(`startExchange response`);
     return response;
   },
 );

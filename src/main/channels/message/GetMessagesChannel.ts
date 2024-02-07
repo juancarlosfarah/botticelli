@@ -32,7 +32,7 @@ export class GetMessagesChannel implements IpcChannel {
     });
 
     // debug
-    log.debug(`got messages:`, messages);
+    log.debug(`got ${messages?.length} messages`);
 
     event.sender.send(request.responseChannel, instanceToPlain(messages));
   }
