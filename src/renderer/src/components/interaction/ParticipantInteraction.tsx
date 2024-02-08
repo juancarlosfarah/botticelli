@@ -61,11 +61,15 @@ export default function ParticipantInteraction(): ReactElement {
           }}
         >
           {interaction.participantInstructions && (
-            <Typography level="title-lg">
+            <Typography level="title-lg" sx={{ p: 10, textAlign: 'justify' }}>
               {interaction.participantInstructions}
             </Typography>
           )}
-          <Button sx={{ mt: 3, mx: 'auto' }} onClick={handleStartInteraction}>
+          <Button
+            size="lg"
+            sx={{ mt: 3, mx: 'auto' }}
+            onClick={handleStartInteraction}
+          >
             Start
           </Button>
         </Box>

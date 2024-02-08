@@ -40,7 +40,7 @@ export class GetOneInteractionChannel extends GetOneChannel {
 
     const instance = instances?.length ? instances[0] : null;
     // debugging
-    log.debug(`got ${this.entity}:`, instance);
+    log.debug(`got interaction ${instance?.id}`);
 
     event.sender.send(request.responseChannel, instanceToPlain(instance));
   }

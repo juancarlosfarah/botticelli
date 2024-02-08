@@ -8,4 +8,8 @@ export interface Message {
   createdAt: string;
 }
 
+export type GenerateResponseParams = {
+  exchangeId: string;
+};
+
 export type MessageType = Message;

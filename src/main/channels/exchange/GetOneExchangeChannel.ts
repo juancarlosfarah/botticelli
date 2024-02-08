@@ -37,7 +37,7 @@ export class GetOneExchangeChannel extends GetOneChannel {
 
     const instance = instances?.length ? instances[0] : null;
     // debugging
-    log.debug(`got ${this.entity}:`, instance);
+    log.debug(`got exchange ${instance?.id}`);
 
     event.sender.send(request.responseChannel, instanceToPlain(instance));
   }

@@ -19,8 +19,9 @@ export class Message {
 
   @ManyToOne(() => Exchange, (exchange) => exchange.messages, {
     onDelete: 'CASCADE',
+    nullable: false,
   })
-  exchange: Relation<Exchange>;
+  exchange: Relation<Exchange> | string;
 
   @Column({ default: '' })
   content: string;
