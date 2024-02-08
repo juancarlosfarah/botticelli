@@ -83,21 +83,26 @@ export class GenerateResponseChannel implements IpcChannel {
   }
 
   async completeExchange(exchange: Exchange): Promise<void> {
-    log.debug(`manually completing exchange`, exchange?.id);
+    log.debug(`completing exchange`, exchange?.id);
 
     const exchangeRepository = AppDataSource.getRepository(Exchange);
     const interactionRepository = AppDataSource.getRepository(Interaction);
 
-    exchange.completed = true;
-    exchange.completedAt = new Date();
-    await exchangeRepository.save(exchange);
+    // mark exchange as completed
+    await exchangeRepository.update(
+      { id: exchange?.id },
+      { completed: true, completedAt: new Date() },
+    );
 
     const interaction = await interactionRepository.findOneBy({
       id: exchange.interaction.id,
     });
 
+    // proceed to the next exchange in the interaction
     if (interaction) {
       interaction.currentExchange = exchange.next;
+
+      // if this is the last exchange, mark the interaction as completed
       if (!exchange.next) {
         interaction.completed = true;
         interaction.completedAt = new Date();
@@ -127,9 +132,6 @@ export class GenerateResponseChannel implements IpcChannel {
     }
 
     const { exchangeId } = request.params;
-
-    // debug
-    log.debug(`generating response for exchange`, exchangeId);
 
     // get repositories
     const exchangeRepository = AppDataSource.getRepository(Exchange);
@@ -163,7 +165,8 @@ export class GenerateResponseChannel implements IpcChannel {
       event.sender.send(request.responseChannel, null);
     } else {
       // debug
-      log.debug(`requesting completion with instructions:`, instructions);
+      log.debug(`generating response for exchange`, exchangeId);
+      log.debug(`requesting completion`);
       log.debug(`assisted by:`, assistant.id);
 
       // transform messages to prompt format

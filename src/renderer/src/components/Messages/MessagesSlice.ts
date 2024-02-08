@@ -71,13 +71,14 @@ export const saveNewMessage = createAsyncThunk(
       },
     );
 
+    // debug
+    log.debug(`saveNewMessage response`);
+
     // generate a response
     if (evaluate) {
       dispatch(generateResponse({ exchangeId, interactionId }));
     }
 
-    // debug
-    log.debug(`saveNewMessage response`);
     return response;
   },
 );
