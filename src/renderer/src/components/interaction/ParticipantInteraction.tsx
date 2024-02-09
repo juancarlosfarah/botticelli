@@ -10,6 +10,7 @@ import Typography from '@mui/joy/Typography';
 
 import log from 'electron-log/renderer';
 
+import { AppDispatch } from '../../store';
 import MessagesPane from '../Messages/MessagesPane';
 import {
   fetchInteraction,
@@ -19,7 +20,11 @@ import {
 
 export default function ParticipantInteraction(): ReactElement {
   const { experimentId, participantId, interactionId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
+  if (!interactionId || !experimentId || !participantId) {
+    return <div>Interaction Not Found</div>;
+  }
 
   useEffect(() => {
     const query = { id: interactionId };
@@ -99,7 +104,7 @@ export default function ParticipantInteraction(): ReactElement {
           }}
         >
           <Typography level="title-lg">
-            Merci pour votre participation.
+            {interaction.participantInstructionsOnComplete}
           </Typography>
         </Box>
       ) : (

@@ -13,6 +13,7 @@ import {
 import { START_INTERACTION_CHANNEL } from '@shared/channels';
 import Interaction from '@shared/interfaces/Interaction';
 import { NewInteractionParams } from '@shared/interfaces/Interaction';
+import { GetOneInteractionParams } from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
@@ -24,7 +25,10 @@ const initialState = interactionsAdapter.getInitialState({
 });
 
 // thunk functions
-export const fetchInteraction = createAsyncThunk<Interaction>(
+export const fetchInteraction = createAsyncThunk<
+  Interaction,
+  GetOneInteractionParams
+>(
   'interactions/fetchInteraction',
   // todo: give type to `query`
   async (query) => {

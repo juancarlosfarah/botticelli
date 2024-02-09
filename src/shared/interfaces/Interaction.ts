@@ -8,6 +8,7 @@ type Interaction = {
   description: string;
   modelInstructions: string;
   participantInstructions: string;
+  participantInstructionsOnComplete: string;
   name: string;
   currentExchange: string;
   completed: boolean;
@@ -26,11 +27,16 @@ export type NewInteractionParams = {
   description: string;
   modelInstructions: string;
   participantInstructions: string;
+  participantInstructionsOnComplete: string;
   name: string;
   experiment: Experiment;
   template: InteractionTemplate;
   participant: Agent;
   exchanges: Exchange[];
+};
+
+export type GetOneInteractionParams = {
+  id: string;
 };
 
 export default Interaction;

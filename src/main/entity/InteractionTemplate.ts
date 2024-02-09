@@ -30,6 +30,9 @@ export class InteractionTemplate {
   @Column({ default: '' })
   participantInstructions: string = '';
 
+  @Column({ default: '' })
+  participantInstructionsOnComplete: string = '';
+
   @ManyToOne(() => Agent, { eager: true })
   participant: Relation<Agent>;
 

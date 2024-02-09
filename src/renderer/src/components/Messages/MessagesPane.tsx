@@ -6,7 +6,7 @@ import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 
-import { AppDispatch } from '../../store';
+import { AppDispatch, RootState } from '../../store';
 import { MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
 import {
@@ -32,7 +32,7 @@ export default function MessagesPane({
   participantId,
   readOnly = false,
 }: MessagesPaneProps): React.ReactElement {
-  const status = useSelector((state) => state.messages.status);
+  const status = useSelector((state: RootState) => state.messages.status);
 
   const [textAreaValue, setTextAreaValue] = React.useState('');
 
@@ -44,7 +44,7 @@ export default function MessagesPane({
 
   useEffect(() => {
     dispatch(fetchExchange({ id: exchangeId }));
-    dispatch(fetchMessages({ exchangeId: exchangeId }));
+    dispatch(fetchMessages({ exchangeId }));
   }, [exchangeId]);
   useEffect((): void => {
     // do not start if this is readonly
@@ -115,10 +115,12 @@ export default function MessagesPane({
             )}
           </Stack>
         </Box>
-        {!(readOnly || exchange.completed) && (
+        {!(readOnly || exchange.dismissed) && (
           <MessageInput
+            exchangeId={exchangeId}
             textAreaValue={textAreaValue}
             setTextAreaValue={setTextAreaValue}
+            completed={exchange.completed}
             onSubmit={(): void => {
               dispatch(
                 saveNewMessage({

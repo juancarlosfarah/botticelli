@@ -65,7 +65,7 @@ export class GenerateResponseChannel implements IpcChannel {
             content: `Conversation: ${messagesToText(messages)}`,
           },
         ],
-        model: 'gpt-4',
+        model: 'gpt-3.5-turbo',
       });
       evaluations.push(evaluation.choices[0].message.content || '');
     }
@@ -86,29 +86,12 @@ export class GenerateResponseChannel implements IpcChannel {
     log.debug(`completing exchange`, exchange?.id);
 
     const exchangeRepository = AppDataSource.getRepository(Exchange);
-    const interactionRepository = AppDataSource.getRepository(Interaction);
 
     // mark exchange as completed
     await exchangeRepository.update(
       { id: exchange?.id },
       { completed: true, completedAt: new Date() },
     );
-
-    const interaction = await interactionRepository.findOneBy({
-      id: exchange.interaction.id,
-    });
-
-    // proceed to the next exchange in the interaction
-    if (interaction) {
-      interaction.currentExchange = exchange.next;
-
-      // if this is the last exchange, mark the interaction as completed
-      if (!exchange.next) {
-        interaction.completed = true;
-        interaction.completedAt = new Date();
-      }
-      await interactionRepository.save(interaction);
-    }
   }
 
   async handle(

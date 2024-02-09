@@ -29,6 +29,7 @@ import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/P
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
 import { DeleteOneExchangeChannel } from './channels/exchange/DeleteOneExchangeChannel';
 import { DeleteOneExchangeTemplateChannel } from './channels/exchange/DeleteOneExchangeTemplateChannel';
+import { DismissExchangeChannel } from './channels/exchange/DismissExchangeChannel';
 import { GetManyExchangeTemplatesChannel } from './channels/exchange/GetManyExchangeTemplatesChannel';
 import { GetManyExchangesChannel } from './channels/exchange/GetManyExchangesChannel';
 import { GetOneExchangeChannel } from './channels/exchange/GetOneExchangeChannel';
@@ -175,6 +176,7 @@ new Main().init([
   new DeleteOneExchangeChannel(),
   new GetOneExchangeChannel(),
   new StartExchangeChannel(),
+  new DismissExchangeChannel(),
   // messages
   new PostMessageChannel(),
   new GetMessagesChannel(),

@@ -32,6 +32,9 @@ export class Interaction {
   @Column({ default: '' })
   participantInstructions: string = '';
 
+  @Column({ default: '' })
+  participantInstructionsOnComplete: string = '';
+
   @Column({ default: false })
   started: boolean = false;
 

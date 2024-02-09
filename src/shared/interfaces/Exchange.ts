@@ -18,8 +18,10 @@ type Exchange = {
   template: ExchangeTemplate;
   started: boolean;
   completed: boolean;
+  dismissed: boolean;
   startedAt: Date;
   completedAt: Date;
+  dismissedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -28,12 +30,8 @@ export type ExchangeQuery = {
   id: string;
 };
 
-export type ExchangeResponse = {
-  exchange: Exchange;
-};
+export type ExchangeResponse = Exchange;
 
-export type ExchangesResponse = {
-  exchanges: Exchange[];
-};
+export type ExchangesResponse = Exchange[];
 
 export default Exchange;

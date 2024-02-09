@@ -44,6 +44,9 @@ export class Exchange {
   @Column({ default: false })
   started: boolean = false;
 
+  @Column({ default: false })
+  dismissed: boolean = false;
+
   // note: array initialization is not allowed in relations
   @ManyToOne(() => Interaction, (interaction) => interaction.exchanges, {
     onDelete: 'CASCADE',
@@ -77,6 +80,9 @@ export class Exchange {
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
+
+  @UpdateDateColumn({ type: 'datetime' })
+  dismissedAt: Date;
 
   @AfterLoad()
   getCreatedAt(): void {

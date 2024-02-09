@@ -20,7 +20,9 @@ import {
 } from '@shared/interfaces/Exchange';
 import log from 'electron-log/renderer';
 
+import { DISMISS_EXCHANGE_CHANNEL } from '../../../../shared/channels';
 import { IpcService } from '../../services/IpcService';
+import { fetchInteraction } from '../interaction/InteractionsSlice';
 
 const exchangesAdapter = createEntityAdapter<Exchange>();
 
@@ -32,12 +34,9 @@ const initialState = exchangesAdapter.getInitialState({
 export const fetchExchange = createAsyncThunk<ExchangeResponse, ExchangeQuery>(
   'exchanges/fetchExchange',
   async (query) => {
-    const response = await IpcService.send<{ exchange: Exchange }>(
-      GET_ONE_EXCHANGE_CHANNEL,
-      {
-        params: { query },
-      },
-    );
+    const response = await IpcService.send<Exchange>(GET_ONE_EXCHANGE_CHANNEL, {
+      params: { query },
+    });
     return response;
   },
 );
@@ -45,9 +44,7 @@ export const fetchExchange = createAsyncThunk<ExchangeResponse, ExchangeQuery>(
 export const fetchExchanges = createAsyncThunk<ExchangesResponse>(
   'exchanges/fetchExchanges',
   async () => {
-    return await IpcService.send<{ exchanges: Exchange[] }>(
-      GET_MANY_EXCHANGES_CHANNEL,
-    );
+    return await IpcService.send<Exchange[]>(GET_MANY_EXCHANGES_CHANNEL);
   },
 );
 
@@ -105,6 +102,20 @@ export const startExchange = createAsyncThunk<ExchangeResponse, string>(
   },
 );
 
+export const dismissExchange = createAsyncThunk<ExchangeResponse, string>(
+  'exchanges/dismissExchange',
+  async (id, { dispatch }) => {
+    const response = await IpcService.send<Exchange>(DISMISS_EXCHANGE_CHANNEL, {
+      params: { id },
+    });
+
+    dispatch(fetchInteraction({ id: response.interaction.id }));
+
+    log.debug(`dismissExchange response`);
+    return response;
+  },
+);
+
 export const deleteOneExchange = createAsyncThunk<string, string>(
   'exchanges/deleteExchange',
   async (id) => {
@@ -136,11 +147,18 @@ const exchangesSlice = createSlice({
       .addCase(startExchange.pending, (state) => {
         state.status = 'loading';
       })
+      .addCase(dismissExchange.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(fetchExchange.fulfilled, (state, action) => {
         exchangesAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
       .addCase(startExchange.fulfilled, (state, action) => {
+        exchangesAdapter.setOne(state, action.payload);
+        state.status = 'idle';
+      })
+      .addCase(dismissExchange.fulfilled, (state, action) => {
         exchangesAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })

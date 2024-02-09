@@ -150,7 +150,7 @@ export default function Experiment(): ReactElement {
                                   key={exchange.id}
                                 >
                                   <Typography level="body-xs">
-                                    {exchange.name}
+                                    {exchange.name} {exchange.dismissed && '✓'}
                                   </Typography>
                                 </Chip>
                               </td>
