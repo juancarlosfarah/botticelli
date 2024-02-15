@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import Alert from '@mui/joy/Alert';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
@@ -56,6 +57,9 @@ export default function MessagesPane({
   if (!exchange) {
     return <>Exchange Not Found</>;
   }
+
+  const showParticipantInstructionsOnComplete =
+    exchange.completed && exchange.participantInstructionsOnComplete;
 
   return (
     <>
@@ -112,6 +116,11 @@ export default function MessagesPane({
                   <MessageLoader />
                 </Stack>
               </Box>
+            )}
+            {showParticipantInstructionsOnComplete && (
+              <Alert variant="soft" color="success">
+                {exchange.participantInstructionsOnComplete}
+              </Alert>
             )}
           </Stack>
         </Box>

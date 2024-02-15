@@ -29,6 +29,9 @@ export class ExchangeTemplate {
   instructions: string = '';
 
   @Column({ default: '' })
+  participantInstructionsOnComplete: string = '';
+
+  @Column({ default: '' })
   cue: string = '';
 
   @ManyToOne(() => Agent, { eager: true })

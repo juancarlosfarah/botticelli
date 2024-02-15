@@ -12,7 +12,7 @@ import InteractionTemplateExchangeTemplate from '@shared/interfaces/InteractionT
 import log from 'electron-log/renderer';
 import _ from 'lodash';
 
-import { AppDispatch } from '../../store';
+import { AppDispatch, RootState } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import {
   fetchInteractionTemplate,
@@ -34,7 +34,8 @@ export default function InteractionTemplate(): ReactElement {
   }, [interactionTemplateId]);
 
   const interactionTemplate: InteractionTemplateType | undefined = useSelector(
-    (state) => selectInteractionTemplateById(state, interactionTemplateId),
+    (state: RootState) =>
+      selectInteractionTemplateById(state, interactionTemplateId),
   );
 
   if (!interactionTemplate) {

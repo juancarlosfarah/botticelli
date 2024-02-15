@@ -127,6 +127,8 @@ export class PostOneExperimentChannel extends PostOneChannel {
               savedInteractionTemplate.modelInstructions;
             interaction.participantInstructions =
               savedInteractionTemplate.participantInstructions;
+            interaction.participantInstructionsOnComplete =
+              savedInteractionTemplate.participantInstructionsOnComplete;
             interaction.template = savedInteractionTemplate;
             interaction.experiment = savedExperiment;
             interaction.order = interactionTemplateIndex;
@@ -156,6 +158,8 @@ export class PostOneExperimentChannel extends PostOneChannel {
                 exchange.template = exchangeTemplate;
                 exchange.name = exchangeTemplate.name;
                 exchange.instructions = exchangeTemplate.instructions;
+                exchange.participantInstructionsOnComplete =
+                  exchangeTemplate.participantInstructionsOnComplete;
                 exchange.cue = exchangeTemplate.cue;
                 exchange.order = exchangeTemplateNumber;
                 exchange.triggers = exchangeTemplate.triggers;

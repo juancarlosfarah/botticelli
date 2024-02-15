@@ -9,6 +9,7 @@ type Exchange = {
   name: string;
   description: string;
   instructions: string;
+  participantInstructionsOnComplete: string;
   cue: string;
   order: number;
   messages: Message[];

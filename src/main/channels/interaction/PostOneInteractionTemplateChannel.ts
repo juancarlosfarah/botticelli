@@ -41,6 +41,7 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
       participantInstructions,
       name,
       exchangeTemplates,
+      participantInstructionsOnComplete,
     } = request.params;
 
     const interactionTemplate = new InteractionTemplate();
@@ -48,6 +49,8 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
     interactionTemplate.description = description;
     interactionTemplate.modelInstructions = modelInstructions;
     interactionTemplate.participantInstructions = participantInstructions;
+    interactionTemplate.participantInstructionsOnComplete =
+      participantInstructionsOnComplete;
 
     const interactionTemplateRepository =
       AppDataSource.getRepository(InteractionTemplate);
@@ -86,9 +89,10 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
       interactionTemplateExchangeTemplates,
     );
 
-    event.sender.send(
-      request.responseChannel,
-      instanceToPlain(interactionTemplate),
-    );
+    const response = await interactionTemplateRepository.findOneBy({
+      id: savedInteractionTemplate.id,
+    });
+
+    event.sender.send(request.responseChannel, instanceToPlain(response));
   }
 }

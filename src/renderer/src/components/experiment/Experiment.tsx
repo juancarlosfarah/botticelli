@@ -14,13 +14,14 @@ import { ColorPaletteProp } from '@mui/joy/styles';
 import log from 'electron-log/renderer';
 import _ from 'lodash';
 
+import { AppDispatch } from '../../store';
 import { Order, getComparator, stableSort } from '../../utils/sort';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchExperiment, selectExperimentById } from './ExperimentsSlice';
 
 export default function Experiment(): ReactElement {
   const { experimentId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [order, setOrder] = React.useState<Order>('desc');
 
@@ -29,6 +30,10 @@ export default function Experiment(): ReactElement {
     log.debug(`fetching experiment ${experimentId}`);
     dispatch(fetchExperiment(query));
   }, [experimentId]);
+
+  if (!experimentId) {
+    return <div>Invalid Experiment ID</div>;
+  }
 
   const experiment = useSelector((state) =>
     selectExperimentById(state, experimentId),
@@ -131,7 +136,7 @@ export default function Experiment(): ReactElement {
                     ? 'Start'
                     : 'Resume';
                   return (
-                    <td key={interaction.id}>
+                    <td key={interaction.id} style={{ overflowX: 'scroll' }}>
                       {_.orderBy(interaction.exchanges, 'order', 'asc').map(
                         (exchange) => {
                           let color: ColorPaletteProp = 'primary';

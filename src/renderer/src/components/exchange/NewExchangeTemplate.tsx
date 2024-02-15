@@ -28,6 +28,10 @@ const NewExchangeTemplate = (): ReactElement => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
+  const [
+    participantInstructionsOnComplete,
+    setParticipantInstructionsOnComplete,
+  ] = useState('');
   const [cue, setCue] = useState<string>('');
   const [assistant, setAssistant] = useState<string | null>(null);
   const [triggers, setTriggers] = useState<string | null>(null);
@@ -43,12 +47,14 @@ const NewExchangeTemplate = (): ReactElement => {
         name,
         description,
         instructions,
+        participantInstructionsOnComplete,
         assistant,
         triggers,
         cue,
       }),
     );
 
+    // todo: handle error
     if (saveNewExchangeTemplate.fulfilled.match(resultAction)) {
       const exchangeTemplate = resultAction.payload;
       navigate(`/exchanges/templates/${exchangeTemplate.id}`);
@@ -72,6 +78,13 @@ const NewExchangeTemplate = (): ReactElement => {
   ): void => {
     const value = event.target.value;
     setInstructions(value);
+  };
+
+  const handleChangeParticipantInstructionsOnComplete = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ): void => {
+    const value = event.target.value;
+    setParticipantInstructionsOnComplete(value);
   };
 
   const handleChangeCue = (event: ChangeEvent<HTMLTextAreaElement>): void => {
@@ -142,6 +155,17 @@ const NewExchangeTemplate = (): ReactElement => {
             </Option>
           ))}
         </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Instructions On Complete</FormLabel>
+        <Textarea
+          value={participantInstructionsOnComplete}
+          onChange={handleChangeParticipantInstructionsOnComplete}
+        />
+        <FormHelperText>
+          These are the instructions that are shown to the participant when the
+          exchange has been marked as completed.
+        </FormHelperText>
       </FormControl>
       <Button onClick={handleNewExchangeTemplate}>Save</Button>
     </>

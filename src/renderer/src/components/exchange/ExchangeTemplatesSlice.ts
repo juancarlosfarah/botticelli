@@ -56,7 +56,15 @@ export const saveNewExchangeTemplate = createAsyncThunk<
   PostOneExchangeTemplateParams
 >(
   'exchangeTemplates/saveNewExchangeTemplate',
-  async ({ name, description, instructions, assistant, triggers, cue }) => {
+  async ({
+    name,
+    description,
+    instructions,
+    participantInstructionsOnComplete,
+    assistant,
+    triggers,
+    cue,
+  }) => {
     return (await IpcService.send<
       PostOneExchangeTemplateResponse,
       PostOneExchangeTemplateParams
@@ -65,6 +73,7 @@ export const saveNewExchangeTemplate = createAsyncThunk<
         name,
         description,
         instructions,
+        participantInstructionsOnComplete,
         assistant,
         triggers,
         cue,
@@ -117,6 +126,16 @@ const exchangeTemplatesSlice = createSlice({
         deleteOneExchangeTemplate.fulfilled,
         exchangeTemplatesAdapter.removeOne,
       );
+    // // example of how to add a case that listens to actions from a different slice
+    // .addCase(fetchInteractionTemplate.fulfilled, (state, action) => {
+    //   const interactionTemplate = action.payload;
+    //   const exchangeTemplates = interactionTemplate.exchangeTemplates.map(
+    //     (interactionTemplateExchangeTemplate) =>
+    //       interactionTemplateExchangeTemplate.exchangeTemplate,
+    //   );
+    //   exchangeTemplatesAdapter.setMany(state, exchangeTemplates);
+    //   state.status = 'idle';
+    // });
   },
 });
 
@@ -137,3 +156,18 @@ export const selectExchangeTemplateIds = createSelector(
   (exchangeTemplates) =>
     exchangeTemplates.map((exchangeTemplate) => exchangeTemplate.id),
 );
+
+// // example of how to add custom arguments to a selector
+// export const selectExchangeTemplatesByIds = createSelector(
+//   // First, pass one or more "input selector" functions:
+//   selectAllExchangeTemplates,
+//   (_, ids) => ids,
+//   // Then, an "output selector" that receives all the input results as arguments
+//   // and returns a final result value
+//   (exchangeTemplates, ids = []) => {
+//     console.log(exchangeTemplates, ids);
+//     return exchangeTemplates.filter((exchangeTemplate) =>
+//       ids.includes(exchangeTemplate.id),
+//     );
+//   },
+// );

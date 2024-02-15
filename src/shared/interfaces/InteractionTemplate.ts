@@ -20,4 +20,16 @@ export type PostOneInteractionTemplateParams = {
   exchangeTemplates: string[];
 };
 
+export type PostOneInteractionTemplateResponse = InteractionTemplate;
+
+export type GetManyInteractionTemplatesResponse = InteractionTemplate[];
+
+export type GetOneInteractionTemplateResponse = InteractionTemplate;
+
+export type GetOneInteractionTemplateParams = {
+  id: string;
+};
+
+export type DeleteOneInteractionTemplateParams = string;
+
 export default InteractionTemplate;

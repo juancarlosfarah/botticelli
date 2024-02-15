@@ -11,9 +11,17 @@ import {
   POST_ONE_INTERACTION_TEMPLATE_CHANNEL,
 } from '@shared/channels';
 import InteractionTemplate from '@shared/interfaces/InteractionTemplate';
-import log from 'electron-log/renderer';
+import {
+  DeleteOneInteractionTemplateParams,
+  GetManyInteractionTemplatesResponse,
+  GetOneInteractionTemplateParams,
+  GetOneInteractionTemplateResponse,
+  PostOneInteractionTemplateParams,
+  PostOneInteractionTemplateResponse,
+} from '@shared/interfaces/InteractionTemplate';
 
 import { IpcService } from '../../services/IpcService';
+import { RootState } from '../../store';
 
 const interactionTemplatesAdapter = createEntityAdapter<InteractionTemplate>();
 
@@ -22,77 +30,69 @@ const initialState = interactionTemplatesAdapter.getInitialState({
 });
 
 // thunk functions
-export const fetchInteractionTemplate = createAsyncThunk(
-  'interactionTemplates/fetchInteractionTemplate',
-  async (query) => {
-    const response = await IpcService.send<{ interactionTemplate: any }>(
-      GET_ONE_INTERACTION_TEMPLATE_CHANNEL,
-      {
-        params: { query },
-      },
-    );
+export const fetchInteractionTemplate = createAsyncThunk<
+  GetOneInteractionTemplateResponse,
+  GetOneInteractionTemplateParams
+>('interactionTemplates/fetchInteractionTemplate', async (params) => {
+  const response = await IpcService.send<
+    GetOneInteractionTemplateResponse,
+    GetOneInteractionTemplateParams
+  >(GET_ONE_INTERACTION_TEMPLATE_CHANNEL, {
+    params,
+  });
 
-    // debugging
-    log.debug(response);
+  return response;
+});
 
-    return response;
-  },
-);
-
-export const fetchInteractionTemplates = createAsyncThunk(
-  'interactionTemplates/fetchInteractionTemplates',
-  async () => {
-    return await IpcService.send<{ interactionTemplates: any }>(
-      GET_MANY_INTERACTION_TEMPLATES_CHANNEL,
-    );
-  },
-);
+export const fetchInteractionTemplates =
+  createAsyncThunk<GetManyInteractionTemplatesResponse>(
+    'interactionTemplates/fetchInteractionTemplates',
+    async () => {
+      return await IpcService.send<GetManyInteractionTemplatesResponse>(
+        GET_MANY_INTERACTION_TEMPLATES_CHANNEL,
+      );
+    },
+  );
 
 export const saveNewInteractionTemplate = createAsyncThunk<
-  InteractionTemplate,
-  {
-    name: string;
-    description: string;
-    modelInstructions: string;
-    participantInstructions: string;
-    exchangeTemplates: string[];
-  }
+  PostOneInteractionTemplateResponse,
+  PostOneInteractionTemplateParams
 >(
   'interactionTemplates/saveNewInteractionTemplate',
   async ({
     description,
     modelInstructions,
     participantInstructions,
+    participantInstructionsOnComplete,
     name,
     exchangeTemplates,
   }) => {
-    const response = await IpcService.send<{ interactionTemplate: any }>(
-      POST_ONE_INTERACTION_TEMPLATE_CHANNEL,
-      {
-        params: {
-          name,
-          description,
-          modelInstructions,
-          participantInstructions,
-          exchangeTemplates,
-        },
+    return await IpcService.send<
+      PostOneInteractionTemplateResponse,
+      PostOneInteractionTemplateParams
+    >(POST_ONE_INTERACTION_TEMPLATE_CHANNEL, {
+      params: {
+        name,
+        description,
+        modelInstructions,
+        participantInstructions,
+        participantInstructionsOnComplete,
+        exchangeTemplates,
       },
-    );
-    return response;
+    });
   },
 );
 
 export const deleteInteractionTemplate = createAsyncThunk<
-  string | number,
-  string | number
+  string,
+  DeleteOneInteractionTemplateParams
 >('interactionTemplates/deleteInteractionTemplate', async (id) => {
-  const response = await IpcService.send<{ interactionTemplate: any }>(
+  await IpcService.send<InteractionTemplate, { id }>(
     DELETE_ONE_INTERACTION_TEMPLATE_CHANNEL,
     {
       params: { id },
     },
   );
-  log.debug(response);
   return id;
 });
 
@@ -137,7 +137,7 @@ export const {
   selectAll: selectInteractionTemplates,
   selectById: selectInteractionTemplateById,
 } = interactionTemplatesAdapter.getSelectors(
-  (state) => state.interactionTemplates,
+  (state: RootState) => state.interactionTemplates,
 );
 
 export const selectInteractionTemplateIds = createSelector(

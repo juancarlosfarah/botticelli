@@ -69,6 +69,9 @@ export class Exchange {
   @JoinTable()
   triggers: Trigger[];
 
+  @Column({ default: '' })
+  participantInstructionsOnComplete: string = '';
+
   @Column({ default: null, type: 'datetime' })
   startedAt: Date;
 

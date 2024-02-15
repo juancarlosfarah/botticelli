@@ -1,4 +1,5 @@
 import { GET_ONE_INTERACTION_TEMPLATE_CHANNEL } from '@shared/channels';
+import { GetOneInteractionTemplateParams } from '@shared/interfaces/InteractionTemplate';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
@@ -16,7 +17,10 @@ export class GetOneInteractionTemplateChannel extends GetOneChannel {
     });
   }
 
-  async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
+  async handle(
+    event: IpcMainEvent,
+    request: IpcRequest<GetOneInteractionTemplateParams>,
+  ): Promise<void> {
     log.debug(`handling ${this.name}...`);
 
     if (!request.responseChannel) {
@@ -24,15 +28,15 @@ export class GetOneInteractionTemplateChannel extends GetOneChannel {
     }
 
     // todo: error handling
-    const query = request?.params?.query;
+    const { params } = request;
 
     // debugging
-    log.debug(`using query:`, query);
+    log.debug(`using query:`, params);
 
     const repository = AppDataSource.getRepository(this.entity);
     const instances = await repository.find({
       where: {
-        ...query,
+        ...params,
       },
       relations: {
         exchangeTemplates: {
@@ -44,8 +48,11 @@ export class GetOneInteractionTemplateChannel extends GetOneChannel {
     });
 
     const instance = instances?.length ? instances[0] : null;
+
     // debugging
-    log.debug(`got ${this.entity}:`, instance);
+    if (instance) {
+      log.debug(`got ${this.entity}:`, instance.id);
+    }
 
     event.sender.send(request.responseChannel, instanceToPlain(instance));
   }

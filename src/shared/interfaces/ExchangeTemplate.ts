@@ -6,6 +6,7 @@ type ExchangeTemplate = {
   name: string;
   description: string;
   instructions: string;
+  participantInstructionsOnComplete: string;
   cue: string;
   assistant: Agent;
   triggers: Trigger[];
@@ -21,6 +22,7 @@ export type PostOneExchangeTemplateParams = {
   name: string;
   description: string;
   instructions: string;
+  participantInstructionsOnComplete: string;
   assistant: string | null;
   triggers: string | null;
   cue: string;

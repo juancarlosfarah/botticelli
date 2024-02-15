@@ -81,6 +81,12 @@ export default function ExchangeTemplate(): ReactElement {
         Trigger
       </Typography>
       <Typography>{trigger?.name || '—'}</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Instructions On Complete
+      </Typography>
+      <Typography>
+        {exchangeTemplate.participantInstructionsOnComplete}
+      </Typography>
     </>
   );
 }

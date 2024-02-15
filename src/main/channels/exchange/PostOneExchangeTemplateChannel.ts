@@ -4,6 +4,7 @@ import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
+import { PostOneExchangeTemplateParams } from '../../../shared/interfaces/ExchangeTemplate';
 import { AppDataSource } from '../../data-source';
 import { Agent } from '../../entity/Agent';
 import { ExchangeTemplate } from '../../entity/ExchangeTemplate';
@@ -18,15 +19,31 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
     });
   }
 
-  async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
+  async handle(
+    event: IpcMainEvent,
+    request: IpcRequest<PostOneExchangeTemplateParams>,
+  ): Promise<void> {
     log.debug(`handling ${this.getName()}...`);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { name, description, instructions, assistant, cue, triggers } =
-      request.params;
+    // todo: return error
+    if (!request.params) {
+      event.sender.send(request.responseChannel, {});
+      return;
+    }
+
+    const {
+      name,
+      description,
+      instructions,
+      participantInstructionsOnComplete,
+      assistant,
+      cue,
+      triggers,
+    } = request.params;
 
     log.debug(`linking triggers: ${triggers}`);
 
@@ -34,19 +51,27 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
     exchangeTemplate.name = name;
     exchangeTemplate.description = description;
     exchangeTemplate.instructions = instructions;
+    exchangeTemplate.participantInstructionsOnComplete =
+      participantInstructionsOnComplete;
     exchangeTemplate.cue = cue;
 
-    const agentRepository = AppDataSource.getRepository(Agent);
-    const savedAssistant = await agentRepository.findOneBy({ id: assistant });
-    if (savedAssistant) {
-      exchangeTemplate.assistant = savedAssistant;
+    // todo: handle no assistant
+    if (assistant) {
+      const agentRepository = AppDataSource.getRepository(Agent);
+      const savedAssistant = await agentRepository.findOneBy({ id: assistant });
+      if (savedAssistant) {
+        exchangeTemplate.assistant = savedAssistant;
+      }
     }
 
+    // todo: handle no triggers
     // todo: array should come from the front end
-    const triggerRepository = AppDataSource.getRepository(Trigger);
-    const savedTrigger = await triggerRepository.findOneBy({ id: triggers });
-    if (savedTrigger) {
-      exchangeTemplate.triggers = [savedTrigger];
+    if (triggers) {
+      const triggerRepository = AppDataSource.getRepository(Trigger);
+      const savedTrigger = await triggerRepository.findOneBy({ id: triggers });
+      if (savedTrigger) {
+        exchangeTemplate.triggers = [savedTrigger];
+      }
     }
 
     await AppDataSource.manager.save(exchangeTemplate);

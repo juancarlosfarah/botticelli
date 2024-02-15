@@ -18,8 +18,7 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
-import log from 'electron-log/renderer';
-
+import { AppDispatch } from '../../store';
 import {
   fetchExchangeTemplates,
   selectAllExchangeTemplates,
@@ -27,7 +26,7 @@ import {
 import { saveNewInteractionTemplate } from './InteractionTemplatesSlice';
 
 const NewInteractionTemplate = (): ReactElement => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const availableExchangeTemplates = useSelector(selectAllExchangeTemplates);
@@ -35,6 +34,10 @@ const NewInteractionTemplate = (): ReactElement => {
   const [description, setDescription] = useState('');
   const [modelInstructions, setModelInstructions] = useState('');
   const [participantInstructions, setParticipantInstructions] = useState('');
+  const [
+    participantInstructionsOnComplete,
+    setParticipantInstructionsOnComplete,
+  ] = useState('');
   const [name, setName] = useState<string>('');
   const [exchangeTemplates, setExchangeTemplates] = useState<string[]>([]);
 
@@ -43,17 +46,22 @@ const NewInteractionTemplate = (): ReactElement => {
   }, []);
 
   const handleNewInteractionTemplate = async (): Promise<void> => {
-    const { payload } = await dispatch(
+    const resultAction = await dispatch(
       saveNewInteractionTemplate({
         name,
         description,
         modelInstructions,
         participantInstructions,
+        participantInstructionsOnComplete,
         exchangeTemplates,
       }),
     );
-    log.debug(`saveNewInteractionTemplate response.payload:`, payload);
-    navigate(`/interactions/templates/${payload.id}`);
+
+    // todo: handle error
+    if (saveNewInteractionTemplate.fulfilled.match(resultAction)) {
+      const interactionTemplate = resultAction.payload;
+      navigate(`/interactions/templates/${interactionTemplate.id}`);
+    }
   };
 
   const handleChangeDescription = (
@@ -75,6 +83,13 @@ const NewInteractionTemplate = (): ReactElement => {
   ): void => {
     const value = event.target.value;
     setParticipantInstructions(value);
+  };
+
+  const handleChangeParticipantInstructionsOnComplete = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ): void => {
+    const value = event.target.value;
+    setParticipantInstructionsOnComplete(value);
   };
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -122,6 +137,17 @@ const NewInteractionTemplate = (): ReactElement => {
         <FormHelperText>
           These are the instructions that will be shown to participants at the
           start of the interaction.
+        </FormHelperText>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Participant Instructions On Complete</FormLabel>
+        <Textarea
+          value={participantInstructionsOnComplete}
+          onChange={handleChangeParticipantInstructionsOnComplete}
+        />
+        <FormHelperText>
+          These are the instructions that are shown to the participant when the
+          interaction has been marked as completed.
         </FormHelperText>
       </FormControl>
       <FormControl>
