@@ -57,7 +57,7 @@ export class GetOneExperimentChannel extends GetOneChannel {
 
     // debugging
     if (instance) {
-      log.debug(`got ${this.entity}:`, instance.id);
+      log.debug(`got experiment ${instance.id}`);
     }
 
     event.sender.send(request.responseChannel, instanceToPlain(instance));

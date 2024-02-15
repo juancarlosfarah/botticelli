@@ -9,7 +9,6 @@ import OpenAi, { OpenAI } from 'openai';
 import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
 import { AppDataSource } from '../../data-source';
 import { Exchange } from '../../entity/Exchange';
-import { Interaction } from '../../entity/Interaction';
 import { Message } from '../../entity/Message';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 import { messagesToPrompt } from '../../utils/messagesToPrompt';
@@ -94,6 +93,43 @@ export class GenerateResponseChannel implements IpcChannel {
     );
   }
 
+  async generateResponse(
+    exchange: Exchange,
+    messages: Message[],
+  ): Promise<Message> {
+    const instructions = exchange.instructions;
+
+    const assistant = exchange?.assistant;
+
+    // debug
+    log.debug(`generating response for exchange`, exchange.id);
+    log.debug(`requesting completion`);
+    log.debug(`assisted by:`, assistant.id);
+
+    // transform messages to prompt format
+    const prompt = messagesToPrompt(messages);
+
+    const completion = await this.openAi.chat.completions.create({
+      messages: [
+        { role: 'system', content: assistant.description },
+        { role: 'system', content: instructions },
+        ...prompt,
+      ],
+      model: 'gpt-4',
+    });
+
+    // debug
+    log.debug(`received completion`);
+
+    // create new message out of prompt
+    const response = new Message();
+    response.content = completion.choices[0].message.content || '';
+    response.exchange = exchange.id;
+    response.sender = assistant;
+
+    return response;
+  }
+
   async handle(
     event: IpcMainEvent,
     request: IpcRequest<GenerateResponseParams>,
@@ -133,65 +169,59 @@ export class GenerateResponseChannel implements IpcChannel {
       return;
     }
 
-    const instructions = exchange?.instructions || '';
-
-    const assistant = exchange?.assistant;
-
     const messages = await messageRepository.findBy({
       exchange: { id: exchangeId },
     });
 
-    const completed = await this.evaluate(exchange, messages);
+    const exchangeAlreadyCompleted = exchange.completed;
 
-    if (completed) {
-      await this.completeExchange(exchange);
-      event.sender.send(request.responseChannel, null);
-    } else {
-      // debug
-      log.debug(`generating response for exchange`, exchangeId);
-      log.debug(`requesting completion`);
-      log.debug(`assisted by:`, assistant.id);
-
-      // transform messages to prompt format
-      const prompt = messagesToPrompt(messages);
-
-      const completion = await this.openAi.chat.completions.create({
-        messages: [
-          { role: 'system', content: assistant.description },
-          { role: 'system', content: instructions },
-          ...prompt,
-        ],
-        model: 'gpt-4',
-      });
-
-      // debug
-      log.debug(`received completion`);
-
-      // create new message out of prompt
-      const response = new Message();
-      response.content = completion.choices[0].message.content || '';
-      response.exchange = exchangeId;
-      response.sender = assistant;
+    // no need to evaluate if already completed, just continue the conversation
+    if (exchangeAlreadyCompleted) {
+      const response = await this.generateResponse(exchange, messages);
 
       const { id } = await messageRepository.save(response);
 
       const savedMessage = await messageRepository.findOneBy({ id });
 
-      // evaluate again, after the response has been generated
       if (savedMessage) {
         // debug
         log.debug(`generated response:`, savedMessage?.id);
-        const completed = await this.evaluate(exchange, [
-          ...messages,
-          savedMessage,
-        ]);
-
-        if (completed) {
-          await this.completeExchange(exchange);
-        }
       }
 
       event.sender.send(request.responseChannel, instanceToPlain(savedMessage));
+    } else {
+      // evaluate
+      const completed = await this.evaluate(exchange, messages);
+
+      if (completed) {
+        await this.completeExchange(exchange);
+        event.sender.send(request.responseChannel, null);
+      } else {
+        const response = await this.generateResponse(exchange, messages);
+
+        const { id } = await messageRepository.save(response);
+
+        const savedMessage = await messageRepository.findOneBy({ id });
+
+        // evaluate again, after the response has been generated
+        if (savedMessage) {
+          // debug
+          log.debug(`generated response:`, savedMessage?.id);
+          const completed = await this.evaluate(exchange, [
+            ...messages,
+            savedMessage,
+          ]);
+
+          if (completed) {
+            await this.completeExchange(exchange);
+          }
+        }
+
+        event.sender.send(
+          request.responseChannel,
+          instanceToPlain(savedMessage),
+        );
+      }
     }
   }
 }
