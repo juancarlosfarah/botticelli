@@ -65,13 +65,18 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
     }
 
     // todo: handle no triggers
-    // todo: array should come from the front end
     if (triggers) {
       const triggerRepository = AppDataSource.getRepository(Trigger);
-      const savedTrigger = await triggerRepository.findOneBy({ id: triggers });
-      if (savedTrigger) {
-        exchangeTemplate.triggers = [savedTrigger];
+      const savedTriggers: Trigger[] = [];
+      for (const triggerId of triggers) {
+        const savedTrigger = await triggerRepository.findOneBy({
+          id: triggerId,
+        });
+        if (savedTrigger) {
+          savedTriggers.push(savedTrigger);
+        }
       }
+      exchangeTemplate.triggers = savedTriggers;
     }
 
     await AppDataSource.manager.save(exchangeTemplate);

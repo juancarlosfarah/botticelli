@@ -3,8 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
+import List from '@mui/joy/List';
+import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
 
+import Trigger from '@shared/interfaces/Trigger';
 import log from 'electron-log/renderer';
 
 import { AppDispatch, RootState } from '../../store';
@@ -36,10 +39,8 @@ export default function ExchangeTemplate(): ReactElement {
     return <div>Exchange Template Not Found</div>;
   }
 
-  // show first trigger only if triggers exist
-  const trigger = exchangeTemplate?.triggers?.length
-    ? exchangeTemplate.triggers[0]
-    : null;
+  // extract triggers
+  const { triggers = [] } = exchangeTemplate;
 
   return (
     <>
@@ -57,30 +58,41 @@ export default function ExchangeTemplate(): ReactElement {
       >
         <Typography level="h2">Exchange Template</Typography>
       </Box>
+
       <Typography sx={{}} level="title-md">
         Name
       </Typography>
       <Typography>{exchangeTemplate.name}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Description
       </Typography>
       <Typography>{exchangeTemplate.description}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Instructions
       </Typography>
       <Typography>{exchangeTemplate.instructions}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Cue
       </Typography>
       <Typography>{exchangeTemplate.cue}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Assistant
       </Typography>
       <Typography>{exchangeTemplate?.assistant?.name || '—'}</Typography>
+
       <Typography sx={{ mt: 1 }} level="title-md">
-        Trigger
+        Triggers
       </Typography>
-      <Typography>{trigger?.name || '—'}</Typography>
+      <List component="ol" marker="decimal">
+        {triggers.map((trigger: Trigger) => {
+          return <ListItem key={trigger.id}>{trigger?.name || '—'}</ListItem>;
+        }) || '—'}
+      </List>
+
       <Typography sx={{ mt: 1 }} level="title-md">
         Instructions On Complete
       </Typography>

@@ -33,11 +33,11 @@ const initialState = exchangeTemplatesAdapter.getInitialState({
 export const fetchExchangeTemplate = createAsyncThunk<
   GetOneExchangeTemplateResponse,
   GetOneExchangeTemplateParams
->('exchangeTemplates/fetchExchangeTemplate', async (query) => {
+>('exchangeTemplates/fetchExchangeTemplate', async (params) => {
   return await IpcService.send<ExchangeTemplate, GetOneExchangeTemplateParams>(
     GET_ONE_EXCHANGE_TEMPLATE_CHANNEL,
     {
-      params: query,
+      params,
     },
   );
 });

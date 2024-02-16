@@ -24,7 +24,7 @@ export type PostOneExchangeTemplateParams = {
   instructions: string;
   participantInstructionsOnComplete: string;
   assistant: string | null;
-  triggers: string | null;
+  triggers: string[];
   cue: string;
 };
 

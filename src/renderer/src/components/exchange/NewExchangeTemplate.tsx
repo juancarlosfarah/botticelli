@@ -1,5 +1,8 @@
 import {
   ChangeEvent,
+  FocusEvent,
+  KeyboardEvent,
+  MouseEvent,
   ReactElement,
   SyntheticEvent,
   useEffect,
@@ -9,6 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import Box from '@mui/joy/Box';
+import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
 import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
@@ -34,7 +39,7 @@ const NewExchangeTemplate = (): ReactElement => {
   ] = useState('');
   const [cue, setCue] = useState<string>('');
   const [assistant, setAssistant] = useState<string | null>(null);
-  const [triggers, setTriggers] = useState<string | null>(null);
+  const [triggers, setTriggers] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -100,8 +105,8 @@ const NewExchangeTemplate = (): ReactElement => {
   };
 
   const handleChangeTriggers = (
-    _: SyntheticEvent | null,
-    newValue: string | null,
+    _: MouseEvent | KeyboardEvent | FocusEvent | null,
+    newValue: string[],
   ): void => {
     setTriggers(newValue);
   };
@@ -146,16 +151,7 @@ const NewExchangeTemplate = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <FormControl>
-        <FormLabel>Trigger</FormLabel>
-        <Select value={triggers} onChange={handleChangeTriggers}>
-          {availableTriggers.map((trigger) => (
-            <Option value={trigger.id} key={trigger.id}>
-              {trigger.name}
-            </Option>
-          ))}
-        </Select>
-      </FormControl>
+
       <FormControl>
         <FormLabel>Instructions On Complete</FormLabel>
         <Textarea
@@ -167,6 +163,38 @@ const NewExchangeTemplate = (): ReactElement => {
           exchange has been marked as completed.
         </FormHelperText>
       </FormControl>
+
+      <FormControl>
+        <FormLabel>Triggers</FormLabel>
+        <Select
+          multiple
+          value={triggers}
+          onChange={handleChangeTriggers}
+          renderValue={(selected): ReactElement => (
+            <Box sx={{ display: 'flex', gap: '0.25rem' }}>
+              {selected.map((selectedOption) => (
+                <Chip variant="soft" color="primary" key={selectedOption.value}>
+                  {selectedOption.label}
+                </Chip>
+              ))}
+            </Box>
+          )}
+          slotProps={{
+            listbox: {
+              sx: {
+                width: '100%',
+              },
+            },
+          }}
+        >
+          {availableTriggers.map((trigger) => (
+            <Option value={trigger.id} key={trigger.id}>
+              {trigger.name}
+            </Option>
+          ))}
+        </Select>
+      </FormControl>
+
       <Button onClick={handleNewExchangeTemplate}>Save</Button>
     </>
   );
