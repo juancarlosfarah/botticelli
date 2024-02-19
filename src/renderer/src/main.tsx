@@ -203,6 +203,7 @@ const router = createBrowserRouter([
   },
 ]);
 
+// this is a call to add the app at the root of the document
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <StyledEngineProvider injectFirst>
