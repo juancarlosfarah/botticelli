@@ -203,6 +203,8 @@ const router = createBrowserRouter([
   },
 ]);
 
+console.log('loading');
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <StyledEngineProvider injectFirst>
