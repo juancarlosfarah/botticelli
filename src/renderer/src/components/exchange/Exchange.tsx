@@ -92,6 +92,10 @@ export default function Exchange(): ReactElement {
       </Typography>
       <Typography>{exchange?.order ?? '—'}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
+        Type
+      </Typography>
+      <Typography>Text</Typography>
+      <Typography sx={{ mt: 1 }} level="title-md">
         Trigger
       </Typography>
       <Typography>{trigger?.name || '—'}</Typography>
