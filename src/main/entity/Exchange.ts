@@ -35,6 +35,12 @@ export class Exchange {
   @Column({ default: '' })
   cue: string = '';
 
+  @Column({ default: 0 })
+  softLimit: number = 0;
+
+  @Column({ default: 0 })
+  hardLimit: number = 0;
+
   @Column({ default: 0, nullable: true })
   order: number = 0;
 

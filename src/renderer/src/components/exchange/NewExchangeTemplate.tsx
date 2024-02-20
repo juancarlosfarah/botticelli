@@ -40,6 +40,8 @@ const NewExchangeTemplate = (): ReactElement => {
   const [cue, setCue] = useState<string>('');
   const [assistant, setAssistant] = useState<string | null>(null);
   const [triggers, setTriggers] = useState<string[]>([]);
+  const [softLimit, setSoftLimit] = useState<number>(0);
+  const [hardLimit, setHardLimit] = useState<number>(0);
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -56,6 +58,8 @@ const NewExchangeTemplate = (): ReactElement => {
         assistant,
         triggers,
         cue,
+        softLimit,
+        hardLimit,
       }),
     );
 
@@ -97,6 +101,38 @@ const NewExchangeTemplate = (): ReactElement => {
     setCue(value);
   };
 
+  const handleChangeSoftLimit = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
+    const value = event.target.value;
+    try {
+      const intValue = parseInt(value);
+      if (intValue < 0) {
+        setSoftLimit(0);
+      } else {
+        setSoftLimit(intValue);
+      }
+    } catch (_) {
+      setSoftLimit(0);
+    }
+  };
+
+  const handleChangeHardLimit = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
+    const value = event.target.value;
+    try {
+      const intValue = parseInt(value);
+      if (intValue < 0) {
+        setHardLimit(0);
+      } else {
+        setHardLimit(intValue);
+      }
+    } catch (_) {
+      setHardLimit(0);
+    }
+  };
+
   const handleChangeAssistant = (
     _: SyntheticEvent | null,
     newValue: string | null,
@@ -120,6 +156,7 @@ const NewExchangeTemplate = (): ReactElement => {
           This is an internal name for this exchange template.
         </FormHelperText>
       </FormControl>
+
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
@@ -127,6 +164,7 @@ const NewExchangeTemplate = (): ReactElement => {
           This is an internal description for this exchange template.
         </FormHelperText>
       </FormControl>
+
       <FormControl>
         <FormLabel>Instructions</FormLabel>
         <Textarea value={instructions} onChange={handleChangeInstructions} />
@@ -134,6 +172,7 @@ const NewExchangeTemplate = (): ReactElement => {
           These are the instructions that will be sent to the language model.
         </FormHelperText>
       </FormControl>
+
       <FormControl>
         <FormLabel>Cue</FormLabel>
         <Textarea value={cue} onChange={handleChangeCue} />
@@ -141,6 +180,7 @@ const NewExchangeTemplate = (): ReactElement => {
           This is the cue that will be shown to the participant.
         </FormHelperText>
       </FormControl>
+
       <FormControl>
         <FormLabel>Assistant</FormLabel>
         <Select value={assistant} onChange={handleChangeAssistant}>
@@ -193,6 +233,37 @@ const NewExchangeTemplate = (): ReactElement => {
             </Option>
           ))}
         </Select>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Soft Limit</FormLabel>
+        <Input
+          slotProps={{ input: { type: 'number', interval: 1, min: 0 } }}
+          value={softLimit}
+          onChange={handleChangeSoftLimit}
+        />
+        <FormHelperText>
+          When the exchange reaches this total number of messages, the exchange
+          will be marked as completed. Participants will be able to continue to
+          send messages, but they will be also able to dismiss the exchange.
+          Zero means there is no limit. Usually this number divided by two
+          equals the number of messages sent by a participant.
+        </FormHelperText>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Hard Limit</FormLabel>
+        <Input
+          slotProps={{ input: { type: 'number', interval: 1, min: 0 } }}
+          value={hardLimit}
+          onChange={handleChangeHardLimit}
+        />
+        <FormHelperText>
+          When the exchange reaches this total number of messages, the exchange
+          will be marked as blocked. Participants will not longer be able to
+          send messages. Zero means there is no limit. Usually this number
+          divided by two equals the number of messages sent by a participant.
+        </FormHelperText>
       </FormControl>
 
       <Button onClick={handleNewExchangeTemplate}>Save</Button>

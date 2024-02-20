@@ -173,6 +173,14 @@ export class GenerateResponseChannel implements IpcChannel {
       exchange: { id: exchangeId },
     });
 
+    // need to check if soft limit is not zero, as that indicates there's no limit
+    const hasSoftLimit = exchange.softLimit;
+    const reachedSoftLimit = messages.length >= exchange.softLimit;
+    if (hasSoftLimit && reachedSoftLimit) {
+      exchange.completed = true;
+      await this.completeExchange(exchange);
+    }
+
     const exchangeAlreadyCompleted = exchange.completed;
 
     // no need to evaluate if already completed, just continue the conversation
@@ -195,33 +203,31 @@ export class GenerateResponseChannel implements IpcChannel {
 
       if (completed) {
         await this.completeExchange(exchange);
-        event.sender.send(request.responseChannel, null);
-      } else {
-        const response = await this.generateResponse(exchange, messages);
-
-        const { id } = await messageRepository.save(response);
-
-        const savedMessage = await messageRepository.findOneBy({ id });
-
-        // evaluate again, after the response has been generated
-        if (savedMessage) {
-          // debug
-          log.debug(`generated response:`, savedMessage?.id);
-          const completed = await this.evaluate(exchange, [
-            ...messages,
-            savedMessage,
-          ]);
-
-          if (completed) {
-            await this.completeExchange(exchange);
-          }
-        }
-
-        event.sender.send(
-          request.responseChannel,
-          instanceToPlain(savedMessage),
-        );
       }
+
+      // always generate a response, even if completed after a user message
+      const response = await this.generateResponse(exchange, messages);
+
+      const { id } = await messageRepository.save(response);
+
+      const savedMessage = await messageRepository.findOneBy({ id });
+
+      // evaluate again, after the response has been generated, if not already complete
+      if (savedMessage && !completed) {
+        // debug
+        log.debug(`generated response:`, savedMessage?.id);
+        const completed = await this.evaluate(exchange, [
+          ...messages,
+          savedMessage,
+        ]);
+
+        // if now completed, mark as such
+        if (completed) {
+          await this.completeExchange(exchange);
+        }
+      }
+
+      event.sender.send(request.responseChannel, instanceToPlain(savedMessage));
     }
   }
 }
