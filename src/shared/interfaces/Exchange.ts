@@ -20,6 +20,8 @@ type Exchange = {
   started: boolean;
   completed: boolean;
   dismissed: boolean;
+  softLimit: number;
+  hardLimit: number;
   startedAt: Date;
   completedAt: Date;
   dismissedAt: Date;

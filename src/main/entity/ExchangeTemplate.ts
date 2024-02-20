@@ -34,6 +34,12 @@ export class ExchangeTemplate {
   @Column({ default: '' })
   cue: string = '';
 
+  @Column({ default: 0 })
+  softLimit: number = 0;
+
+  @Column({ default: 0 })
+  hardLimit: number = 0;
+
   @ManyToOne(() => Agent, { eager: true })
   assistant: Relation<Agent>;
 

@@ -10,6 +10,8 @@ type ExchangeTemplate = {
   cue: string;
   assistant: Agent;
   triggers: Trigger[];
+  softLimit: number;
+  hardLimit: number;
 };
 
 export type PostOneExchangeTemplateResponse = ExchangeTemplate;
@@ -26,6 +28,8 @@ export type PostOneExchangeTemplateParams = {
   assistant: string | null;
   triggers: string[];
   cue: string;
+  softLimit?: number;
+  hardLimit?: number;
 };
 
 export type GetOneExchangeTemplateParams = {

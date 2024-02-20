@@ -64,6 +64,8 @@ export const saveNewExchangeTemplate = createAsyncThunk<
     assistant,
     triggers,
     cue,
+    softLimit,
+    hardLimit,
   }) => {
     return (await IpcService.send<
       PostOneExchangeTemplateResponse,
@@ -77,6 +79,8 @@ export const saveNewExchangeTemplate = createAsyncThunk<
         assistant,
         triggers,
         cue,
+        softLimit,
+        hardLimit,
       },
     })) as PostOneExchangeTemplateResponse;
   },

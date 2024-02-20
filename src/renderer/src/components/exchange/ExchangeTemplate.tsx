@@ -85,13 +85,14 @@ export default function ExchangeTemplate(): ReactElement {
       <Typography>{exchangeTemplate?.assistant?.name || '—'}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Triggers
+        Soft Limit
       </Typography>
-      <List component="ol" marker="decimal">
-        {triggers.map((trigger: Trigger) => {
-          return <ListItem key={trigger.id}>{trigger?.name || '—'}</ListItem>;
-        }) || '—'}
-      </List>
+      <Typography>{exchangeTemplate?.softLimit || '—'}</Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Hard Limit
+      </Typography>
+      <Typography>{exchangeTemplate?.hardLimit || '—'}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         Instructions On Complete
@@ -99,6 +100,15 @@ export default function ExchangeTemplate(): ReactElement {
       <Typography>
         {exchangeTemplate.participantInstructionsOnComplete}
       </Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Triggers
+      </Typography>
+      <List component="ol" marker="decimal">
+        {triggers.map((trigger: Trigger) => {
+          return <ListItem key={trigger.id}>{trigger?.name || '—'}</ListItem>;
+        }) || '—'}
+      </List>
     </>
   );
 }

@@ -164,6 +164,8 @@ export class PostOneExperimentChannel extends PostOneChannel {
                 exchange.order = exchangeTemplateNumber;
                 exchange.triggers = exchangeTemplate.triggers;
                 exchange.assistant = exchangeTemplate.assistant;
+                exchange.softLimit = exchangeTemplate.softLimit;
+                exchange.hardLimit = exchangeTemplate.hardLimit;
                 exchange.description = exchangeTemplate.description;
                 exchange.interaction = savedInteraction;
 

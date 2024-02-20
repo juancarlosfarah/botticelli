@@ -99,6 +99,17 @@ export default function Exchange(): ReactElement {
         Trigger
       </Typography>
       <Typography>{trigger?.name || '—'}</Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Soft Limit
+      </Typography>
+      <Typography>{exchange?.softLimit || '—'}</Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Hard Limit
+      </Typography>
+      <Typography>{exchange?.hardLimit || '—'}</Typography>
+
       <MessagesPane
         exchangeId={exchange.id}
         interactionId={exchange?.interaction?.id}

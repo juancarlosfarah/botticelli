@@ -43,6 +43,8 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       assistant,
       cue,
       triggers,
+      softLimit,
+      hardLimit,
     } = request.params;
 
     log.debug(`linking triggers: ${triggers}`);
@@ -54,6 +56,14 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
     exchangeTemplate.participantInstructionsOnComplete =
       participantInstructionsOnComplete;
     exchangeTemplate.cue = cue;
+
+    // limits
+    if (softLimit) {
+      exchangeTemplate.softLimit = softLimit;
+    }
+    if (hardLimit) {
+      exchangeTemplate.hardLimit = hardLimit;
+    }
 
     // todo: handle no assistant
     if (assistant) {
