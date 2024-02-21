@@ -11,12 +11,29 @@ import {
   POST_MESSAGE_CHANNEL,
 } from '@shared/channels';
 import { GENERATE_RESPONSE_CHANNEL } from '@shared/channels';
-import { Message } from '@shared/interfaces/Message';
+import {
+  GenerateResponseHandlerParams,
+  GenerateResponseParams,
+  GenerateResponseResponse,
+  Message,
+} from '@shared/interfaces/Message';
 import log from 'electron-log/renderer';
+import _ from 'lodash';
 
 import { IpcService } from '../../services/IpcService';
 import { fetchExchange } from '../exchange/ExchangesSlice';
 import { fetchInteraction } from '../interaction/InteractionsSlice';
+
+const scrollToBottom = (): void => {
+  _.delay(
+    () =>
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth',
+      }),
+    500,
+  );
+};
 
 export const messagesAdapter = createEntityAdapter<Message>();
 
@@ -83,18 +100,21 @@ export const saveNewMessage = createAsyncThunk(
   },
 );
 
-export const generateResponse = createAsyncThunk(
+export const generateResponse = createAsyncThunk<
+  GenerateResponseResponse,
+  GenerateResponseParams
+>(
   'messages/generateResponse',
   async ({ exchangeId, interactionId }, { dispatch }) => {
     // debug
     log.debug(`generateResponse:`, exchangeId);
 
-    const response = await IpcService.send<{ message: any }>(
-      GENERATE_RESPONSE_CHANNEL,
-      {
-        params: { exchangeId },
-      },
-    );
+    const response = await IpcService.send<
+      GenerateResponseResponse,
+      GenerateResponseHandlerParams
+    >(GENERATE_RESPONSE_CHANNEL, {
+      params: { exchangeId },
+    });
 
     dispatch(fetchExchange({ id: exchangeId }));
     dispatch(fetchInteraction({ id: interactionId }));
@@ -139,15 +159,20 @@ const messagesSlice = createSlice({
       .addCase(saveNewMessage.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(saveNewMessage.fulfilled, messagesAdapter.addOne)
+      .addCase(saveNewMessage.fulfilled, (state, action) => {
+        messagesAdapter.addOne(state, action.payload);
+        scrollToBottom();
+      })
       .addCase(generateResponse.pending, (state) => {
         state.status = 'loading';
+        scrollToBottom();
       })
       .addCase(generateResponse.fulfilled, (state, action) => {
         if (action.payload) {
           messagesAdapter.addOne(state, action.payload);
         }
         state.status = 'idle';
+        scrollToBottom();
       })
       .addCase(deleteMessage.fulfilled, messagesAdapter.removeOne);
   },

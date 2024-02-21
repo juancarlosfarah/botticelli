@@ -38,6 +38,9 @@ export default function MessageInput({
     if (textAreaValue.trim() !== '') {
       onSubmit();
       setTextAreaValue('');
+
+      // focus on the text area
+      textAreaRef?.current?.focus();
     }
   };
 
