@@ -130,11 +130,12 @@ export default function MessagesPane({
             textAreaValue={textAreaValue}
             setTextAreaValue={setTextAreaValue}
             completed={exchange.completed}
-            onSubmit={(): void => {
+            onSubmit={(keyPressEvents): void => {
               dispatch(
                 saveNewMessage({
                   interactionId,
                   exchangeId,
+                  keyPressEvents,
                   content: textAreaValue,
                   evaluate: true,
                   sender: participantId,

@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -11,6 +12,7 @@ import {
 
 import { Agent } from './Agent';
 import { Exchange } from './Exchange';
+import { KeyPressEvent } from './KeyPressEvent';
 
 @Entity()
 export class Message {
@@ -28,6 +30,9 @@ export class Message {
 
   @ManyToOne(() => Agent, (agent) => agent.messages, { eager: true })
   sender: Relation<Agent>;
+
+  @OneToMany(() => KeyPressEvent, (keyPressEvent) => keyPressEvent.message)
+  keyPressEvents: Relation<KeyPressEvent>[];
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
