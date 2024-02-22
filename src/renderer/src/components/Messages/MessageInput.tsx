@@ -2,12 +2,8 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
 import CheckIcon from '@mui/icons-material/CheckRounded';
-import FormatBoldRoundedIcon from '@mui/icons-material/FormatBoldRounded';
-import FormatItalicRoundedIcon from '@mui/icons-material/FormatItalicRounded';
-import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import StrikethroughSRoundedIcon from '@mui/icons-material/StrikethroughSRounded';
-import { IconButton, Stack } from '@mui/joy';
+import { Stack } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
@@ -38,6 +34,12 @@ export default function MessageInput({
     if (textAreaValue.trim() !== '') {
       onSubmit();
       setTextAreaValue('');
+
+      // focus on the text area
+      const textareaElement = textAreaRef?.current?.querySelector('textarea');
+      if (textareaElement) {
+        textareaElement.focus();
+      }
     }
   };
 
