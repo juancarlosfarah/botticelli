@@ -25,13 +25,15 @@ import { fetchExchange } from '../exchange/ExchangesSlice';
 import { fetchInteraction } from '../interaction/InteractionsSlice';
 
 const scrollToBottom = (): void => {
+  // todo: factor out
+  const delayInMillis = 500;
   _.delay(
     () =>
       window.scrollTo({
         top: document.body.scrollHeight,
         behavior: 'smooth',
       }),
-    500,
+    delayInMillis,
   );
 };
 
