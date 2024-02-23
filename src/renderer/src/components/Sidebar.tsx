@@ -148,6 +148,20 @@ export default function Sidebar(): ReactElement {
             </ListItemButton>
           </ListItem>
 
+          <ListItem>
+            <ListItemButton
+              selected={pathname === '/simulation'}
+              role="menuitem"
+              component={Link}
+              to="/simulation"
+            >
+              <ScienceIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Simulation</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+
           <ListItem nested>
             <Toggler
               renderToggle={({ open, setOpen }): ReactElement => (
