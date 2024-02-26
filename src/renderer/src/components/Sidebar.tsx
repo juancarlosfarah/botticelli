@@ -401,8 +401,8 @@ export default function Sidebar(): ReactElement {
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
         <Avatar variant="outlined" size="sm" />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">User</Typography>
-          <Typography level="body-xs">user@email.com</Typography>
+          <Typography level="title-sm">LNCO</Typography>
+          <Typography level="body-xs">lnco@epfl.ch</Typography>
         </Box>
         <IconButton size="sm" variant="plain" color="neutral">
           <LogoutRoundedIcon />
