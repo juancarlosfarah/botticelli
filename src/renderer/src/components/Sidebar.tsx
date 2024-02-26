@@ -5,6 +5,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import ImportantDevicesIcon from '@mui/icons-material/ImportantDevices';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded';
@@ -150,14 +151,14 @@ export default function Sidebar(): ReactElement {
 
           <ListItem>
             <ListItemButton
-              selected={pathname === '/simulation'}
+              selected={pathname === '/simulations'}
               role="menuitem"
               component={Link}
-              to="/simulation"
+              to="/simulations"
             >
-              <ScienceIcon />
+              <ImportantDevicesIcon />
               <ListItemContent>
-                <Typography level="title-sm">Simulation</Typography>
+                <Typography level="title-sm">Simulations</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>

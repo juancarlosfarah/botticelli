@@ -55,6 +55,10 @@ import { StartInteractionChannel } from './channels/interaction/StartInteraction
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
+import { DeleteOneSimulationChannel } from './channels/simulation/DeleteOneSimulationChannel';
+import { GetManySimulationsChannel } from './channels/simulation/GetManySimulationsChannel';
+import { GetOneSimulationChannel } from './channels/simulation/GetOneSimulationChannel';
+import { PostOneSimulationChannel } from './channels/simulation/PostOneSimulationChannel';
 import { DeleteOneTriggerChannel } from './channels/trigger/DeleteOneTriggerChannel';
 import { GetManyTriggersChannel } from './channels/trigger/GetManyTriggersChannel';
 import { GetOneTriggerChannel } from './channels/trigger/GetOneTriggerChannel';
@@ -228,6 +232,11 @@ new Main().init([
   new GetOneExperimentChannel(),
   new GetManyExperimentsChannel(),
   new DeleteOneExperimentChannel(),
+  // simulations
+  new PostOneSimulationChannel(),
+  new GetOneSimulationChannel(),
+  new GetManySimulationsChannel(),
+  new DeleteOneSimulationChannel(),
   // events
   new PostOneKeyPressEventChannel(),
   new PostManyKeyPressEventsChannel(),

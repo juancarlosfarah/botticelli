@@ -14,6 +14,7 @@ import { Agent } from './Agent';
 import { Exchange } from './Exchange';
 import { Experiment } from './Experiment';
 import { InteractionTemplate } from './InteractionTemplate';
+import { Simulation } from './Simulation';
 
 @Entity()
 export class Interaction {
@@ -53,6 +54,11 @@ export class Interaction {
     onDelete: 'CASCADE',
   })
   experiment: Relation<Experiment>;
+
+  @ManyToOne(() => Simulation, (simulation) => simulation.interactions, {
+    onDelete: 'CASCADE',
+  })
+  simulation: Relation<Simulation>;
 
   @Column({ default: 0 })
   order: number = 0;

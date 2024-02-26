@@ -39,6 +39,9 @@ import Interactions from './components/interaction/Interactions';
 import NewInteraction from './components/interaction/NewInteraction';
 import NewInteractionTemplate from './components/interaction/NewInteractionTemplate';
 import ParticipantInteraction from './components/interaction/ParticipantInteraction';
+import NewSimulation from './components/simulation/NewSimulation';
+import Simulation from './components/simulation/Simulation';
+import Simulations from './components/simulation/Simulations';
 import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
@@ -194,6 +197,18 @@ const router = createBrowserRouter([
       {
         path: 'agents/human/participants/:agentId',
         element: <HumanParticipant />,
+      },
+      {
+        path: 'simulations',
+        element: <Simulations />,
+      },
+      {
+        path: 'simulations/new',
+        element: <NewSimulation />,
+      },
+      {
+        path: 'simulations/:simulationId',
+        element: <Simulation />,
       },
     ],
   },
