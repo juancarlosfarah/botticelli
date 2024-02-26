@@ -86,6 +86,12 @@ export const GET_MANY_EXCHANGE_TEMPLATES_CHANNEL = 'exchange:template:get:many';
 export const DELETE_ONE_EXCHANGE_TEMPLATE_CHANNEL =
   'exchange:template:delete:one';
 
+// simulations
+export const POST_ONE_SIMULATION_CHANNEL = 'simulation:post:one';
+export const GET_ONE_SIMULATION_CHANNEL = 'simulation:get:one';
+export const GET_MANY_SIMULATIONS_CHANNEL = 'simulation:get:many';
+export const DELETE_ONE_SIMULATION_CHANNEL = 'simulation:delete:one';
+
 // events
 export const POST_ONE_KEY_PRESS_EVENT_CHANNEL = 'event:key:press:post:one';
 export const POST_MANY_KEY_PRESS_EVENTS_CHANNEL = 'event:key:press:post:many';
