@@ -1,4 +1,4 @@
-import { ReactElement, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import CheckIcon from '@mui/icons-material/CheckRounded';
@@ -8,8 +8,6 @@ import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
 import Textarea from '@mui/joy/Textarea';
-
-import log from 'electron-log/renderer';
 
 import { AppDispatch } from '../../store';
 import { dismissExchange } from '../exchange/ExchangesSlice';
@@ -39,16 +37,24 @@ export default function MessageInput({
 
   const dispatch = useDispatch<AppDispatch>();
 
+  const focusOnTextArea = (): void => {
+    const textareaElement = textAreaRef?.current?.querySelector('textarea');
+    if (textareaElement) {
+      textareaElement.focus();
+    }
+  };
+
+  useEffect(() => {
+    focusOnTextArea();
+  });
+
   const handleClick = (): void => {
     if (textAreaValue.trim() !== '') {
       onSubmit(keypressData);
       setTextAreaValue('');
 
       // focus on the text area
-      const textareaElement = textAreaRef?.current?.querySelector('textarea');
-      if (textareaElement) {
-        textareaElement.focus();
-      }
+      focusOnTextArea();
     }
   };
 
@@ -82,20 +88,6 @@ export default function MessageInput({
                 borderColor: 'divider',
               }}
             >
-              {/*<div>*/}
-              {/*  /!*<IconButton size="sm" variant="plain" color="neutral">*!/*/}
-              {/*  /!*  <FormatBoldRoundedIcon />*!/*/}
-              {/*  /!*</IconButton>*!/*/}
-              {/*  /!*<IconButton size="sm" variant="plain" color="neutral">*!/*/}
-              {/*  /!*  <FormatItalicRoundedIcon />*!/*/}
-              {/*  /!*</IconButton>*!/*/}
-              {/*  /!*<IconButton size="sm" variant="plain" color="neutral">*!/*/}
-              {/*  /!*  <StrikethroughSRoundedIcon />*!/*/}
-              {/*  /!*</IconButton>*!/*/}
-              {/*  /!*<IconButton size="sm" variant="plain" color="neutral">*!/*/}
-              {/*  /!*  <FormatListBulletedRoundedIcon />*!/*/}
-              {/*  /!*</IconButton>*!/*/}
-              {/*</div>*/}
               {completed && (
                 <Button
                   size="sm"
