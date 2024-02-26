@@ -6,6 +6,7 @@ import { ArtificialAgent } from './entity/ArtificialAgent';
 import { ArtificialAssistant } from './entity/ArtificialAssistant';
 import { ArtificialEvaluator } from './entity/ArtificialEvaluator';
 import { ArtificialParticipant } from './entity/ArtificialParticipant';
+import { Event } from './entity/Event';
 import { Exchange } from './entity/Exchange';
 import { ExchangeTemplate } from './entity/ExchangeTemplate';
 import { Experiment } from './entity/Experiment';
@@ -16,6 +17,7 @@ import { HumanParticipant } from './entity/HumanParticipant';
 import { Interaction } from './entity/Interaction';
 import { InteractionTemplate } from './entity/InteractionTemplate';
 import { InteractionTemplateExchangeTemplate } from './entity/InteractionTemplateExchangeTemplate';
+import { KeyPressEvent } from './entity/KeyPressEvent';
 import { Message } from './entity/Message';
 import { Trigger } from './entity/Trigger';
 
@@ -42,6 +44,8 @@ export const AppDataSource = new DataSource({
     Experiment,
     InteractionTemplateExchangeTemplate,
     ExperimentInteractionTemplate,
+    Event,
+    KeyPressEvent,
   ],
   migrations: [],
   subscribers: [],

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import CheckIcon from '@mui/icons-material/CheckRounded';
@@ -9,6 +9,8 @@ import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
 import Textarea from '@mui/joy/Textarea';
 
+import log from 'electron-log/renderer';
+
 import { AppDispatch } from '../../store';
 import { dismissExchange } from '../exchange/ExchangesSlice';
 
@@ -16,8 +18,13 @@ export type MessageInputProps = {
   exchangeId: string;
   textAreaValue: string;
   setTextAreaValue: (value: string) => void;
-  onSubmit: () => void;
+  onSubmit: (keyPressData: KeyPressData[]) => void;
   completed: boolean;
+};
+
+type KeyPressData = {
+  timestamp: number;
+  key: string;
 };
 
 export default function MessageInput({
@@ -26,13 +33,15 @@ export default function MessageInput({
   setTextAreaValue,
   onSubmit,
   completed,
-}: MessageInputProps): React.ReactElement {
-  const textAreaRef = React.useRef<HTMLDivElement>(null);
+}: MessageInputProps): ReactElement {
+  const textAreaRef = useRef<HTMLDivElement>(null);
+  const [keypressData, setKeypressData] = useState<KeyPressData[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
+
   const handleClick = (): void => {
     if (textAreaValue.trim() !== '') {
-      onSubmit();
+      onSubmit(keypressData);
       setTextAreaValue('');
 
       // focus on the text area
@@ -110,8 +119,17 @@ export default function MessageInput({
             </Stack>
           }
           onKeyDown={(event): void => {
+            setKeypressData([
+              ...keypressData,
+              {
+                timestamp: event.timeStamp,
+                key: event.key,
+              },
+            ]);
             if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
               handleClick();
+              // reset keypress data
+              setKeypressData([]);
             }
           }}
           sx={{

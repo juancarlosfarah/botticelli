@@ -10,7 +10,10 @@ import {
   GET_MESSAGE_CHANNEL,
   POST_MESSAGE_CHANNEL,
 } from '@shared/channels';
-import { GENERATE_RESPONSE_CHANNEL } from '@shared/channels';
+import {
+  GENERATE_RESPONSE_CHANNEL,
+  POST_MANY_KEY_PRESS_EVENTS_CHANNEL,
+} from '@shared/channels';
 import {
   GenerateResponseHandlerParams,
   GenerateResponseParams,
@@ -77,13 +80,13 @@ export const fetchMessages = createAsyncThunk(
 export const saveNewMessage = createAsyncThunk(
   'messages/saveNewMessage',
   async (
-    { interactionId, exchangeId, content, evaluate, sender },
+    { interactionId, exchangeId, content, evaluate, sender, keyPressEvents },
     { dispatch },
   ) => {
     // debugging
     log.debug(`saveNewMessage:`, exchangeId, content);
 
-    const response = await IpcService.send<{ message: any }>(
+    const response = await IpcService.send<{ message: Message }>(
       POST_MESSAGE_CHANNEL,
       {
         params: { exchangeId, content, sender },
@@ -92,6 +95,14 @@ export const saveNewMessage = createAsyncThunk(
 
     // debug
     log.debug(`saveNewMessage response`);
+
+    // todo: save keypress data
+    if (response?.id) {
+      log.debug('saving keypress events');
+      dispatch(
+        postManyKeyPressEvents({ messageId: response.id, keyPressEvents }),
+      );
+    }
 
     // generate a response
     if (evaluate) {
@@ -136,6 +147,20 @@ export const deleteMessage = createAsyncThunk(
     });
     log.debug(`deleteMessage response`);
     return id;
+  },
+);
+
+export const postManyKeyPressEvents = createAsyncThunk(
+  'events/postManyKeyPressEvents',
+  async ({ messageId, keyPressEvents }) => {
+    log.debug(`postManyKeyPressEvents request`);
+    await IpcService.send(POST_MANY_KEY_PRESS_EVENTS_CHANNEL, {
+      params: {
+        messageId,
+        keyPressEvents,
+      },
+    });
+    log.debug(`postManyKeyPressEvents response`);
   },
 );
 

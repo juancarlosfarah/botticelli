@@ -85,3 +85,7 @@ export const GET_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:get:one';
 export const GET_MANY_EXCHANGE_TEMPLATES_CHANNEL = 'exchange:template:get:many';
 export const DELETE_ONE_EXCHANGE_TEMPLATE_CHANNEL =
   'exchange:template:delete:one';
+
+// events
+export const POST_ONE_KEY_PRESS_EVENT_CHANNEL = 'event:key:press:post:one';
+export const POST_MANY_KEY_PRESS_EVENTS_CHANNEL = 'event:key:press:post:many';
