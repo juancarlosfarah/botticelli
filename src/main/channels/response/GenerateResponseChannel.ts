@@ -5,6 +5,7 @@ import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 import OpenAi, { OpenAI } from 'openai';
+import { ChatCompletionCreateParams } from 'openai/src/resources/chat/completions';
 
 import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
 import { AppDataSource } from '../../data-source';
@@ -13,6 +14,8 @@ import { Message } from '../../entity/Message';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 import { messagesToPrompt } from '../../utils/messagesToPrompt';
 import { messagesToText } from '../../utils/messagesToText';
+
+const OPEN_AI_MODEL = 'gpt-4';
 
 export class GenerateResponseChannel implements IpcChannel {
   private openAi: OpenAI;
@@ -50,7 +53,7 @@ export class GenerateResponseChannel implements IpcChannel {
       log.debug(`evaluating trigger`, trigger.id);
       const evaluator = trigger.evaluator;
       const criteria = trigger.criteria;
-      const evaluation = await this.openAi.chat.completions.create({
+      const completionRequest: ChatCompletionCreateParams = {
         messages: [
           { role: 'system', content: evaluator.description },
           { role: 'user', content: criteria },
@@ -64,8 +67,14 @@ export class GenerateResponseChannel implements IpcChannel {
             content: `Conversation: ${messagesToText(messages)}`,
           },
         ],
-        model: 'gpt-3.5-turbo',
-      });
+        model: OPEN_AI_MODEL,
+      };
+
+      // todo: remove
+      log.debug(completionRequest);
+
+      const evaluation =
+        await this.openAi.chat.completions.create(completionRequest);
       evaluations.push(evaluation.choices[0].message.content || '');
     }
 
@@ -109,14 +118,20 @@ export class GenerateResponseChannel implements IpcChannel {
     // transform messages to prompt format
     const prompt = messagesToPrompt(messages);
 
-    const completion = await this.openAi.chat.completions.create({
+    const completionRequest: ChatCompletionCreateParams = {
       messages: [
         { role: 'system', content: assistant.description },
         { role: 'system', content: instructions },
         ...prompt,
       ],
-      model: 'gpt-4',
-    });
+      model: OPEN_AI_MODEL,
+    };
+
+    // todo: remove
+    log.debug(completionRequest);
+
+    const completion =
+      await this.openAi.chat.completions.create(completionRequest);
 
     // debug
     log.debug(`received completion`);
