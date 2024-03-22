@@ -1,5 +1,5 @@
+import InputType from '@shared/enums/InputType';
 import {
-  AfterLoad,
   Column,
   CreateDateColumn,
   Entity,
@@ -26,10 +26,13 @@ export class Message {
   exchange: Relation<Exchange> | string;
 
   @Column({ default: '' })
-  content: string;
+  content: string = '';
+
+  @Column({ type: 'text', default: InputType.Text })
+  inputType: InputType = InputType.Text;
 
   @ManyToOne(() => Agent, (agent) => agent.messages, { eager: true })
-  sender: Relation<Agent>;
+  sender: Relation<Agent> | string;
 
   @OneToMany(() => KeyPressEvent, (keyPressEvent) => keyPressEvent.message)
   keyPressEvents: Relation<KeyPressEvent>[];
@@ -39,14 +42,4 @@ export class Message {
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
-
-  @AfterLoad()
-  getCreatedAt(): void {
-    this.createdAt = this.createdAt.toISOString();
-  }
-
-  @AfterLoad()
-  getUpdatedAt(): void {
-    this.updatedAt = this.updatedAt.toISOString();
-  }
 }

@@ -1,3 +1,4 @@
+import InputType from '../enums/InputType';
 import Agent from './Agent';
 import ExchangeTemplate from './ExchangeTemplate';
 import Interaction from './Interaction';
@@ -11,6 +12,7 @@ type Exchange = {
   instructions: string;
   participantInstructionsOnComplete: string;
   cue: string;
+  inputType: InputType;
   order: number;
   messages: Message[];
   assistant: Agent;
