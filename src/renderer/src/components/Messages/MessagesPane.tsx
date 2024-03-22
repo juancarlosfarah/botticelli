@@ -21,7 +21,7 @@ import {
 import MessageLoader from '../layout/MessageLoader';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-import { fetchMessages, saveNewMessage, selectMessages } from './MessagesSlice';
+import { fetchMessages, selectMessages } from './MessagesSlice';
 
 type MessagesPaneProps = {
   exchangeId: string;
@@ -37,8 +37,6 @@ export default function MessagesPane({
   readOnly = false,
 }: MessagesPaneProps): React.ReactElement {
   const status = useSelector((state: RootState) => state.messages.status);
-
-  const [textAreaValue, setTextAreaValue] = React.useState('');
 
   const dispatch = useDispatch<AppDispatch>();
   const messages = useSelector(selectMessages);
@@ -147,22 +145,11 @@ export default function MessagesPane({
         </Box>
         {!(readOnly || exchange.dismissed) && (
           <MessageInput
+            inputType={exchange.inputType}
+            participantId={participantId}
+            interactionId={interactionId}
             exchangeId={exchangeId}
-            textAreaValue={textAreaValue}
-            setTextAreaValue={setTextAreaValue}
             completed={exchange.completed}
-            onSubmit={(keyPressEvents): void => {
-              dispatch(
-                saveNewMessage({
-                  interactionId,
-                  exchangeId,
-                  keyPressEvents,
-                  content: textAreaValue,
-                  evaluate: true,
-                  sender: participantId,
-                }),
-              );
-            }}
           />
         )}
       </Sheet>

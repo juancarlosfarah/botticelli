@@ -19,6 +19,10 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
+import InputType from '@shared/enums/InputType';
+import capitalize from 'lodash.capitalize';
+import isNull from 'lodash.isnull';
+
 import { AppDispatch } from '../../store';
 import { fetchAgents, selectAssistants } from '../agent/AgentsSlice';
 import { fetchTriggers, selectTriggers } from '../trigger/TriggersSlice';
@@ -29,6 +33,8 @@ const NewExchangeTemplate = (): ReactElement => {
   const navigate = useNavigate();
   const assistants = useSelector(selectAssistants);
   const availableTriggers = useSelector(selectTriggers);
+  // for string enums, Object.values outputs the right side of the value
+  const inputTypes = Object.values(InputType);
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -42,6 +48,7 @@ const NewExchangeTemplate = (): ReactElement => {
   const [triggers, setTriggers] = useState<string[]>([]);
   const [softLimit, setSoftLimit] = useState<number>(0);
   const [hardLimit, setHardLimit] = useState<number>(0);
+  const [inputType, setInputType] = useState<InputType>(InputType.Text);
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -58,6 +65,7 @@ const NewExchangeTemplate = (): ReactElement => {
         assistant,
         triggers,
         cue,
+        inputType,
         softLimit,
         hardLimit,
       }),
@@ -140,6 +148,17 @@ const NewExchangeTemplate = (): ReactElement => {
     setAssistant(newValue);
   };
 
+  const handleChangeInputType = (
+    _: SyntheticEvent | null,
+    newValue: InputType | null,
+  ): void => {
+    if (!isNull(newValue)) {
+      setInputType(newValue);
+    } else {
+      setInputType(InputType.Text);
+    }
+  };
+
   const handleChangeTriggers = (
     _: MouseEvent | KeyboardEvent | FocusEvent | null,
     newValue: string[],
@@ -179,6 +198,17 @@ const NewExchangeTemplate = (): ReactElement => {
         <FormHelperText>
           This is the cue that will be shown to the participant.
         </FormHelperText>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Input Type</FormLabel>
+        <Select value={inputType} onChange={handleChangeInputType}>
+          {inputTypes.map((inputType) => (
+            <Option value={inputType} key={inputType}>
+              {capitalize(inputType)}
+            </Option>
+          ))}
+        </Select>
       </FormControl>
 
       <FormControl>
