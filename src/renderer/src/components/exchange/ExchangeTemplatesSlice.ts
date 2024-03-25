@@ -64,6 +64,7 @@ export const saveNewExchangeTemplate = createAsyncThunk<
     assistant,
     triggers,
     cue,
+    inputType,
     softLimit,
     hardLimit,
   }) => {
@@ -79,6 +80,7 @@ export const saveNewExchangeTemplate = createAsyncThunk<
         assistant,
         triggers,
         cue,
+        inputType,
         softLimit,
         hardLimit,
       },

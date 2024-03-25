@@ -4,6 +4,7 @@ import log from 'electron-log/main';
 
 import { GET_MESSAGES_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
+import { GetManyMessagesParams } from '../../../shared/interfaces/Message';
 import { AppDataSource } from '../../data-source';
 import { Message } from '../../entity/Message';
 import { IpcChannel } from '../../interfaces/IpcChannel';
@@ -13,12 +14,21 @@ export class GetMessagesChannel implements IpcChannel {
     return GET_MESSAGES_CHANNEL;
   }
 
-  async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
+  async handle(
+    event: IpcMainEvent,
+    request: IpcRequest<GetManyMessagesParams>,
+  ): Promise<void> {
     // debug
     log.debug(`handling ${this.getName()}...`);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
+    }
+
+    // todo: return error
+    if (!request.params) {
+      event.sender.send(request.responseChannel, {});
+      return;
     }
 
     const { exchangeId } = request.params;

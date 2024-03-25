@@ -9,6 +9,7 @@ import Typography from '@mui/joy/Typography';
 
 import Trigger from '@shared/interfaces/Trigger';
 import log from 'electron-log/renderer';
+import capitalize from 'lodash.capitalize';
 
 import { AppDispatch, RootState } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
@@ -78,6 +79,11 @@ export default function ExchangeTemplate(): ReactElement {
         Cue
       </Typography>
       <Typography>{exchangeTemplate.cue}</Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        Input Type
+      </Typography>
+      <Typography>{capitalize(exchangeTemplate.inputType)}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         Assistant

@@ -167,6 +167,7 @@ export class PostOneExperimentChannel extends PostOneChannel {
                 exchange.softLimit = exchangeTemplate.softLimit;
                 exchange.hardLimit = exchangeTemplate.hardLimit;
                 exchange.description = exchangeTemplate.description;
+                exchange.inputType = exchangeTemplate.inputType;
                 exchange.interaction = savedInteraction;
 
                 // if not the last exchange, link next exchange, which is

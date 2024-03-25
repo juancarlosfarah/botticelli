@@ -1,5 +1,4 @@
 import {
-  AfterLoad,
   Column,
   CreateDateColumn,
   Entity,
@@ -12,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import InputType from '../../shared/enums/InputType';
 import { Agent } from './Agent';
 import { ExchangeTemplate } from './ExchangeTemplate';
 import { Interaction } from './Interaction';
@@ -34,6 +34,9 @@ export class Exchange {
 
   @Column({ default: '' })
   cue: string = '';
+
+  @Column({ type: 'text', default: InputType.Text })
+  inputType: InputType = InputType.Text;
 
   @Column({ default: 0 })
   softLimit: number = 0;
@@ -92,14 +95,4 @@ export class Exchange {
 
   @UpdateDateColumn({ type: 'datetime' })
   dismissedAt: Date;
-
-  @AfterLoad()
-  getCreatedAt(): void {
-    this.createdAt = this.createdAt.toISOString();
-  }
-
-  @AfterLoad()
-  getUpdatedAt(): void {
-    this.updatedAt = this.updatedAt.toISOString();
-  }
 }
