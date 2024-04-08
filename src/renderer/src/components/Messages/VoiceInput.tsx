@@ -9,17 +9,18 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { Stack } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
-import FormLabel from '@mui/joy/FormLabel';
 import IconButton from '@mui/joy/IconButton';
-import { FormControl } from '@mui/material';
+import List from '@mui/joy/List';
+import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 
 import InputType from '@shared/enums/InputType';
-import { KeyPressData } from '@shared/interfaces/Event';
+
+/* import { KeyPressData } from '@shared/interfaces/Event';
 
 import { AppDispatch } from '../../store';
 import { dismissExchange } from '../exchange/ExchangesSlice';
-import { saveNewMessage } from './MessagesSlice';
+import { saveNewMessage } from './MessagesSlice'; */
 
 interface AudioChunk {
   url: string;
@@ -34,13 +35,12 @@ export type VoiceInputProps = {
   completed: boolean;
 };
 
-export default function VoiceInput({
-  exchangeId,
+export default function VoiceInput({} /* exchangeId,
   interactionId,
   participantId,
   completed,
-  inputType,
-}: VoiceInputProps): ReactElement {
+  inputType, */
+: VoiceInputProps): ReactElement {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -185,6 +185,7 @@ export default function VoiceInput({
   };
 
   return (
+    // Bottom Box
     <Box
       sx={{
         position: 'fixed',
@@ -197,6 +198,7 @@ export default function VoiceInput({
         alignItems: 'center',
         justifyContent: 'center',
         display: 'block',
+        height: '80px',
       }}
     >
       <Stack
@@ -205,58 +207,101 @@ export default function VoiceInput({
         justifyContent="space-evenly"
         alignItems="center"
         divider={<Divider orientation="vertical" flexItem />}
+        sx={{ width: '100%', height: '100%' }}
       >
+        {/* Microphone recording */}
         <Stack
           direction="column"
           justifyContent="space-evenly"
           alignItems="center"
           spacing={1}
+          sx={{ width: '25%', height: '100%' }}
         >
           {isRecording && (
-            <div>Recording: {recordingDuration}s (max 30s/message)</div>
+            <Typography variant="h6" align="center" gutterBottom>
+              Recording: {recordingDuration}s <br />
+              <br />
+            </Typography>
           )}
-          {!isRecording && <div>Click to record (max 30s)</div>}
+          {!isRecording && (
+            <Typography variant="h6" align="center" gutterBottom>
+              Click to record (max 30s)
+            </Typography>
+          )}
 
-          <Button
-            startDecorator={
-              isRecording ? <MicOffRoundedIcon /> : <MicRoundedIcon />
-            }
+          <IconButton
             variant="solid"
-            size="lg"
+            color="primary"
+            aria-label="recording"
             onClick={toggleRecording}
-          ></Button>
+          >
+            {isRecording ? <MicOffRoundedIcon /> : <MicRoundedIcon />}
+          </IconButton>
         </Stack>
 
-        <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
-          {audioChunks.map((chunk, index) => (
-            <Box
-              key={index}
-              sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-            >
-              <audio controls src={chunk.url} />
-              <Button
-                size="sm"
-                variant="outlined"
-                color="danger"
-                onClick={() => deleteAudioChunk(index)}
+        {/* AudioChunks display */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowX: 'auto',
+            maxHeight: '100px',
+            overflowY: 'auto',
+            width: '50%',
+          }}
+        >
+          <List>
+            {audioChunks.map((chunk, index) => (
+              <Box
+                key={index}
+                sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
               >
-                <DeleteForeverRoundedIcon />
-              </Button>
-            </Box>
-          ))}
+                <div>{index + 1}</div>
+                <audio controls src={chunk.url} />
+                <Button
+                  size="sm"
+                  variant="outlined"
+                  color="danger"
+                  onClick={() => deleteAudioChunk(index)}
+                >
+                  <DeleteForeverRoundedIcon />
+                </Button>
+              </Box>
+            ))}
+          </List>
         </Box>
+
+        {/* Send button */}
         <Stack
           direction="column"
           justifyContent="space-evenly"
           alignItems="center"
           spacing={1}
+          sx={{ width: '25%', height: '100%' }}
         >
-          {<div>Send {audioChunks.length} messages</div>}
-          <Button
+          {audioChunks.length === 1 && (
+            <Typography variant="h6" align="center" gutterBottom>
+              Send 1 message
+            </Typography>
+          )}
+          {audioChunks.length > 1 && (
+            <Typography variant="h6" align="center" gutterBottom>
+              Send {audioChunks.length} messages
+            </Typography>
+          )}
+          {audioChunks.length === 0 && (
+            <Typography variant="h6" align="center" gutterBottom>
+              Record some messages
+            </Typography>
+          )}
+
+          <IconButton
             variant="solid"
-            size="md"
-            endDecorator={<SendRoundedIcon />}
-          ></Button>
+            aria-label="send"
+            color="success"
+            disabled={audioChunks.length === 0}
+          >
+            <SendRoundedIcon />
+          </IconButton>
         </Stack>
       </Stack>
     </Box>
