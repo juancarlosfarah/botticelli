@@ -1,15 +1,10 @@
+import ffmpeg from 'fluent-ffmpeg';
+import whisper from 'whisper-node';
+
 import { Audio } from '../entity/Audio';
 
-const express = require('express');
-const multer = require('multer');
 const fs = require('fs');
-const whisper = require('whisper-node');
-const path = require('path');
-const app = express();
-const ffmpeg = require('fluent-ffmpeg');
 
-const cors = require('cors');
-app.use(cors());
 // const upload = multer({ dest: 'uploads/' }); // Files will be saved in the "uploads" directory
 
 /**
