@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { Agent } from './Agent';
+import { Audio } from './Audio';
 import { Exchange } from './Exchange';
 import { KeyPressEvent } from './KeyPressEvent';
 
@@ -36,6 +37,9 @@ export class Message {
 
   @OneToMany(() => KeyPressEvent, (keyPressEvent) => keyPressEvent.message)
   keyPressEvents: Relation<KeyPressEvent>[];
+
+  @OneToMany(() => Audio, (audio) => audio.message, { eager: true })
+  audios: Relation<Audio[]>;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

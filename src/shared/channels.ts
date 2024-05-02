@@ -95,3 +95,7 @@ export const DELETE_ONE_SIMULATION_CHANNEL = 'simulation:delete:one';
 // events
 export const POST_ONE_KEY_PRESS_EVENT_CHANNEL = 'event:key:press:post:one';
 export const POST_MANY_KEY_PRESS_EVENTS_CHANNEL = 'event:key:press:post:many';
+
+// audios
+export const GENERATE_AUDIO_TRANSCRIPTION_CHANNEL =
+  'audio:transcription:generate';
