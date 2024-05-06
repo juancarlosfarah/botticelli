@@ -7,7 +7,6 @@ import {
 import {
   DELETE_MESSAGE_CHANNEL,
   GET_MESSAGES_CHANNEL,
-  GET_MESSAGE_CHANNEL,
   POST_MESSAGE_CHANNEL,
 } from '@shared/channels';
 import {
@@ -15,22 +14,37 @@ import {
   POST_MANY_KEY_PRESS_EVENTS_CHANNEL,
 } from '@shared/channels';
 import {
+  PostManyKeyPressEventsHandleResponse,
+  PostManyKeyPressEventsParams,
+  PostManyKeyPressEventsResponse,
+} from '@shared/interfaces/Event';
+import {
   GenerateResponseHandlerParams,
   GenerateResponseParams,
   GenerateResponseResponse,
   Message,
 } from '@shared/interfaces/Message';
+import {
+  DeleteOneMessageHandlerParams,
+  DeleteOneMessageParams,
+  DeleteOneMessageResponse,
+  GetManyMessagesParams,
+  GetManyMessagesResponse,
+  PostOneMessageHandlerParams,
+  PostOneMessageParams,
+} from '@shared/interfaces/Message';
 import log from 'electron-log/renderer';
-import _ from 'lodash';
+import delay from 'lodash.delay';
 
 import { IpcService } from '../../services/IpcService';
+import { RootState } from '../../store';
 import { fetchExchange } from '../exchange/ExchangesSlice';
 import { fetchInteraction } from '../interaction/InteractionsSlice';
 
 const scrollToBottom = (): void => {
   // todo: factor out
   const delayInMillis = 500;
-  _.delay(
+  delay(
     () =>
       window.scrollTo({
         top: document.body.scrollHeight,
@@ -47,51 +61,41 @@ const initialState = messagesAdapter.getInitialState({
 });
 
 // thunk functions
-export const fetchMessage = createAsyncThunk(
-  'messages/fetchMessage',
-  async (query) => {
-    const response = await IpcService.send<{ message: any }>(
-      GET_MESSAGE_CHANNEL,
-      {
-        params: { query },
-      },
-    );
+export const fetchMessages = createAsyncThunk<
+  GetManyMessagesResponse,
+  GetManyMessagesParams
+>('messages/fetchMessages', async ({ exchangeId }) => {
+  return await IpcService.send<GetManyMessagesResponse, GetManyMessagesParams>(
+    GET_MESSAGES_CHANNEL,
+    {
+      params: { exchangeId },
+    },
+  );
+});
 
-    // debugging
-    log.debug(`fetchMessage response`);
-
-    return response;
-  },
-);
-
-export const fetchMessages = createAsyncThunk(
-  'messages/fetchMessages',
-  async ({ exchangeId }) => {
-    const response = await IpcService.send<{ messages: any }>(
-      GET_MESSAGES_CHANNEL,
-      {
-        params: { exchangeId },
-      },
-    );
-    return response;
-  },
-);
-
-export const saveNewMessage = createAsyncThunk(
+export const saveNewMessage = createAsyncThunk<Message, PostOneMessageParams>(
   'messages/saveNewMessage',
   async (
-    { interactionId, exchangeId, content, evaluate, sender, keyPressEvents },
+    {
+      interactionId,
+      exchangeId,
+      content,
+      evaluate,
+      sender,
+      keyPressEvents,
+      inputType,
+    },
     { dispatch },
   ) => {
     // debugging
     log.debug(`saveNewMessage:`, exchangeId, content);
 
-    const response = await IpcService.send<{ message: Message }>(
-      POST_MESSAGE_CHANNEL,
-      {
-        params: { exchangeId, content, sender },
-      },
-    );
+    const response = await IpcService.send<
+      Message,
+      PostOneMessageHandlerParams
+    >(POST_MESSAGE_CHANNEL, {
+      params: { exchangeId, content, sender, inputType },
+    });
 
     // debug
     log.debug(`saveNewMessage response`);
@@ -139,30 +143,36 @@ export const generateResponse = createAsyncThunk<
   },
 );
 
-export const deleteMessage = createAsyncThunk(
-  'messages/deleteMessage',
-  async (id) => {
-    await IpcService.send<{ message: any }>(DELETE_MESSAGE_CHANNEL, {
+export const deleteMessage = createAsyncThunk<
+  DeleteOneMessageResponse,
+  DeleteOneMessageHandlerParams
+>('messages/deleteMessage', async (id) => {
+  await IpcService.send<DeleteOneMessageResponse, DeleteOneMessageParams>(
+    DELETE_MESSAGE_CHANNEL,
+    {
       params: { id },
-    });
-    log.debug(`deleteMessage response`);
-    return id;
-  },
-);
+    },
+  );
+  log.debug(`deleteMessage response`);
+  return id;
+});
 
-export const postManyKeyPressEvents = createAsyncThunk(
-  'events/postManyKeyPressEvents',
-  async ({ messageId, keyPressEvents }) => {
-    log.debug(`postManyKeyPressEvents request`);
-    await IpcService.send(POST_MANY_KEY_PRESS_EVENTS_CHANNEL, {
-      params: {
-        messageId,
-        keyPressEvents,
-      },
-    });
-    log.debug(`postManyKeyPressEvents response`);
-  },
-);
+export const postManyKeyPressEvents = createAsyncThunk<
+  PostManyKeyPressEventsResponse,
+  PostManyKeyPressEventsParams
+>('events/postManyKeyPressEvents', async ({ messageId, keyPressEvents }) => {
+  log.debug(`postManyKeyPressEvents request`);
+  await IpcService.send<
+    PostManyKeyPressEventsHandleResponse,
+    PostManyKeyPressEventsParams
+  >(POST_MANY_KEY_PRESS_EVENTS_CHANNEL, {
+    params: {
+      messageId,
+      keyPressEvents,
+    },
+  });
+  log.debug(`postManyKeyPressEvents response`);
+});
 
 const messagesSlice = createSlice({
   name: 'messages',
@@ -172,7 +182,7 @@ const messagesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMessages.pending, (state, action) => {
+      .addCase(fetchMessages.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
@@ -210,7 +220,7 @@ export const { messageDeleted } = messagesSlice.actions;
 export default messagesSlice.reducer;
 
 export const { selectAll: selectMessages, selectById: selectMessageById } =
-  messagesAdapter.getSelectors((state) => state.messages);
+  messagesAdapter.getSelectors((state: RootState) => state.messages);
 
 export const selectMessageIds = createSelector(
   // First, pass one or more "input selector" functions:

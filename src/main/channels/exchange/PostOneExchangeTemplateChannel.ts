@@ -42,6 +42,7 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       participantInstructionsOnComplete,
       assistant,
       cue,
+      inputType,
       triggers,
       softLimit,
       hardLimit,
@@ -56,6 +57,7 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
     exchangeTemplate.participantInstructionsOnComplete =
       participantInstructionsOnComplete;
     exchangeTemplate.cue = cue;
+    exchangeTemplate.inputType = inputType;
 
     // limits
     if (softLimit) {

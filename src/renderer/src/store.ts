@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import audiosReducer from './components/Messages/AudiosSlice';
 import messagesReducer from './components/Messages/MessagesSlice';
 import agentsReducer from './components/agent/AgentsSlice';
 import exchangeTemplatesReducer from './components/exchange/ExchangeTemplatesSlice';
@@ -22,6 +23,7 @@ const store = configureStore({
     interactionTemplates: interactionTemplatesReducer,
     experiments: experimentsReducer,
     simulations: simulationsReducer,
+    audios: audiosReducer,
   },
 });
 

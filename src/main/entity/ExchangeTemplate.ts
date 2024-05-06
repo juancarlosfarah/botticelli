@@ -1,5 +1,5 @@
+import InputType from '@shared/enums/InputType';
 import {
-  AfterLoad,
   Column,
   CreateDateColumn,
   Entity,
@@ -34,6 +34,9 @@ export class ExchangeTemplate {
   @Column({ default: '' })
   cue: string = '';
 
+  @Column({ type: 'text', default: InputType.Text })
+  inputType: InputType = InputType.Text;
+
   @Column({ default: 0 })
   softLimit: number = 0;
 
@@ -52,14 +55,4 @@ export class ExchangeTemplate {
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
-
-  @AfterLoad()
-  getCreatedAt(): void {
-    this.createdAt = this.createdAt.toISOString();
-  }
-
-  @AfterLoad()
-  getUpdatedAt(): void {
-    this.updatedAt = this.updatedAt.toISOString();
-  }
 }

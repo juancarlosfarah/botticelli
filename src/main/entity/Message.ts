@@ -1,5 +1,5 @@
+import InputType from '@shared/enums/InputType';
 import {
-  AfterLoad,
   Column,
   CreateDateColumn,
   Entity,
@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { Agent } from './Agent';
+import { Audio } from './Audio';
 import { Exchange } from './Exchange';
 import { KeyPressEvent } from './KeyPressEvent';
 
@@ -26,27 +27,23 @@ export class Message {
   exchange: Relation<Exchange> | string;
 
   @Column({ default: '' })
-  content: string;
+  content: string = '';
+
+  @Column({ type: 'text', default: InputType.Text })
+  inputType: InputType = InputType.Text;
 
   @ManyToOne(() => Agent, (agent) => agent.messages, { eager: true })
-  sender: Relation<Agent>;
+  sender: Relation<Agent> | string;
 
   @OneToMany(() => KeyPressEvent, (keyPressEvent) => keyPressEvent.message)
   keyPressEvents: Relation<KeyPressEvent>[];
+
+  @OneToMany(() => Audio, (audio) => audio.message, { eager: true })
+  audio: Relation<Audio>;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
-
-  @AfterLoad()
-  getCreatedAt(): void {
-    this.createdAt = this.createdAt.toISOString();
-  }
-
-  @AfterLoad()
-  getUpdatedAt(): void {
-    this.updatedAt = this.updatedAt.toISOString();
-  }
 }

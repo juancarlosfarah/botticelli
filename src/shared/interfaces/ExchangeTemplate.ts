@@ -1,3 +1,4 @@
+import InputType from '../enums/InputType';
 import Agent from './Agent';
 import Trigger from './Trigger';
 
@@ -8,6 +9,7 @@ type ExchangeTemplate = {
   instructions: string;
   participantInstructionsOnComplete: string;
   cue: string;
+  inputType: InputType;
   assistant: Agent;
   triggers: Trigger[];
   softLimit: number;
@@ -28,6 +30,7 @@ export type PostOneExchangeTemplateParams = {
   assistant: string | null;
   triggers: string[];
   cue: string;
+  inputType: InputType;
   softLimit?: number;
   hardLimit?: number;
 };
