@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import MicOffRoundedIcon from '@mui/icons-material/MicOffRounded';
@@ -15,6 +15,9 @@ import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 
 import InputType from '@shared/enums/InputType';
+
+import { AppDispatch, RootState } from '../../store';
+import { saveNewAudio } from './AudiosSlice';
 
 /* import { KeyPressData } from '@shared/interfaces/Event';
 
@@ -35,18 +38,23 @@ export type VoiceInputProps = {
   completed: boolean;
 };
 
-export default function VoiceInput({} /* exchangeId,
+export default function VoiceInput({
+  exchangeId /* exchangeId,
   interactionId,
   participantId,
   completed,
-  inputType, */
-: VoiceInputProps): ReactElement {
+  inputType, */,
+}: VoiceInputProps): ReactElement {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<AudioChunk[]>([]);
   const audioChunksRef = useRef<Blob[]>([]);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const status = useSelector((state: RootState) => state.audios);
 
   const transcribeAudio = async (audioBlob: Blob, index: number) => {
     // Create a FormData object to hold the audio file
@@ -151,7 +159,7 @@ export default function VoiceInput({} /* exchangeId,
         });
         const audioUrl = URL.createObjectURL(audioBlob);
 
-        const newChunkIndex = audioChunks.length; // Capture the index where the new chunk will be added
+        // const newChunkIndex = audioChunks.length; // Capture the index where the new chunk will be added
         const newChunk = {
           url: audioUrl,
           blob: audioBlob,
@@ -162,7 +170,15 @@ export default function VoiceInput({} /* exchangeId,
         // Clear the recording chunks
         audioChunksRef.current = [];
 
-        transcribeAudio(audioBlob, newChunkIndex);
+        // transcribeAudio(audioBlob, newChunkIndex);
+
+        console.log('front end saveNewAudio');
+        dispatch(
+          saveNewAudio({
+            exchangeId,
+            blob: audioBlob,
+          }),
+        );
 
         // Send the audio file to the server for transcription
         const formData = new FormData();
@@ -256,7 +272,9 @@ export default function VoiceInput({} /* exchangeId,
                 sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
               >
                 <div>{index + 1}</div>
-                <audio controls src={chunk.url} />
+                {status.status.recording === 'idle' && (
+                  <audio controls src={chunk.url} />
+                )}
                 <Button
                   size="sm"
                   variant="outlined"
@@ -278,12 +296,13 @@ export default function VoiceInput({} /* exchangeId,
           spacing={1}
           sx={{ width: '25%', height: '100%' }}
         >
-          {audioChunks.length === 1 && (
-            <Typography variant="h6" align="center" gutterBottom>
-              Send 1 message
-            </Typography>
-          )}
-          {audioChunks.length > 1 && (
+          {audioChunks.length === 1 &&
+            status.status.transcription === 'idle' && (
+              <Typography variant="h6" align="center" gutterBottom>
+                Send 1 message
+              </Typography>
+            )}
+          {audioChunks.length > 1 && status.status.transcription === 'idle' && (
             <Typography variant="h6" align="center" gutterBottom>
               Send {audioChunks.length} messages
             </Typography>
@@ -293,12 +312,21 @@ export default function VoiceInput({} /* exchangeId,
               Record some messages
             </Typography>
           )}
+          {audioChunks.length > 0 &&
+            status.status.transcription === 'loading' && (
+              <Typography variant="h6" align="center" gutterBottom>
+                Wait a few seconds
+              </Typography>
+            )}
 
           <IconButton
             variant="solid"
             aria-label="send"
             color="success"
-            disabled={audioChunks.length === 0}
+            disabled={
+              audioChunks.length === 0 ||
+              status.status.transcription === 'loading'
+            }
           >
             <SendRoundedIcon />
           </IconButton>

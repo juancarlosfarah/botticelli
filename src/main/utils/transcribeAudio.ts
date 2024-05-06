@@ -1,9 +1,8 @@
 import ffmpeg from 'fluent-ffmpeg';
+import fs from 'fs';
 import whisper from 'whisper-node';
 
 import { Audio } from '../entity/Audio';
-
-const fs = require('fs');
 
 // const upload = multer({ dest: 'uploads/' }); // Files will be saved in the "uploads" directory
 
@@ -26,43 +25,41 @@ function resampleAudio(inputFilePath, outputFilePath, newSampleRate) {
   });
 }
 
-export const transcribeAudio = async (audios: Audio[]): Promise<String> => {
+export const transcribeAudio = async (blobPath: string): Promise<String> => {
   let speechText = '';
 
-  audios.forEach(async (audio) => {
-    const extension = '.wav'; // We want .wav files for whisper-node
-    const originalFilePath = audio.blob;
-    const filePathWithExtension = originalFilePath + extension;
-    const resampledFilePath = originalFilePath + '_resampled' + extension;
-    fs.renameSync(originalFilePath, filePathWithExtension);
+  const extension = '.wav'; // We want .wav files for whisper-node
+  const originalFilePath = blobPath;
+  const filePathWithExtension = originalFilePath + extension;
+  const resampledFilePath = originalFilePath + '_resampled' + extension;
+  fs.renameSync(originalFilePath, filePathWithExtension);
 
-    try {
-      // Set the sample rate to 16kHz
-      await resampleAudio(filePathWithExtension, resampledFilePath, 16000);
+  try {
+    // Set the sample rate to 16kHz
+    await resampleAudio(filePathWithExtension, resampledFilePath, 16000);
 
-      // Transcribe the audio
-      const transcript = await whisper.whisper(resampledFilePath, {
-        modelName: 'base.en', // Specify model options as needed
+    // Transcribe the audio
+    const transcript = await whisper.whisper(resampledFilePath, {
+      modelName: 'base.en', // Specify model options as needed
+    });
+
+    // Process the transcription as needed
+    const newText = transcript
+      .map((t) => t.speech)
+      .join(' ')
+      .replace(/\[.*?\]/g, '');
+    // res.json({ transcription: speechText });
+    speechText += newText;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    // Cleanup: delete the original and resampled files after transcription
+    /* [filePathWithExtension, resampledFilePath].forEach((file) => {
+      fs.unlink(file, (err) => {
+        if (err) console.error('Failed to delete the file:', file, err);
       });
-
-      // Process the transcription as needed
-      const newText = transcript
-        .map((t) => t.speech)
-        .join(' ')
-        .replace(/\[.*?\]/g, '');
-      // res.json({ transcription: speechText });
-      speechText += newText;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      // Cleanup: delete the original and resampled files after transcription
-      [filePathWithExtension, resampledFilePath].forEach((file) => {
-        fs.unlink(file, (err) => {
-          if (err) console.error('Failed to delete the file:', file, err);
-        });
-      });
-    }
-  });
+    }); */
+  }
 
   return speechText;
 };

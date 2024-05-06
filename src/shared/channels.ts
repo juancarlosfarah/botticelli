@@ -99,3 +99,5 @@ export const POST_MANY_KEY_PRESS_EVENTS_CHANNEL = 'event:key:press:post:many';
 // audios
 export const GENERATE_AUDIO_TRANSCRIPTION_CHANNEL =
   'audio:transcription:generate';
+export const POST_ONE_AUDIO_CHANNEL = 'audio:post:one';
+export const TRANSCRIBE_ONE_AUDIO_CHANNEL = 'audio:transcribe:one';

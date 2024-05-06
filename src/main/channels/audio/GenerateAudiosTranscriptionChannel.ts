@@ -25,15 +25,15 @@ export class GenerateAudioTranscriptonChannel implements IpcChannel {
       return;
     }
 
-    const audioRepository = AppDataSource.getRepository(Audio);
+    // const audioRepository = AppDataSource.getRepository(Audio);
 
-    const { exchangeId } = request.params;
+    const { exchangeId, blobPath } = request.params;
 
-    const audios = await audioRepository.findBy({
+    /*  const audios = await audioRepository.findBy({
       exchange: { id: exchangeId },
-    });
+    }); */
 
-    const transcription = await transcribeAudio(audios);
+    const transcription = await transcribeAudio(blobPath);
     event.sender.send(request.responseChannel, instanceToPlain(transcription));
   }
 }
