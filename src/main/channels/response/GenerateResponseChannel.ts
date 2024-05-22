@@ -6,7 +6,8 @@ import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 import OpenAi, { OpenAI } from 'openai';
 
-import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
+import AgentType from '../../../shared/interfaces/AgentType';
+import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_ORG_ID } from '../../config/env';
 import { AppDataSource } from '../../data-source';
 import { Exchange } from '../../entity/Exchange';
 import { Message } from '../../entity/Message';
@@ -64,7 +65,7 @@ export class GenerateResponseChannel implements IpcChannel {
             content: `Conversation: ${messagesToText(messages)}`,
           },
         ],
-        model: 'gpt-3.5-turbo',
+        model: OPENAI_MODEL,
       });
       evaluations.push(evaluation.choices[0].message.content || '');
     }
@@ -115,7 +116,7 @@ export class GenerateResponseChannel implements IpcChannel {
         { role: 'system', content: instructions },
         ...prompt,
       ],
-      model: 'gpt-4',
+      model: OPENAI_MODEL,
     });
 
     // debug
