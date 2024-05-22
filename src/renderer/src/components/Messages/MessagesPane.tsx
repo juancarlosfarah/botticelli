@@ -2,8 +2,10 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CheckIcon from '@mui/icons-material/CheckRounded';
 import Alert from '@mui/joy/Alert';
 import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 
@@ -11,6 +13,7 @@ import { AppDispatch, RootState } from '../../store';
 import { MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
 import {
+  dismissExchange,
   fetchExchange,
   selectExchangeById,
   startExchange,
@@ -60,6 +63,10 @@ export default function MessagesPane({
 
   const showParticipantInstructionsOnComplete =
     exchange.completed && exchange.participantInstructionsOnComplete;
+
+  const handleDismiss = (): void => {
+    dispatch(dismissExchange(exchangeId));
+  };
 
   return (
     <>
@@ -118,7 +125,21 @@ export default function MessagesPane({
               </Box>
             )}
             {showParticipantInstructionsOnComplete && (
-              <Alert variant="soft" color="success">
+              <Alert
+                variant="soft"
+                color="success"
+                endDecorator={
+                  <Button
+                    size="sm"
+                    color="success"
+                    endDecorator={<CheckIcon />}
+                    sx={{ alignSelf: 'center', borderRadius: 'sm' }}
+                    onClick={handleDismiss}
+                  >
+                    Done
+                  </Button>
+                }
+              >
                 {exchange.participantInstructionsOnComplete}
               </Alert>
             )}

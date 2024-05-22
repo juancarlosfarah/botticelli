@@ -45,6 +45,7 @@ export class GenerateResponseChannel implements IpcChannel {
     const evaluations: string[] = [];
 
     if (triggers.length === 0) {
+      // if there are no triggers, completed will always be marked as false
       log.warn(`empty triggers`);
     }
     for (const trigger of triggers) {
@@ -174,9 +175,15 @@ export class GenerateResponseChannel implements IpcChannel {
       exchange: { id: exchangeId },
     });
 
+    const userMessages = messages.filter(
+      (message) => message?.sender?.type === AgentType.HumanParticipant,
+    );
+
+    log.debug(`number of user messages:`, userMessages.length);
+
     // need to check if soft limit is not zero, as that indicates there's no limit
     const hasSoftLimit = exchange.softLimit;
-    const reachedSoftLimit = messages.length >= exchange.softLimit;
+    const reachedSoftLimit = userMessages.length >= exchange.softLimit;
     if (hasSoftLimit && reachedSoftLimit) {
       exchange.completed = true;
       await this.completeExchange(exchange);

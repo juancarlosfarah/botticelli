@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import AgentType from '../../shared/interfaces/AgentType';
 import { Message } from './Message';
 
 @Entity()
@@ -24,8 +25,8 @@ export class Agent {
   @Column({ default: '' })
   description: string = '';
 
-  @Column()
-  type: string;
+  @Column({ type: 'varchar' })
+  type: AgentType;
 
   @OneToMany(() => Message, (message) => message.sender)
   messages: Relation<Message>[];

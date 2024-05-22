@@ -1,16 +1,11 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
-import CheckIcon from '@mui/icons-material/CheckRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { Stack } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import FormControl from '@mui/joy/FormControl';
 import Textarea from '@mui/joy/Textarea';
-
-import { AppDispatch } from '../../store';
-import { dismissExchange } from '../exchange/ExchangesSlice';
 
 export type MessageInputProps = {
   exchangeId: string;
@@ -26,16 +21,12 @@ type KeyPressData = {
 };
 
 export default function MessageInput({
-  exchangeId,
   textAreaValue,
   setTextAreaValue,
   onSubmit,
-  completed,
 }: MessageInputProps): ReactElement {
   const textAreaRef = useRef<HTMLDivElement>(null);
   const [keypressData, setKeypressData] = useState<KeyPressData[]>([]);
-
-  const dispatch = useDispatch<AppDispatch>();
 
   const focusOnTextArea = (): void => {
     const textareaElement = textAreaRef?.current?.querySelector('textarea');
@@ -56,10 +47,6 @@ export default function MessageInput({
       // focus on the text area
       focusOnTextArea();
     }
-  };
-
-  const handleDismiss = (): void => {
-    dispatch(dismissExchange(exchangeId));
   };
 
   return (
@@ -88,17 +75,6 @@ export default function MessageInput({
                 borderColor: 'divider',
               }}
             >
-              {completed && (
-                <Button
-                  size="sm"
-                  color="success"
-                  endDecorator={<CheckIcon />}
-                  sx={{ alignSelf: 'center', borderRadius: 'sm' }}
-                  onClick={handleDismiss}
-                >
-                  Done
-                </Button>
-              )}
               <Button
                 size="sm"
                 color="primary"
