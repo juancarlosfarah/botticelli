@@ -9,6 +9,7 @@ import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 
+import robot from '../../assets/robot.png?asset';
 import { AppDispatch, RootState } from '../../store';
 import { MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
@@ -99,7 +100,7 @@ export default function MessagesPane({
                   spacing={2}
                   flexDirection={isYou ? 'row-reverse' : 'row'}
                 >
-                  {!isYou && <AvatarWithStatus online src="" />}
+                  {!isYou && <AvatarWithStatus online src={robot} />}
                   <ChatBubble
                     variant={isYou ? 'sent' : 'received'}
                     content={message.content}
@@ -112,12 +113,8 @@ export default function MessagesPane({
             })}
             {status === 'loading' && (
               <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  spacing={2}
-                  sx={{ mb: 0.25 }}
-                >
+                <Stack direction="row" spacing={2} sx={{ mb: 0.25 }}>
+                  <AvatarWithStatus online src={robot} />
                   <MessageLoader />
                 </Stack>
               </Box>
