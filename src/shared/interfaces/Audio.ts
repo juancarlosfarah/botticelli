@@ -2,7 +2,7 @@ export interface Audio {
   id: String;
   // url: String;
   // blob: Blob;
-  blobPath: string;
+  blobPath?: string;
   transcription?: string;
   exchangeId: string;
   /*   createdAt: String;
@@ -17,7 +17,7 @@ export type PostOneAudioParams = {
 
 export type PostOneAudioHandlerParams = {
   exchangeId: string;
-  blob: Blob;
+  blobBuffer: ArrayBuffer;
 };
 
 // refers to the redux handler

@@ -13,23 +13,23 @@ import { AppDataSource } from '../../data-source';
 import { Audio } from '../../entity/Audio';
 import { PostOneChannel } from '../common/PostOneChannel';
 
-const saveAudio = async (blob: Blob, filename: string): Promise<string> => {
-  const audioBuffer = await blob.arrayBuffer();
+async function saveAudio(
+  arrayBuffer: ArrayBuffer,
+  filename: string,
+): Promise<string> {
+  const buffer = Buffer.from(arrayBuffer);
+  const filePath = path.join(__dirname, '../../src/saved_audios', filename); // Adjust the path as needed
 
-  const userPath = app.getPath('userData');
-  console.log('user path ' + userPath);
-
-  const filePath = path.join(userPath, 'newAudiosFolder', filename);
-
-  try {
-    fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    fs.writeFileSync(filePath, Buffer.from(new Uint8Array(audioBuffer)));
-    return filePath;
-  } catch (error) {
-    console.error('Failed to save audio:', error);
-    return '';
-  }
-};
+  return new Promise<string>((resolve, reject) => {
+    fs.writeFile(filePath, buffer, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(filePath);
+      }
+    });
+  });
+}
 
 export class PostOneAudioChannel implements IpcChannel {
   getName(): string {
@@ -52,7 +52,7 @@ export class PostOneAudioChannel implements IpcChannel {
       return;
     }
 
-    const { exchangeId, blob } = request.params;
+    const { exchangeId, blobBuffer } = request.params;
 
     const audio = new Audio();
 
@@ -60,14 +60,17 @@ export class PostOneAudioChannel implements IpcChannel {
 
     const audioRepository = AppDataSource.getRepository(Audio);
 
-    console.log('before id');
+    log.debug('before id');
+    audio.blobPath = 'initialPath';
+    audio.transcription = 'initialTranscription';
+
     const { id } = await audioRepository.save(audio);
-    console.log('after id');
+    log.debug('after id');
 
     const fileName = id + '.wav';
-    console.log('file name ' + fileName);
+    log.debug('file name ' + fileName);
 
-    const blobPath = await saveAudio(blob, fileName);
+    const blobPath = await saveAudio(blobBuffer, fileName);
     audio.blobPath = blobPath;
     await audioRepository.save(audio);
     const savedResponse = await audioRepository.findOneBy({ id });

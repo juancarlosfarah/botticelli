@@ -18,6 +18,9 @@ export class GenerateAudioTranscriptonChannel implements IpcChannel {
     event: IpcMainEvent,
     request: IpcRequest<GenerateAudioTranscriptionParams>,
   ): Promise<void> {
+    log.debug(`generate audio transcription channel`);
+    log.debug(`handling ${this.getName()}...`);
+
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
@@ -34,6 +37,8 @@ export class GenerateAudioTranscriptonChannel implements IpcChannel {
     }); */
 
     const transcription = await transcribeAudio(blobPath);
+    log.debug('transcription ' + transcription);
+
     event.sender.send(request.responseChannel, instanceToPlain(transcription));
   }
 }

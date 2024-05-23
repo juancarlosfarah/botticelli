@@ -27,6 +27,8 @@ import { GetOneArtificialParticipantChannel } from './channels/agent/artificial/
 import { PostOneArtificialParticipantChannel } from './channels/agent/artificial/participant/PostOneArtificialParticipantChannel';
 import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/PostOneHumanAssistantChannel';
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
+import { GenerateAudioTranscriptonChannel } from './channels/audio/GenerateAudiosTranscriptionChannel';
+import { PostOneAudioChannel } from './channels/audio/PostOneAudioChannel';
 import { PostManyKeyPressEventsChannel } from './channels/event/PostManyKeyPressEventsChannel';
 import { PostOneKeyPressEventChannel } from './channels/event/PostOneKeyPressEventChannel';
 import { DeleteOneExchangeChannel } from './channels/exchange/DeleteOneExchangeChannel';
@@ -240,4 +242,7 @@ new Main().init([
   // events
   new PostOneKeyPressEventChannel(),
   new PostManyKeyPressEventsChannel(),
+  // audios
+  new PostOneAudioChannel(),
+  new GenerateAudioTranscriptonChannel(),
 ]);

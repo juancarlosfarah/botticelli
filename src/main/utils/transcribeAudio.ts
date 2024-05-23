@@ -1,5 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs';
+import path from 'path';
 import whisper from 'whisper-node';
 
 import { Audio } from '../entity/Audio';
@@ -30,17 +31,33 @@ export const transcribeAudio = async (blobPath: string): Promise<String> => {
 
   const extension = '.wav'; // We want .wav files for whisper-node
   const originalFilePath = blobPath;
+  const fileNameWithoutExt = path.basename(
+    originalFilePath,
+    path.extname(originalFilePath),
+  );
+
   const filePathWithExtension = originalFilePath + extension;
-  const resampledFilePath = originalFilePath + '_resampled' + extension;
+  const resampledFilePath = path.join(
+    path.dirname(originalFilePath),
+    `${fileNameWithoutExt}_resampled${extension}`,
+  );
+
+  // const resampledFilePath = originalFilePath  + '_resampled' + extension;
   fs.renameSync(originalFilePath, filePathWithExtension);
 
   try {
     // Set the sample rate to 16kHz
     await resampleAudio(filePathWithExtension, resampledFilePath, 16000);
 
+    const options = {
+      modelName: 'base',
+      whisperOptions: {
+        language: 'auto',
+      },
+    };
     // Transcribe the audio
     const transcript = await whisper.whisper(resampledFilePath, {
-      modelName: 'base.en', // Specify model options as needed
+      modelName: 'base',
     });
 
     // Process the transcription as needed
@@ -54,11 +71,11 @@ export const transcribeAudio = async (blobPath: string): Promise<String> => {
     console.error(error);
   } finally {
     // Cleanup: delete the original and resampled files after transcription
-    /* [filePathWithExtension, resampledFilePath].forEach((file) => {
+    [filePathWithExtension].forEach((file) => {
       fs.unlink(file, (err) => {
         if (err) console.error('Failed to delete the file:', file, err);
       });
-    }); */
+    });
   }
 
   return speechText;

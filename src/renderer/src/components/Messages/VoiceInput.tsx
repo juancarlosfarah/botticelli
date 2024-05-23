@@ -272,9 +272,8 @@ export default function VoiceInput({
                 sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
               >
                 <div>{index + 1}</div>
-                {status.status.recording === 'idle' && (
-                  <audio controls src={chunk.url} />
-                )}
+                {/* status.status.recording === 'idle' &&  */}
+                {<audio controls src={chunk.url} />}
                 <Button
                   size="sm"
                   variant="outlined"

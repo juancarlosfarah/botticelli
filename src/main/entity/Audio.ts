@@ -17,10 +17,10 @@ export class Audio {
   id: string;
 
   @Column()
-  blobPath: string;
+  transcription?: string;
 
   @Column()
-  transcription?: string;
+  blobPath?: string;
 
   /*   @ManyToOne(() => Exchange, (exchange) => exchange.audios, {
     onDelete: 'CASCADE',

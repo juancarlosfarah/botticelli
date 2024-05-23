@@ -5,8 +5,9 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
+  GENERATE_AUDIO_TRANSCRIPTION_CHANNEL,
+  POST_MESSAGE_CHANNEL,
   POST_ONE_AUDIO_CHANNEL,
-  TRANSCRIBE_ONE_AUDIO_CHANNEL,
 } from '@shared/channels';
 import {
   Audio,
@@ -24,15 +25,26 @@ const initialState = audiosAdapter.getInitialState({
   status: { recording: 'idle', transcription: 'loading' },
 });
 
+// Convert Blob to ArrayBuffer
+async function blobToArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
+  return new Promise<ArrayBuffer>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as ArrayBuffer);
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(blob);
+  });
+}
+
 export const saveNewAudio = createAsyncThunk<Audio, PostOneAudioParams>(
   'audios/saveNewAudios',
   async ({ exchangeId, blob }, { dispatch }) => {
     log.debug(`saveNewAudio:`, exchangeId);
+    const blobBuffer = await blobToArrayBuffer(blob);
 
     const response = await IpcService.send<Audio, PostOneAudioHandlerParams>(
       POST_ONE_AUDIO_CHANNEL,
       {
-        params: { exchangeId, blob },
+        params: { exchangeId, blobBuffer },
       },
     );
     log.debug(`response before transcript`);
@@ -51,7 +63,7 @@ export const transcribeAudio = createAsyncThunk<
   GenerateAudioTranscriptionParams
 >('audios/transcribeAudios', async ({ exchangeId, blobPath }) => {
   return await IpcService.send<Audio, GenerateAudioTranscriptionParams>(
-    TRANSCRIBE_ONE_AUDIO_CHANNEL,
+    GENERATE_AUDIO_TRANSCRIPTION_CHANNEL,
     {
       params: { exchangeId, blobPath },
     },
