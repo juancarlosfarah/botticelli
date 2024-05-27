@@ -81,6 +81,9 @@ export class Exchange {
   @Column({ default: '' })
   participantInstructionsOnComplete: string = '';
 
+  @Column({ default: '' })
+  participantInstructionsOnHardComplete: string = '';
+
   @Column({ default: null, type: 'datetime' })
   startedAt: Date;
 

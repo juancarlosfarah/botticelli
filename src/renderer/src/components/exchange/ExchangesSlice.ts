@@ -5,6 +5,7 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
+  COMPLETE_EXCHANGE_CHANNEL,
   DELETE_ONE_EXCHANGE_CHANNEL,
   GET_MANY_EXCHANGES_CHANNEL,
   GET_ONE_EXCHANGE_CHANNEL,
@@ -102,6 +103,20 @@ export const startExchange = createAsyncThunk<ExchangeResponse, string>(
   },
 );
 
+export const completeExchange = createAsyncThunk<ExchangeResponse, string>(
+  'exchanges/completeExchange',
+  async (id) => {
+    const response = await IpcService.send<{ exchange: Exchange }>(
+      COMPLETE_EXCHANGE_CHANNEL,
+      {
+        params: { id },
+      },
+    );
+    log.debug(`completeExchange response`);
+    return response;
+  },
+);
+
 export const dismissExchange = createAsyncThunk<ExchangeResponse, string>(
   'exchanges/dismissExchange',
   async (id, { dispatch }) => {
@@ -150,6 +165,9 @@ const exchangesSlice = createSlice({
       .addCase(dismissExchange.pending, (state) => {
         state.status = 'loading';
       })
+      .addCase(completeExchange.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(fetchExchange.fulfilled, (state, action) => {
         exchangesAdapter.setOne(state, action.payload);
         state.status = 'idle';
@@ -159,6 +177,10 @@ const exchangesSlice = createSlice({
         state.status = 'idle';
       })
       .addCase(dismissExchange.fulfilled, (state, action) => {
+        exchangesAdapter.setOne(state, action.payload);
+        state.status = 'idle';
+      })
+      .addCase(completeExchange.fulfilled, (state, action) => {
         exchangesAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })

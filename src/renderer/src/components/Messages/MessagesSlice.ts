@@ -38,7 +38,11 @@ import delay from 'lodash.delay';
 
 import { IpcService } from '../../services/IpcService';
 import { RootState } from '../../store';
-import { fetchExchange } from '../exchange/ExchangesSlice';
+import {
+  completeExchange,
+  dismissExchange,
+  fetchExchange,
+} from '../exchange/ExchangesSlice';
 import { fetchInteraction } from '../interaction/InteractionsSlice';
 
 const scrollToBottom = (): void => {
@@ -57,7 +61,7 @@ const scrollToBottom = (): void => {
 export const messagesAdapter = createEntityAdapter<Message>();
 
 const initialState = messagesAdapter.getInitialState({
-  status: 'idle',
+  status: [],
 });
 
 // thunk functions
@@ -101,7 +105,7 @@ export const saveNewMessage = createAsyncThunk<Message, PostOneMessageParams>(
     log.debug(`saveNewMessage response`);
 
     // todo: save keypress data
-    if (response?.id) {
+    if (response?.id && keyPressEvents) {
       log.debug('saving keypress events');
       dispatch(
         postManyKeyPressEvents({ messageId: response.id, keyPressEvents }),
@@ -111,6 +115,8 @@ export const saveNewMessage = createAsyncThunk<Message, PostOneMessageParams>(
     // generate a response
     if (evaluate) {
       dispatch(generateResponse({ exchangeId, interactionId }));
+    } else {
+      dispatch(completeExchange(exchangeId));
     }
 
     return response;
@@ -183,7 +189,8 @@ const messagesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMessages.pending, (state) => {
-        state.status = 'loading';
+        // adds a '1' to the loading queue
+        state.status = [...state.status, '1' as never];
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
         // debug
@@ -191,24 +198,29 @@ const messagesSlice = createSlice({
           `fetchMessages.fulfilled: ${action.payload?.length} messages`,
         );
         messagesAdapter.setAll(state, action.payload);
-        state.status = 'idle';
+        // removes the last element from the loading queue
+        state.status = state.status.slice(0, -1);
       })
       .addCase(saveNewMessage.pending, (state) => {
-        state.status = 'loading';
+        // adds a '1' to the loading queue
+        state.status = [...state.status, '1' as never];
       })
       .addCase(saveNewMessage.fulfilled, (state, action) => {
         messagesAdapter.addOne(state, action.payload);
+        state.status = state.status.slice(0, -1);
         scrollToBottom();
       })
       .addCase(generateResponse.pending, (state) => {
-        state.status = 'loading';
+        // adds a '1' to the loading queue
+        state.status = [...state.status, '1' as never];
         scrollToBottom();
       })
       .addCase(generateResponse.fulfilled, (state, action) => {
         if (action.payload) {
           messagesAdapter.addOne(state, action.payload);
         }
-        state.status = 'idle';
+        // removes the last element from the loading queue
+        state.status = state.status.slice(0, -1);
         scrollToBottom();
       })
       .addCase(deleteMessage.fulfilled, messagesAdapter.removeOne);

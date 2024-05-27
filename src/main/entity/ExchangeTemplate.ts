@@ -32,6 +32,9 @@ export class ExchangeTemplate {
   participantInstructionsOnComplete: string = '';
 
   @Column({ default: '' })
+  participantInstructionsOnHardComplete: string = '';
+
+  @Column({ default: '' })
   cue: string = '';
 
   @Column({ type: 'text', default: InputType.Text })

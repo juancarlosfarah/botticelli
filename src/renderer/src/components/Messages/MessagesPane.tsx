@@ -37,6 +37,7 @@ export default function MessagesPane({
   participantId,
   readOnly = false,
 }: MessagesPaneProps): React.ReactElement {
+  // status is an array where each entry marks a "loading" process
   const status = useSelector((state: RootState) => state.messages.status);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -60,8 +61,27 @@ export default function MessagesPane({
     return <>Exchange Not Found</>;
   }
 
+  // completed is flagged when we reached the soft limit
   const showParticipantInstructionsOnComplete =
     exchange.completed && exchange.participantInstructionsOnComplete;
+
+  // we calculate the number of user messages to
+  // calculate whether we have reached the hard limit
+  const numUserMessages = messages.filter(
+    (message) => message?.sender?.id === participantId,
+  ).length;
+
+  // hard complete is when we've reached the hard limit
+  const hardComplete =
+    exchange.completed &&
+    exchange.hardLimit &&
+    numUserMessages >= exchange.hardLimit;
+
+  // the message showed upon reaching the hard limit is slightly
+  // different to the one we show when the soft limit is reached
+  const messageOnComplete = hardComplete
+    ? 'This exchange has been marked as completed. Please click "Done".'
+    : exchange.participantInstructionsOnComplete;
 
   const handleDismiss = (): void => {
     dispatch(dismissExchange(exchangeId));
@@ -111,7 +131,7 @@ export default function MessagesPane({
                 </Stack>
               );
             })}
-            {status === 'loading' && (
+            {status.length !== 0 && (
               <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
                 <Stack direction="row" spacing={2} sx={{ mb: 0.25 }}>
                   <AvatarWithStatus online src={robot} />
@@ -135,12 +155,12 @@ export default function MessagesPane({
                   </Button>
                 }
               >
-                {exchange.participantInstructionsOnComplete}
+                {messageOnComplete}
               </Alert>
             )}
           </Stack>
         </Box>
-        {!(readOnly || exchange.dismissed) && (
+        {!(readOnly || exchange.dismissed || hardComplete) && (
           <MessageInput
             inputType={exchange.inputType}
             participantId={participantId}

@@ -29,6 +29,7 @@ import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/P
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
 import { PostManyKeyPressEventsChannel } from './channels/event/PostManyKeyPressEventsChannel';
 import { PostOneKeyPressEventChannel } from './channels/event/PostOneKeyPressEventChannel';
+import { CompleteExchangeChannel } from './channels/exchange/CompleteExchangeChannel';
 import { DeleteOneExchangeChannel } from './channels/exchange/DeleteOneExchangeChannel';
 import { DeleteOneExchangeTemplateChannel } from './channels/exchange/DeleteOneExchangeTemplateChannel';
 import { DismissExchangeChannel } from './channels/exchange/DismissExchangeChannel';
@@ -183,6 +184,7 @@ new Main().init([
   new GetOneExchangeChannel(),
   new StartExchangeChannel(),
   new DismissExchangeChannel(),
+  new CompleteExchangeChannel(),
   // messages
   new PostMessageChannel(),
   new GetMessagesChannel(),
