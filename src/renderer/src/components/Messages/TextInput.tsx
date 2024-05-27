@@ -110,7 +110,11 @@ export default function TextInput({
                 key: event.key,
               },
             ]);
-            if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+            // submit with enter key (and no other key pressed)
+            if (
+              event.key === 'Enter' &&
+              !(event.metaKey || event.ctrlKey || event.shiftKey)
+            ) {
               handleClick();
               // reset keypress data
               setKeypressData([]);
