@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 
 import InputType from '@shared/enums/InputType';
 
+import ScaleInput from './ScaleInput';
 import TextInput from './TextInput';
 import VoiceInput from './VoiceInput';
 
@@ -34,6 +35,16 @@ export default function MessageInput({
     case InputType.Voice:
       return (
         <VoiceInput
+          participantId={participantId}
+          exchangeId={exchangeId}
+          interactionId={interactionId}
+          completed={completed}
+          inputType={inputType}
+        />
+      );
+    case InputType.Scale:
+      return (
+        <ScaleInput
           participantId={participantId}
           exchangeId={exchangeId}
           interactionId={interactionId}
