@@ -22,13 +22,13 @@ export class Audio {
   @Column()
   blobPath?: string;
 
-  /*   @ManyToOne(() => Exchange, (exchange) => exchange.audios, {
+  @ManyToOne(() => Exchange, (exchange) => exchange.audios, {
     onDelete: 'CASCADE',
     nullable: false,
   })
-  exchange: Relation<Exchange> | string; */
+  exchange: Relation<Exchange>;
 
-  @ManyToOne(() => Message, (message) => message.audio)
+  @ManyToOne(() => Message, (message) => message.audios)
   message?: Relation<Message>;
 
   /*   @CreateDateColumn({ type: 'datetime' })

@@ -37,7 +37,7 @@ export class GenerateAudioTranscriptonChannel implements IpcChannel {
     }); */
 
     const transcription = await transcribeAudio(blobPath);
-    log.debug('transcription ' + transcription);
+    // log.debug('transcription ' + transcription);
 
     event.sender.send(request.responseChannel, instanceToPlain(transcription));
   }

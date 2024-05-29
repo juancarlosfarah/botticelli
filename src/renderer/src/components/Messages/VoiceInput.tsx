@@ -15,9 +15,15 @@ import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 
 import InputType from '@shared/enums/InputType';
+import { KeyPressData } from '@shared/interfaces/Event';
 
 import { AppDispatch, RootState } from '../../store';
-import { saveNewAudio } from './AudiosSlice';
+import {
+  saveNewAudio,
+  selectAudioById,
+  selectAudios,
+  sendAudios,
+} from './AudiosSlice';
 
 /* import { KeyPressData } from '@shared/interfaces/Event';
 
@@ -39,22 +45,25 @@ export type VoiceInputProps = {
 };
 
 export default function VoiceInput({
-  exchangeId /* exchangeId,
+  exchangeId,
   interactionId,
   participantId,
   completed,
-  inputType, */,
+  inputType,
 }: VoiceInputProps): ReactElement {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<AudioChunk[]>([]);
+  const [keypressData, setKeypressData] = useState<KeyPressData[]>([]);
+
   const audioChunksRef = useRef<Blob[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
 
   const status = useSelector((state: RootState) => state.audios);
+  const audios = useSelector(selectAudios);
 
   const transcribeAudio = async (audioBlob: Blob, index: number) => {
     // Create a FormData object to hold the audio file
@@ -92,6 +101,26 @@ export default function VoiceInput({
         ),
       );
     }
+  };
+
+  const sendMessage = () => {
+    let text = '';
+    audios.forEach((audio) => {
+      if (audio.transcription) {
+        text += audio.transcription;
+      }
+    });
+    dispatch(
+      sendAudios({
+        interactionId,
+        exchangeId,
+        inputType,
+        keyPressEvents: keypressData,
+        content: text,
+        evaluate: true,
+        sender: participantId,
+      }),
+    );
   };
 
   const handleStartRecording = async () => {
@@ -181,8 +210,8 @@ export default function VoiceInput({
         );
 
         // Send the audio file to the server for transcription
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.wav');
+        /* const formData = new FormData();
+        formData.append('audio', audioBlob, 'recording.wav'); */
       };
     }
   };
@@ -295,13 +324,12 @@ export default function VoiceInput({
           spacing={1}
           sx={{ width: '25%', height: '100%' }}
         >
-          {audioChunks.length === 1 &&
-            status.status.transcription === 'idle' && (
-              <Typography variant="h6" align="center" gutterBottom>
-                Send 1 message
-              </Typography>
-            )}
-          {audioChunks.length > 1 && status.status.transcription === 'idle' && (
+          {audioChunks.length === 1 && status.status.toSend === 'idle' && (
+            <Typography variant="h6" align="center" gutterBottom>
+              Send 1 message
+            </Typography>
+          )}
+          {audioChunks.length > 1 && status.status.toSend === 'idle' && (
             <Typography variant="h6" align="center" gutterBottom>
               Send {audioChunks.length} messages
             </Typography>
@@ -311,21 +339,20 @@ export default function VoiceInput({
               Record some messages
             </Typography>
           )}
-          {audioChunks.length > 0 &&
-            status.status.transcription === 'loading' && (
-              <Typography variant="h6" align="center" gutterBottom>
-                Wait a few seconds
-              </Typography>
-            )}
+          {audioChunks.length > 0 && status.status.toSend === 'loading' && (
+            <Typography variant="h6" align="center" gutterBottom>
+              Wait a few seconds
+            </Typography>
+          )}
 
           <IconButton
             variant="solid"
             aria-label="send"
             color="success"
             disabled={
-              audioChunks.length === 0 ||
-              status.status.transcription === 'loading'
+              audioChunks.length === 0 || status.status.toSend === 'loading'
             }
+            onClick={sendMessage}
           >
             <SendRoundedIcon />
           </IconButton>

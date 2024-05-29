@@ -65,9 +65,9 @@ export class Exchange {
 
   @OneToMany(() => Message, (message) => message.exchange, { eager: true })
   messages: Relation<Message[]>;
-  /* 
+
   @OneToMany(() => Audio, (audio) => audio.exchange, { eager: true })
-  audios: Relation<Audio[]>; */
+  audios: Relation<Audio[]>;
 
   @ManyToOne(() => Agent, { eager: true })
   assistant: Relation<Agent>;

@@ -11,6 +11,7 @@ import * as path from 'path';
 
 import { AppDataSource } from '../../data-source';
 import { Audio } from '../../entity/Audio';
+import { Exchange } from '../../entity/Exchange';
 import { PostOneChannel } from '../common/PostOneChannel';
 
 async function saveAudio(
@@ -59,6 +60,7 @@ export class PostOneAudioChannel implements IpcChannel {
     // audio.exchange = exchangeId;
 
     const audioRepository = AppDataSource.getRepository(Audio);
+    const exchangeRepository = AppDataSource.getRepository(Exchange);
 
     log.debug('before id');
     audio.blobPath = 'initialPath';
@@ -72,6 +74,11 @@ export class PostOneAudioChannel implements IpcChannel {
 
     const blobPath = await saveAudio(blobBuffer, fileName);
     audio.blobPath = blobPath;
+    const exchange = await exchangeRepository.findOneBy({ id: exchangeId });
+    if (exchange) {
+      audio.exchange = exchange;
+    }
+
     await audioRepository.save(audio);
     const savedResponse = await audioRepository.findOneBy({ id });
 

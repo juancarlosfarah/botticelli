@@ -6,23 +6,29 @@ import {
 } from '@reduxjs/toolkit';
 import {
   GENERATE_AUDIO_TRANSCRIPTION_CHANNEL,
-  POST_MESSAGE_CHANNEL,
+  GET_AUDIOS_CHANNEL,
   POST_ONE_AUDIO_CHANNEL,
+  SEND_AUDIOS_CHANNEL,
 } from '@shared/channels';
 import {
   Audio,
   GenerateAudioTranscriptionParams,
+  GetManyAudiosParams,
+  GetManyAudiosResponse,
   PostOneAudioHandlerParams,
   PostOneAudioParams,
 } from '@shared/interfaces/Audio';
+import { Message, PostOneMessageParams } from '@shared/interfaces/Message';
 import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
 import { RootState } from '../../store';
+import { saveNewMessage } from './MessagesSlice';
 
 export const audiosAdapter = createEntityAdapter<Audio>();
+
 const initialState = audiosAdapter.getInitialState({
-  status: { recording: 'idle', transcription: 'loading' },
+  status: { recording: 'idle', toSend: 'loading' },
 });
 
 // Convert Blob to ArrayBuffer
@@ -50,7 +56,12 @@ export const saveNewAudio = createAsyncThunk<Audio, PostOneAudioParams>(
     log.debug(`response before transcript`);
     if (response?.blobPath) {
       log.debug('response ok');
-      dispatch(transcribeAudio({ exchangeId, blobPath: response.blobPath }));
+      const transcription = await dispatch(
+        transcribeAudio({ exchangeId, blobPath: response.blobPath }),
+      ).unwrap();
+      response.transcription = transcription;
+      // log.debug('transcription: ', transcription);
+      // return transcription;
     }
     log.debug(`after transcript`);
 
@@ -59,10 +70,10 @@ export const saveNewAudio = createAsyncThunk<Audio, PostOneAudioParams>(
 );
 
 export const transcribeAudio = createAsyncThunk<
-  Audio,
+  string,
   GenerateAudioTranscriptionParams
 >('audios/transcribeAudios', async ({ exchangeId, blobPath }) => {
-  return await IpcService.send<Audio, GenerateAudioTranscriptionParams>(
+  return await IpcService.send<string, GenerateAudioTranscriptionParams>(
     GENERATE_AUDIO_TRANSCRIPTION_CHANNEL,
     {
       params: { exchangeId, blobPath },
@@ -70,30 +81,84 @@ export const transcribeAudio = createAsyncThunk<
   );
 });
 
+export const fetchAudios = createAsyncThunk<
+  GetManyAudiosResponse,
+  GetManyAudiosParams
+>('messages/fetchMessages', async ({ messageId }) => {
+  return await IpcService.send<GetManyAudiosResponse, GetManyAudiosParams>(
+    GET_AUDIOS_CHANNEL,
+    {
+      params: { messageId },
+    },
+  );
+});
+
+export const sendAudios = createAsyncThunk<Message, PostOneMessageParams>(
+  'messages/saveNewMessage',
+  async (
+    {
+      interactionId,
+      exchangeId,
+      content,
+      evaluate,
+      sender,
+      keyPressEvents,
+      inputType,
+    },
+    { dispatch },
+  ) => {
+    // debugging
+    log.debug(`saveNewMessage:`, exchangeId, content);
+    const newMessage = await dispatch(
+      saveNewMessage({
+        interactionId,
+        exchangeId,
+        content,
+        evaluate,
+        sender,
+        keyPressEvents,
+        inputType,
+      }),
+    ).unwrap();
+
+    return newMessage;
+  },
+);
+
 const audiosSlice = createSlice({
   name: 'audios',
   initialState,
   reducers: {
-    maudioDeleted: audiosAdapter.removeOne,
+    audioDeleted: audiosAdapter.removeOne,
   },
   extraReducers(builder) {
-    builder.addCase(saveNewAudio.pending, (state) => {
-      state.status.recording = 'loading';
-    });
-    builder.addCase(saveNewAudio.fulfilled, (state, action) => {
-      // audiosAdapter.addOne(state, action.payload);
-      state.status.recording = 'idle';
-    });
-    builder.addCase(transcribeAudio.pending, (state) => {
-      state.status.transcription = 'loading';
-    });
-    builder.addCase(transcribeAudio.fulfilled, (state, action) => {
-      // audiosAdapter.addOne(state, action.payload);
-      state.status.transcription = 'idle';
-    });
+    builder
+      .addCase(sendAudios.pending, (state) => {
+        state.status.toSend = 'loading';
+      })
+      .addCase(sendAudios.fulfilled, (state, action) => {
+        // log.debug(`fetchAudioss.fulfilled: ${action.payload?.length} audios`);
+        // audiosAdapter.setAll(state, action.payload);
+        audiosAdapter.removeAll(state);
+        state.status.toSend = 'idle';
+      })
+      .addCase(saveNewAudio.pending, (state) => {
+        state.status.recording = 'loading';
+      })
+      .addCase(saveNewAudio.fulfilled, (state, action) => {
+        audiosAdapter.addOne(state, action.payload);
+        state.status.recording = 'idle';
+      })
+      .addCase(transcribeAudio.pending, (state) => {
+        state.status.toSend = 'loading';
+      })
+      .addCase(transcribeAudio.fulfilled, (state) => {
+        // audiosAdapter.addOne(state, action.payload);
+        state.status.toSend = 'idle';
+      });
   },
 });
 
 export default audiosSlice.reducer;
-/* export const { selectAll: selectAudios, selectById: selectAudioById } =
-  audiosAdapter.getSelectors((state: RootState) => state.audios); */
+export const { selectAll: selectAudios, selectById: selectAudioById } =
+  audiosAdapter.getSelectors((state: RootState) => state.audios);

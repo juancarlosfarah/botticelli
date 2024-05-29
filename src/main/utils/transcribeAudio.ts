@@ -49,12 +49,6 @@ export const transcribeAudio = async (blobPath: string): Promise<String> => {
     // Set the sample rate to 16kHz
     await resampleAudio(filePathWithExtension, resampledFilePath, 16000);
 
-    const options = {
-      modelName: 'base',
-      whisperOptions: {
-        language: 'auto',
-      },
-    };
     // Transcribe the audio
     const transcript = await whisper.whisper(resampledFilePath, {
       modelName: 'base',
@@ -65,13 +59,12 @@ export const transcribeAudio = async (blobPath: string): Promise<String> => {
       .map((t) => t.speech)
       .join(' ')
       .replace(/\[.*?\]/g, '');
-    // res.json({ transcription: speechText });
     speechText += newText;
   } catch (error) {
     console.error(error);
   } finally {
-    // Cleanup: delete the original and resampled files after transcription
-    [filePathWithExtension].forEach((file) => {
+    // Cleanup: delete the original files after transcription
+    [filePathWithExtension, resampledFilePath].forEach((file) => {
       fs.unlink(file, (err) => {
         if (err) console.error('Failed to delete the file:', file, err);
       });

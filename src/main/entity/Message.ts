@@ -39,7 +39,7 @@ export class Message {
   keyPressEvents: Relation<KeyPressEvent>[];
 
   @OneToMany(() => Audio, (audio) => audio.message, { eager: true })
-  audio: Relation<Audio>;
+  audios: Relation<Audio>;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
