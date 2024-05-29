@@ -130,8 +130,6 @@ export class GenerateResponseChannel implements IpcChannel {
       ...prompt,
     ];
 
-    log.debug(`messages:`, messagesPrompt);
-
     const completion = await this.openAi.chat.completions.create({
       messages: messagesPrompt,
       model: OPENAI_MODEL,
