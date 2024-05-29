@@ -39,7 +39,9 @@ export class GenerateResponseChannel implements IpcChannel {
 
     // evaluate
     const triggers = exchange?.triggers || [];
-    const instructions = exchange?.instructions || '';
+    const interactionInstructions =
+      exchange?.interaction?.modelInstructions || '';
+    const exchangeInstructions = exchange?.instructions || '';
     const assistant = exchange?.assistant;
 
     const evaluations: string[] = [];
@@ -60,7 +62,10 @@ export class GenerateResponseChannel implements IpcChannel {
             role: 'user',
             content: `Assistant's Description: ${assistant.description}`,
           },
-          { role: 'user', content: `Instructions: ${instructions}` },
+          {
+            role: 'user',
+            content: `Instructions: ${interactionInstructions} ${exchangeInstructions}`,
+          },
           {
             role: 'user',
             content: `Conversation: ${messagesToText(messages)}`,
@@ -99,7 +104,9 @@ export class GenerateResponseChannel implements IpcChannel {
     exchange: Exchange,
     messages: Message[],
   ): Promise<Message> {
-    const instructions = exchange.instructions;
+    const exchangeInstructions = exchange.instructions;
+    const interactionInstructions =
+      exchange?.interaction?.modelInstructions || '';
 
     const assistant = exchange?.assistant;
 
@@ -110,13 +117,23 @@ export class GenerateResponseChannel implements IpcChannel {
 
     // transform messages to prompt format
     const prompt = messagesToPrompt(messages);
+    const messagesPrompt = [
+      { role: 'system', content: assistant.description },
+      {
+        role: 'system',
+        content: interactionInstructions,
+      },
+      {
+        role: 'system',
+        content: exchangeInstructions,
+      },
+      ...prompt,
+    ];
+
+    log.debug(`messages:`, messagesPrompt);
 
     const completion = await this.openAi.chat.completions.create({
-      messages: [
-        { role: 'system', content: assistant.description },
-        { role: 'system', content: instructions },
-        ...prompt,
-      ],
+      messages: messagesPrompt,
       model: OPENAI_MODEL,
     });
 
