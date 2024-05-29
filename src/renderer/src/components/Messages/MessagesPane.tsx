@@ -150,6 +150,7 @@ export default function MessagesPane({
                     endDecorator={<CheckIcon />}
                     sx={{ alignSelf: 'center', borderRadius: 'sm' }}
                     onClick={handleDismiss}
+                    disabled={readOnly || exchange.dismissed}
                   >
                     Done
                   </Button>

@@ -273,8 +273,8 @@ const NewExchangeTemplate = (): ReactElement => {
           onChange={handleChangeSoftLimit}
         />
         <FormHelperText>
-          When the exchange reaches this total number of <em>user</em> messages,
-          the exchange will be marked as completed. Participants will be able to
+          When the exchange reaches this total number of user messages, the
+          exchange will be marked as completed. Participants will be able to
           continue to send messages, but they will be also able to dismiss the
           exchange. Zero means there is no limit.
         </FormHelperText>
@@ -288,9 +288,9 @@ const NewExchangeTemplate = (): ReactElement => {
           onChange={handleChangeHardLimit}
         />
         <FormHelperText>
-          When the exchange reaches this total number of <em>user</em> messages,
-          the exchange will be marked as blocked. Participants will not longer
-          be able to send messages. Zero means there is no limit.
+          When the exchange reaches this total number of user messages, the
+          exchange will be marked as blocked. Participants will not longer be
+          able to send messages. Zero means there is no limit.
         </FormHelperText>
       </FormControl>
 

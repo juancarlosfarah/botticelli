@@ -82,6 +82,13 @@ export default function InteractionTemplate(): ReactElement {
       <Typography>{interactionTemplate.participantInstructions}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
+        Participant Instructions On Complete
+      </Typography>
+      <Typography>
+        {interactionTemplate.participantInstructionsOnComplete}
+      </Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
         Exchange Templates
       </Typography>
       <List component="ol" marker="decimal">

@@ -80,7 +80,7 @@ export default function ScaleInput({
             onChange={handleChange}
           >
             <Typography level="h4">Not At All</Typography>
-            // todo: make dynamic
+            {/*todo: make dynamic*/}
             {[1, 2, 3, 4, 5, 6, 7].map((val) => (
               <Radio key={val} value={val.toString()} label={val.toString()} />
             ))}
