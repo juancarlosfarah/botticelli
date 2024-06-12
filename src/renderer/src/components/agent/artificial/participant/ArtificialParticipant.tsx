@@ -40,7 +40,7 @@ export default function ArtificialParticipant(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">{`Agent #${agentId}`}</Typography>
+        <Typography level="h2">Agent</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
         Name

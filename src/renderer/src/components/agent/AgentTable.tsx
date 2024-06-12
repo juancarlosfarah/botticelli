@@ -2,7 +2,6 @@ import { ReactElement, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Box from '@mui/joy/Box';
 import Checkbox from '@mui/joy/Checkbox';
 import Link from '@mui/joy/Link';
@@ -17,7 +16,7 @@ import RowMenu from '../common/RowMenu';
 import { deleteAgent, selectAgents } from './AgentsSlice';
 
 function AgentTable(): ReactElement {
-  const [order, setOrder] = useState<Order>('desc');
+  const [order] = useState<Order>('desc');
   const [selected, setSelected] = useState<readonly string[]>([]);
 
   const agents = useSelector(selectAgents);
@@ -75,25 +74,6 @@ function AgentTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 20, padding: '12px 6px' }}>
-                <Link
-                  underline="none"
-                  color="primary"
-                  component="button"
-                  onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
-                  fontWeight="lg"
-                  endDecorator={<ArrowDropDownIcon />}
-                  sx={{
-                    '& svg': {
-                      transition: '0.2s',
-                      transform:
-                        order === 'desc' ? 'rotate(0deg)' : 'rotate(180deg)',
-                    },
-                  }}
-                >
-                  ID
-                </Link>
-              </th>
               <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Type</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
@@ -120,11 +100,8 @@ function AgentTable(): ReactElement {
                   />
                 </td>
                 <td>
-                  <Typography level="body-xs">{row.id}</Typography>
-                </td>
-                <td>
                   <Typography level="body-xs">
-                    {_.truncate(row.name, 25)}
+                    {_.truncate(row.name, { length: 25 })}
                   </Typography>
                 </td>
                 <td>
@@ -132,7 +109,7 @@ function AgentTable(): ReactElement {
                 </td>
                 <td>
                   <Typography level="body-xs">
-                    {_.truncate(row.description, 25)}
+                    {_.truncate(row.description, { length: 25 })}
                   </Typography>
                 </td>
                 <td>
