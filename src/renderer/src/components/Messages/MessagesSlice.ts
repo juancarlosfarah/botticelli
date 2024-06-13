@@ -13,6 +13,9 @@ import {
   GENERATE_RESPONSE_CHANNEL,
   POST_MANY_KEY_PRESS_EVENTS_CHANNEL,
 } from '@shared/channels';
+import { GET_MANY_AUDIOS_CHANNEL } from '@shared/channels';
+import InputType from '@shared/enums/InputType';
+import { GetManyAudiosParams } from '@shared/interfaces/Audio';
 import {
   PostManyKeyPressEventsHandleResponse,
   PostManyKeyPressEventsParams,

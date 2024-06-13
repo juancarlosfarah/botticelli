@@ -15,6 +15,7 @@ export type MessageProps = {
   content: string;
   timestamp: string;
   unread?: boolean;
+  audioBlobs?: Blob[];
   sender: AgentProps;
   attachment?: {
     fileName: string;

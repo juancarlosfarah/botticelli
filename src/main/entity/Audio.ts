@@ -22,18 +22,20 @@ export class Audio {
   @Column()
   blobPath?: string;
 
+  binaryData?: Buffer;
+
   @ManyToOne(() => Exchange, (exchange) => exchange.audios, {
     onDelete: 'CASCADE',
-    nullable: false,
+    nullable: true,
   })
-  exchange: Relation<Exchange>;
+  exchange: Relation<Exchange> | string;
 
   @ManyToOne(() => Message, (message) => message.audios)
-  message?: Relation<Message>;
+  message?: Relation<Message> | string;
 
-  /*   @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: Date; */
+  updatedAt: Date;
 }

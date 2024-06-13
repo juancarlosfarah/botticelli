@@ -64,7 +64,7 @@ export const transcribeAudio = async (blobPath: string): Promise<String> => {
     console.error(error);
   } finally {
     // Cleanup: delete the original files after transcription
-    [filePathWithExtension, resampledFilePath].forEach((file) => {
+    [filePathWithExtension].forEach((file) => {
       fs.unlink(file, (err) => {
         if (err) console.error('Failed to delete the file:', file, err);
       });

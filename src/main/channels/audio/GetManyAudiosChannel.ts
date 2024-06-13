@@ -1,49 +1,73 @@
-import { GET_AUDIOS_CHANNEL } from '@shared/channels';
+import { GET_MANY_AUDIOS_CHANNEL } from '@shared/channels';
+import { GetManyAudiosParams } from '@shared/interfaces/Audio';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
+import { existsSync, promises as fs } from 'fs';
+import * as path from 'path';
 
-import { GetManyAudiosParams } from '../../../shared/interfaces/Audio';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
 import { Audio } from '../../entity/Audio';
 import { IpcChannel } from '../../interfaces/IpcChannel';
+import { GetOneChannel } from '../common/GetOneChannel';
 
-export class GetManyAudiosChannel implements IpcChannel {
+export class GetManyAudioChannel implements IpcChannel {
   getName(): string {
-    return GET_AUDIOS_CHANNEL;
+    return GET_MANY_AUDIOS_CHANNEL;
   }
 
   async handle(
     event: IpcMainEvent,
     request: IpcRequest<GetManyAudiosParams>,
   ): Promise<void> {
-    // debug
+    log.debug(`get many audios channel`);
     log.debug(`handling ${this.getName()}...`);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
-
-    // todo: return error
-    if (!request.params) {
-      event.sender.send(request.responseChannel, {});
+    if (!request?.params?.messageId) {
       return;
     }
-
+    const audioBuffers: ArrayBuffer[] = [];
     const { messageId } = request.params;
+    const messagePath = path.join(
+      __dirname,
+      '../../src/saved_audios',
+      messageId,
+    );
+    log.debug('Message path:', messagePath);
+    if (!existsSync(messagePath)) {
+      log.debug('Directory does not exist:', messagePath);
+    }
 
-    // debug
-    log.debug(`getting audios for message:`, messageId);
+    try {
+      // Read all file names in the directory
+      const fileNames = await fs.readdir(messagePath);
 
-    const audioRepository = AppDataSource.getRepository(Audio);
-    const audios = await audioRepository.findBy({
-      message: { id: messageId },
-    });
+      log.debug('Audio file names ', fileNames);
 
-    // debug
-    log.debug(`got ${audios?.length} audios`);
+      // Load each file as a Buffer and store it in the audioBuffers array
+      for (const fileName of fileNames) {
+        const filePath = path.join(messagePath, fileName);
+        try {
+          const audioBuffer = await fs.readFile(filePath);
 
-    event.sender.send(request.responseChannel, instanceToPlain(audios));
+          log.debug('Audio buffer of size ', audioBuffer.byteLength);
+
+          audioBuffers.push(audioBuffer);
+        } catch (error) {
+          log.debug(`Error reading file ${fileName}:`, error);
+        }
+      }
+
+      // log.debug('Loaded audio buffers:', audioBuffers);
+    } catch (error) {
+      log.debug('Error reading directory:', error);
+    }
+
+    log.debug('Audio buffers of size ', audioBuffers.length);
+    event.sender.send(request.responseChannel, instanceToPlain(audioBuffers));
   }
 }

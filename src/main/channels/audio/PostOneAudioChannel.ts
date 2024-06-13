@@ -19,16 +19,25 @@ async function saveAudio(
   filename: string,
 ): Promise<string> {
   const buffer = Buffer.from(arrayBuffer);
-  const filePath = path.join(__dirname, '../../src/saved_audios', filename); // Adjust the path as needed
+  const filePath = path.join(__dirname, '../../src/saved_audios', filename);
 
   return new Promise<string>((resolve, reject) => {
-    fs.writeFile(filePath, buffer, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(filePath);
-      }
-    });
+    fs.mkdir(
+      path.join(__dirname, '../../src/saved_audios'),
+      { recursive: true },
+      (err) => {
+        if (err) {
+          return reject(err);
+        }
+        fs.writeFile(filePath, buffer, (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(filePath);
+          }
+        });
+      },
+    );
   });
 }
 
@@ -65,6 +74,10 @@ export class PostOneAudioChannel implements IpcChannel {
     log.debug('before id');
     audio.blobPath = 'initialPath';
     audio.transcription = 'initialTranscription';
+    const exchange = await exchangeRepository.findOneBy({ id: exchangeId });
+    if (exchange) {
+      audio.exchange = exchange;
+    }
 
     const { id } = await audioRepository.save(audio);
     log.debug('after id');
@@ -74,9 +87,9 @@ export class PostOneAudioChannel implements IpcChannel {
 
     const blobPath = await saveAudio(blobBuffer, fileName);
     audio.blobPath = blobPath;
-    const exchange = await exchangeRepository.findOneBy({ id: exchangeId });
-    if (exchange) {
-      audio.exchange = exchange;
+    audio.binaryData = Buffer.from(blobBuffer);
+    if (audio.binaryData) {
+      log.debug('binary data not empty');
     }
 
     await audioRepository.save(audio);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Alert from '@mui/joy/Alert';
@@ -7,6 +7,10 @@ import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 
+import InputType from '@shared/enums/InputType';
+import { log } from 'electron-log/renderer';
+
+import { Message } from '../../../../shared/interfaces/Message';
 import { AppDispatch, RootState } from '../../store';
 import { MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
@@ -26,6 +30,17 @@ type MessagesPaneProps = {
   interactionId: string;
   readOnly?: boolean;
 };
+
+function bufferToBlobUrl(buffer: Buffer): string {
+  // Convert the Buffer to a Uint8Array
+  const uint8Array = new Uint8Array(buffer);
+
+  // Create a Blob from the Uint8Array
+  const blob = new Blob([uint8Array], { type: 'audio/wav' });
+
+  // Create a URL for the Blob
+  return URL.createObjectURL(blob);
+}
 
 export default function MessagesPane({
   exchangeId,
@@ -50,6 +65,7 @@ export default function MessagesPane({
     if (!readOnly && exchange && !exchange.started) {
       dispatch(startExchange(exchangeId));
     }
+    // if (exchange.inputType === InputType.Voice) dispatch(fetchAudios(exId));
   }, [exchange]);
 
   if (!exchange) {
@@ -84,24 +100,62 @@ export default function MessagesPane({
           <Stack spacing={2} justifyContent="flex-end">
             {messages.map((message: MessageProps, index: number) => {
               const isYou = message?.sender?.id === participantId;
+              // console.log(messages);
 
-              return (
-                <Stack
-                  key={index}
-                  direction="row"
-                  spacing={2}
-                  flexDirection={isYou ? 'row-reverse' : 'row'}
-                >
-                  {!isYou && <AvatarWithStatus online src="" />}
-                  <ChatBubble
-                    variant={isYou ? 'sent' : 'received'}
-                    content={message.content}
-                    // timestamp={message.updatedAt.toString()}
-                    attachment={false}
-                    sender={isYou ? 'You' : message?.sender}
-                  />
-                </Stack>
-              );
+              {
+                console.log(
+                  'message audio blobs MessagesPane ',
+                  message.audioBlobs,
+                );
+                if (
+                  exchange.inputType == InputType.Voice &&
+                  isYou &&
+                  message.audioBlobs
+                ) {
+                  console.log('voice input messagesPane');
+                  const audioBlobs = message.audioBlobs;
+                  const urls = audioBlobs.map((blob) =>
+                    URL.createObjectURL(blob),
+                  );
+                  return (
+                    <Stack
+                      key={index}
+                      direction="row"
+                      spacing={2}
+                      flexDirection={isYou ? 'row-reverse' : 'row'}
+                    >
+                      <div>
+                        {urls.map((url, index) => (
+                          <div key={index}>
+                            <audio controls>
+                              <source src={url} type="audio/wav" />
+                              Your browser does not support the audio element.
+                            </audio>
+                          </div>
+                        ))}
+                      </div>
+                    </Stack>
+                  );
+                } else {
+                  return (
+                    <Stack
+                      key={index}
+                      direction="row"
+                      spacing={2}
+                      flexDirection={isYou ? 'row-reverse' : 'row'}
+                    >
+                      {!isYou && <AvatarWithStatus online src="" />}
+                      <ChatBubble
+                        variant={isYou ? 'sent' : 'received'}
+                        content={message.content}
+                        // timestamp={message.updatedAt.toString()}
+                        attachment={false}
+                        sender={isYou ? 'You' : message?.sender}
+                      />
+                    </Stack>
+                  );
+                }
+              }
             })}
             {status === 'loading' && (
               <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>

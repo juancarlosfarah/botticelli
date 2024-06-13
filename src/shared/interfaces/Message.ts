@@ -1,11 +1,13 @@
 import InputType from '../enums/InputType';
 import Agent from './Agent';
+import { GetManyAudiosResponse } from './Audio';
 import { KeyPressData } from './Event';
 
 export interface Message {
   id: string;
   content: string;
   sender: Agent;
+  audioBlobs?: Blob[];
   updatedAt: string;
   createdAt: string;
 }

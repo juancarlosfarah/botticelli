@@ -101,5 +101,6 @@ export const GENERATE_AUDIO_TRANSCRIPTION_CHANNEL =
   'audio:transcription:generate';
 export const POST_ONE_AUDIO_CHANNEL = 'audio:post:one';
 export const TRANSCRIBE_ONE_AUDIO_CHANNEL = 'audio:transcribe:one';
-export const GET_AUDIOS_CHANNEL = 'audios:get';
+export const POST_AUDIOS_CHANNEL = 'audios:post:many';
 export const SEND_AUDIOS_CHANNEL = 'audios:send';
+export const GET_MANY_AUDIOS_CHANNEL = 'audios:get:many';

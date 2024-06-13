@@ -28,7 +28,8 @@ import { PostOneArtificialParticipantChannel } from './channels/agent/artificial
 import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/PostOneHumanAssistantChannel';
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
 import { GenerateAudioTranscriptonChannel } from './channels/audio/GenerateAudiosTranscriptionChannel';
-import { GetManyAudiosChannel } from './channels/audio/GetManyAudiosChannel';
+import { GetManyAudioChannel } from './channels/audio/GetManyAudiosChannel';
+import { PostManyAudiosChannel } from './channels/audio/PostAudiosMessageChannel';
 import { PostOneAudioChannel } from './channels/audio/PostOneAudioChannel';
 import { PostManyKeyPressEventsChannel } from './channels/event/PostManyKeyPressEventsChannel';
 import { PostOneKeyPressEventChannel } from './channels/event/PostOneKeyPressEventChannel';
@@ -246,5 +247,6 @@ new Main().init([
   // audios
   new PostOneAudioChannel(),
   new GenerateAudioTranscriptonChannel(),
-  new GetManyAudiosChannel(),
+  new PostManyAudiosChannel(),
+  new GetManyAudioChannel(),
 ]);

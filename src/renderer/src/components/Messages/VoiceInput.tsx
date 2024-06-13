@@ -19,6 +19,7 @@ import { KeyPressData } from '@shared/interfaces/Event';
 
 import { AppDispatch, RootState } from '../../store';
 import {
+  deleteAudio,
   saveNewAudio,
   selectAudioById,
   selectAudios,
@@ -35,6 +36,7 @@ interface AudioChunk {
   url: string;
   blob: Blob;
   transcription?: string;
+  id: string;
 }
 export type VoiceInputProps = {
   exchangeId: string;
@@ -62,7 +64,7 @@ export default function VoiceInput({
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const status = useSelector((state: RootState) => state.audios);
+  const status = useSelector((state: RootState) => state.audios.status);
   const audios = useSelector(selectAudios);
 
   const transcribeAudio = async (audioBlob: Blob, index: number) => {
@@ -107,7 +109,7 @@ export default function VoiceInput({
     let text = '';
     audios.forEach((audio) => {
       if (audio.transcription) {
-        text += audio.transcription;
+        text += audio.transcription + ' ';
       }
     });
     dispatch(
@@ -119,8 +121,10 @@ export default function VoiceInput({
         content: text,
         evaluate: true,
         sender: participantId,
+        audios,
       }),
     );
+    audioChunks.map((chunk, index) => deleteAudioChunk(index));
   };
 
   const handleStartRecording = async () => {
@@ -189,12 +193,6 @@ export default function VoiceInput({
         const audioUrl = URL.createObjectURL(audioBlob);
 
         // const newChunkIndex = audioChunks.length; // Capture the index where the new chunk will be added
-        const newChunk = {
-          url: audioUrl,
-          blob: audioBlob,
-          transcription: 'Transcribing...',
-        };
-        setAudioChunks([...audioChunks, newChunk]);
 
         // Clear the recording chunks
         audioChunksRef.current = [];
@@ -202,16 +200,23 @@ export default function VoiceInput({
         // transcribeAudio(audioBlob, newChunkIndex);
 
         console.log('front end saveNewAudio');
-        dispatch(
+        const newAudio = await dispatch(
           saveNewAudio({
             exchangeId,
             blob: audioBlob,
           }),
-        );
+        ).unwrap();
 
+        const newChunk: AudioChunk = {
+          url: audioUrl,
+          blob: audioBlob,
+          transcription: 'Transcribing...',
+          id: newAudio.id,
+        };
+        setAudioChunks([...audioChunks, newChunk]);
         // Send the audio file to the server for transcription
-        /* const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.wav'); */
+        // const formData = new FormData();
+        // formData.append('audio', audioBlob, 'recording.wav');
       };
     }
   };
@@ -226,138 +231,135 @@ export default function VoiceInput({
 
   const deleteAudioChunk = (index: number) => {
     URL.revokeObjectURL(audioChunks[index].url);
+    const audioChunkToDelete = audioChunks[index];
+
+    // Delete the chunk from local state
     setAudioChunks(audioChunks.filter((_, i) => i !== index));
+
+    // Find the corresponding Audio by ID and dispatch the delete action
+    const audioToDelete = audios.find(
+      (audio) => audio.id === audioChunkToDelete.id,
+    );
+    if (audioToDelete) {
+      dispatch(deleteAudio(audioToDelete.id));
+    }
   };
 
+  // text Input pattern :
   return (
-    // Bottom Box
-    <Box
-      sx={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        padding: 5,
-        border: 1,
-        backgroundColor: '#f0f0f0',
-        alignItems: 'center',
-        justifyContent: 'center',
-        display: 'block',
-        height: '80px',
-      }}
-    >
-      <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="space-evenly"
-        alignItems="center"
-        divider={<Divider orientation="vertical" flexItem />}
-        sx={{ width: '100%', height: '100%' }}
-      >
-        {/* Microphone recording */}
+    <Box sx={{ px: 2, pb: 3 }}>
+      <Box sx={{ border: 2, borderColor: 'divider', borderRadius: 'md', p: 1 }}>
         <Stack
-          direction="column"
+          direction="row"
+          spacing={2}
           justifyContent="space-evenly"
           alignItems="center"
-          spacing={1}
-          sx={{ width: '25%', height: '100%' }}
+          divider={<Divider orientation="vertical" flexItem />}
+          sx={{ width: '100%', height: '100%' }}
         >
-          {isRecording && (
-            <Typography variant="h6" align="center" gutterBottom>
-              Recording: {recordingDuration}s <br />
-              <br />
-            </Typography>
-          )}
-          {!isRecording && (
-            <Typography variant="h6" align="center" gutterBottom>
-              Click to record (max 30s)
-            </Typography>
-          )}
-
-          <IconButton
-            variant="solid"
-            color="primary"
-            aria-label="recording"
-            onClick={toggleRecording}
+          {/* Microphone recording */}
+          <Stack
+            direction="column"
+            justifyContent="space-evenly"
+            alignItems="center"
+            spacing={1}
+            sx={{ width: '25%', height: '100%' }}
           >
-            {isRecording ? <MicOffRoundedIcon /> : <MicRoundedIcon />}
-          </IconButton>
-        </Stack>
+            {isRecording && (
+              <Typography variant="h6" align="center" gutterBottom>
+                Recording: {recordingDuration}s <br />
+                <br />
+              </Typography>
+            )}
+            {!isRecording && (
+              <Typography variant="h6" align="center" gutterBottom>
+                Click to record (max 30s)
+              </Typography>
+            )}
 
-        {/* AudioChunks display */}
-        <Box
-          sx={{
-            flexGrow: 1,
-            overflowX: 'auto',
-            maxHeight: '100px',
-            overflowY: 'auto',
-            width: '50%',
-          }}
-        >
-          <List>
-            {audioChunks.map((chunk, index) => (
-              <Box
-                key={index}
-                sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-              >
-                <div>{index + 1}</div>
-                {/* status.status.recording === 'idle' &&  */}
-                {<audio controls src={chunk.url} />}
-                <Button
-                  size="sm"
-                  variant="outlined"
-                  color="danger"
-                  onClick={() => deleteAudioChunk(index)}
+            <IconButton
+              variant="solid"
+              color="primary"
+              aria-label="recording"
+              onClick={toggleRecording}
+            >
+              {isRecording ? <MicOffRoundedIcon /> : <MicRoundedIcon />}
+            </IconButton>
+          </Stack>
+
+          {/* AudioChunks display */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              overflowX: 'auto',
+              maxHeight: '100px',
+              overflowY: 'auto',
+              width: '50%',
+            }}
+          >
+            <List>
+              {audioChunks.map((chunk, index) => (
+                <Box
+                  key={index}
+                  sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
                 >
-                  <DeleteForeverRoundedIcon />
-                </Button>
-              </Box>
-            ))}
-          </List>
-        </Box>
+                  <div>{index + 1}</div>
+                  {/* status.status.recording === 'idle' &&  */}
+                  {<audio controls src={chunk.url} />}
+                  <Button
+                    size="sm"
+                    variant="outlined"
+                    color="danger"
+                    onClick={() => deleteAudioChunk(index)}
+                  >
+                    <DeleteForeverRoundedIcon />
+                  </Button>
+                </Box>
+              ))}
+            </List>
+          </Box>
 
-        {/* Send button */}
-        <Stack
-          direction="column"
-          justifyContent="space-evenly"
-          alignItems="center"
-          spacing={1}
-          sx={{ width: '25%', height: '100%' }}
-        >
-          {audioChunks.length === 1 && status.status.toSend === 'idle' && (
-            <Typography variant="h6" align="center" gutterBottom>
-              Send 1 message
-            </Typography>
-          )}
-          {audioChunks.length > 1 && status.status.toSend === 'idle' && (
-            <Typography variant="h6" align="center" gutterBottom>
-              Send {audioChunks.length} messages
-            </Typography>
-          )}
-          {audioChunks.length === 0 && (
-            <Typography variant="h6" align="center" gutterBottom>
-              Record some messages
-            </Typography>
-          )}
-          {audioChunks.length > 0 && status.status.toSend === 'loading' && (
-            <Typography variant="h6" align="center" gutterBottom>
-              Wait a few seconds
-            </Typography>
-          )}
-
-          <IconButton
-            variant="solid"
-            aria-label="send"
-            color="success"
-            disabled={
-              audioChunks.length === 0 || status.status.toSend === 'loading'
-            }
-            onClick={sendMessage}
+          {/* Send button */}
+          <Stack
+            direction="column"
+            justifyContent="space-evenly"
+            alignItems="center"
+            spacing={1}
+            sx={{ width: '25%', height: '100%' }}
           >
-            <SendRoundedIcon />
-          </IconButton>
+            {audioChunks.length === 1 && status.toSend === 'idle' && (
+              <Typography variant="h6" align="center" gutterBottom>
+                Send 1 message
+              </Typography>
+            )}
+            {audioChunks.length > 1 && status.toSend === 'idle' && (
+              <Typography variant="h6" align="center" gutterBottom>
+                Send {audioChunks.length} messages
+              </Typography>
+            )}
+            {audioChunks.length === 0 && (
+              <Typography variant="h6" align="center" gutterBottom>
+                Record some messages
+              </Typography>
+            )}
+            {audioChunks.length > 0 && status.toSend === 'loading' && (
+              <Typography variant="h6" align="center" gutterBottom>
+                Wait a few seconds
+              </Typography>
+            )}
+
+            <IconButton
+              variant="solid"
+              aria-label="send"
+              color="success"
+              disabled={audioChunks.length === 0 || status.toSend === 'loading'}
+              onClick={sendMessage}
+            >
+              <SendRoundedIcon />
+            </IconButton>
+          </Stack>
         </Stack>
-      </Stack>
+      </Box>
     </Box>
   );
 }
