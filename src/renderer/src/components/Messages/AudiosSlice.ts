@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux';
+
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -13,6 +15,7 @@ import {
 import { GET_MANY_AUDIOS_CHANNEL } from '@shared/channels';
 import InputType from '@shared/enums/InputType';
 import {
+  AddAudiosParams,
   Audio,
   GenerateAudioTranscriptionParams,
   GetManyAudiosResponse,
@@ -27,6 +30,7 @@ import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
 import { RootState } from '../../store';
+import { selectMessageById, updateMessage } from './MessagesSlice';
 import { saveNewMessage } from './MessagesSlice';
 
 export const audiosAdapter = createEntityAdapter<Audio>();
@@ -99,11 +103,43 @@ export const postAudios = createAsyncThunk<
 async function convertArrayBufferToBlob(arrayBuffer) {
   const uint8Array = new Uint8Array(arrayBuffer);
   log.debug('uint8Array of length ', uint8Array.length);
-  const audioBlob = new Blob([uint8Array], { type: 'audio/wav' }); // Adjust the MIME type as needed
+  const audioBlob = new Blob([uint8Array], { type: 'audio/wav' });
   log.debug('audioBlob of length ', audioBlob.size);
 
   return audioBlob;
 }
+
+export const addAudioToMessage = createAsyncThunk<string, AddAudiosParams>(
+  'audios/addAudioToMessage',
+  async ({ messageId, blobs }, { dispatch, getState }) => {
+    console.log('adding audio to message', messageId);
+
+    // Dispatch an action to update the message with the new audio blobs
+    dispatch(
+      updateMessage({
+        id: messageId,
+        changes: {
+          audioBlobs: blobs,
+        },
+      }),
+    );
+
+    const message = useSelector((state: RootState) =>
+      selectMessageById(state, messageId),
+    );
+
+    if (message) {
+      if (message.audioBlobs) {
+        console.log('message blob of length', message.audioBlobs.length);
+      } else {
+        console.log('no audio blobs');
+      }
+    } else {
+      console.log('no message found');
+    }
+    return messageId;
+  },
+);
 
 export const sendAudios = createAsyncThunk<Message, SendAudiosMessageParams>(
   'audios/sendAudios',
@@ -120,8 +156,6 @@ export const sendAudios = createAsyncThunk<Message, SendAudiosMessageParams>(
     },
     { dispatch },
   ) => {
-    // debugging
-    // log.debug(`saveNewMessage:`, exchangeId, content);
     const newMessage = await dispatch(
       saveNewMessage({
         interactionId,
@@ -158,11 +192,12 @@ export const sendAudios = createAsyncThunk<Message, SendAudiosMessageParams>(
       console.log('blob of length ', audioBlob.size);
 
       audioBlobs.push(audioBlob);
-
-      // const url = URL.createObjectURL(audioBlob);
-      // console.log('Blob URL ', url);
     }
     log.debug('message blobs of length ', audioBlobs.length);
+
+    await dispatch(
+      addAudioToMessage({ messageId: newMessage.id, blobs: audioBlobs }),
+    );
 
     return newMessage;
   },
@@ -184,6 +219,7 @@ const audiosSlice = createSlice({
   initialState,
   reducers: {
     deleteAudio: audiosAdapter.removeOne,
+    removeAudios: audiosAdapter.removeAll,
   },
   extraReducers(builder) {
     builder
@@ -191,7 +227,6 @@ const audiosSlice = createSlice({
         state.status.toSend = 'loading';
       })
       .addCase(sendAudios.fulfilled, (state, action) => {
-        // audiosAdapter.setAll(state, action.payload);
         audiosAdapter.removeAll(state);
         state.status.toSend = 'idle';
       })
@@ -212,7 +247,7 @@ const audiosSlice = createSlice({
 });
 
 export default audiosSlice.reducer;
-export const { deleteAudio } = audiosSlice.actions;
+export const { deleteAudio, removeAudios } = audiosSlice.actions;
 
 export const { selectAll: selectAudios, selectById: selectAudioById } =
   audiosAdapter.getSelectors((state: RootState) => state.audios);

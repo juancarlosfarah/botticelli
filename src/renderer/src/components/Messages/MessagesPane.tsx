@@ -65,7 +65,6 @@ export default function MessagesPane({
     if (!readOnly && exchange && !exchange.started) {
       dispatch(startExchange(exchangeId));
     }
-    // if (exchange.inputType === InputType.Voice) dispatch(fetchAudios(exId));
   }, [exchange]);
 
   if (!exchange) {
@@ -103,10 +102,6 @@ export default function MessagesPane({
               // console.log(messages);
 
               {
-                console.log(
-                  'message audio blobs MessagesPane ',
-                  message.audioBlobs,
-                );
                 if (
                   exchange.inputType == InputType.Voice &&
                   isYou &&

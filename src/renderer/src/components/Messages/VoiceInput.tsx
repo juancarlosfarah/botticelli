@@ -20,17 +20,12 @@ import { KeyPressData } from '@shared/interfaces/Event';
 import { AppDispatch, RootState } from '../../store';
 import {
   deleteAudio,
+  removeAudios,
   saveNewAudio,
   selectAudioById,
   selectAudios,
   sendAudios,
 } from './AudiosSlice';
-
-/* import { KeyPressData } from '@shared/interfaces/Event';
-
-import { AppDispatch } from '../../store';
-import { dismissExchange } from '../exchange/ExchangesSlice';
-import { saveNewMessage } from './MessagesSlice'; */
 
 interface AudioChunk {
   url: string;
@@ -67,44 +62,6 @@ export default function VoiceInput({
   const status = useSelector((state: RootState) => state.audios.status);
   const audios = useSelector(selectAudios);
 
-  const transcribeAudio = async (audioBlob: Blob, index: number) => {
-    // Create a FormData object to hold the audio file
-    const formData = new FormData();
-    formData.append('audio', audioBlob, `recording_${index}.wav`);
-
-    try {
-      // Make a POST request to the server's transcription endpoint
-      const response = await fetch('http://localhost:3001/transcribe', {
-        // The endpoint in your server for transcribing
-        method: 'POST',
-        body: formData,
-      });
-
-      // Parse the JSON response containing the transcription
-      const data = await response.json();
-
-      // Update the state with the transcription result
-      setAudioChunks((prevChunks) =>
-        prevChunks.map((chunk, idx) =>
-          idx === index
-            ? { ...chunk, transcription: data.transcription }
-            : chunk,
-        ),
-      );
-    } catch (error) {
-      console.error('Error transcribing audio', error);
-
-      // Update the state indicating there was an error in transcription
-      setAudioChunks((prevChunks) =>
-        prevChunks.map((chunk, idx) =>
-          idx === index
-            ? { ...chunk, transcription: `Error in transcription : ${error}` }
-            : chunk,
-        ),
-      );
-    }
-  };
-
   const sendMessage = () => {
     let text = '';
     audios.forEach((audio) => {
@@ -125,6 +82,7 @@ export default function VoiceInput({
       }),
     );
     audioChunks.map((chunk, index) => deleteAudioChunk(index));
+    setAudioChunks([]);
   };
 
   const handleStartRecording = async () => {
@@ -192,12 +150,8 @@ export default function VoiceInput({
         });
         const audioUrl = URL.createObjectURL(audioBlob);
 
-        // const newChunkIndex = audioChunks.length; // Capture the index where the new chunk will be added
-
         // Clear the recording chunks
         audioChunksRef.current = [];
-
-        // transcribeAudio(audioBlob, newChunkIndex);
 
         console.log('front end saveNewAudio');
         const newAudio = await dispatch(
@@ -214,9 +168,6 @@ export default function VoiceInput({
           id: newAudio.id,
         };
         setAudioChunks([...audioChunks, newChunk]);
-        // Send the audio file to the server for transcription
-        // const formData = new FormData();
-        // formData.append('audio', audioBlob, 'recording.wav');
       };
     }
   };

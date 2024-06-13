@@ -50,6 +50,10 @@ export type PostManyAudiosParams = {
   message: Message;
   savedAudios: Audio[];
 };
+export type AddAudiosParams = {
+  messageId: string;
+  blobs: Blob[];
+};
 export type GetManyAudiosParams = {
   messageId: string;
 };

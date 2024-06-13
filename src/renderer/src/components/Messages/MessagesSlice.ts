@@ -182,6 +182,7 @@ const messagesSlice = createSlice({
   initialState,
   reducers: {
     messageDeleted: messagesAdapter.removeOne,
+    updateMessage: messagesAdapter.updateOne,
   },
   extraReducers: (builder) => {
     builder
@@ -218,7 +219,7 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { messageDeleted } = messagesSlice.actions;
+export const { messageDeleted, updateMessage } = messagesSlice.actions;
 
 export default messagesSlice.reducer;
 
