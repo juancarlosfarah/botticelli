@@ -58,3 +58,7 @@ export type GetManyAudiosParams = {
   messageId: string;
 };
 export type GetManyAudiosResponse = Audio[];
+
+export type DeleteOneAudioParams = {
+  audioId: string;
+};

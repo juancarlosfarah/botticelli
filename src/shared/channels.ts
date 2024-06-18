@@ -104,3 +104,4 @@ export const TRANSCRIBE_ONE_AUDIO_CHANNEL = 'audio:transcribe:one';
 export const POST_AUDIOS_CHANNEL = 'audios:post:many';
 export const SEND_AUDIOS_CHANNEL = 'audios:send';
 export const GET_MANY_AUDIOS_CHANNEL = 'audios:get:many';
+export const DELETE_ONE_AUDIO_CHANNEL = 'audio:delete:one';

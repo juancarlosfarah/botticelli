@@ -27,6 +27,7 @@ import { GetOneArtificialParticipantChannel } from './channels/agent/artificial/
 import { PostOneArtificialParticipantChannel } from './channels/agent/artificial/participant/PostOneArtificialParticipantChannel';
 import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/PostOneHumanAssistantChannel';
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
+import { DeleteOneAudioChannel } from './channels/audio/DeleteOneAudioChannel';
 import { GenerateAudioTranscriptonChannel } from './channels/audio/GenerateAudiosTranscriptionChannel';
 import { GetManyAudioChannel } from './channels/audio/GetManyAudiosChannel';
 import { PostManyAudiosChannel } from './channels/audio/PostAudiosMessageChannel';
@@ -249,4 +250,5 @@ new Main().init([
   new GenerateAudioTranscriptonChannel(),
   new PostManyAudiosChannel(),
   new GetManyAudioChannel(),
+  new DeleteOneAudioChannel(),
 ]);

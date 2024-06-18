@@ -2,10 +2,12 @@ import { ReactElement, useEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CheckIcon from '@mui/icons-material/CheckRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import MicOffRoundedIcon from '@mui/icons-material/MicOffRounded';
 import MicRoundedIcon from '@mui/icons-material/MicRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
 import { Stack } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
@@ -13,13 +15,16 @@ import IconButton from '@mui/joy/IconButton';
 import List from '@mui/joy/List';
 import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
+import Skeleton from '@mui/material/Skeleton';
 
 import InputType from '@shared/enums/InputType';
 import { KeyPressData } from '@shared/interfaces/Event';
 
 import { AppDispatch, RootState } from '../../store';
+import { dismissExchange } from '../exchange/ExchangesSlice';
 import {
   deleteAudio,
+  deleteOneAudio,
   removeAudios,
   saveNewAudio,
   selectAudioById,
@@ -58,7 +63,9 @@ export default function VoiceInput({
   const audioChunksRef = useRef<Blob[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
-
+  const handleDismiss = (): void => {
+    dispatch(dismissExchange(exchangeId));
+  };
   const status = useSelector((state: RootState) => state.audios.status);
   const audios = useSelector(selectAudios);
 
@@ -196,6 +203,23 @@ export default function VoiceInput({
     }
   };
 
+  const deleteStoredAudio = (index: number) => {
+    URL.revokeObjectURL(audioChunks[index].url);
+    const audioChunkToDelete = audioChunks[index];
+
+    // Delete the chunk from local state
+    setAudioChunks(audioChunks.filter((_, i) => i !== index));
+
+    // Find the corresponding Audio by ID and dispatch the delete action
+    const audioToDelete = audios.find(
+      (audio) => audio.id === audioChunkToDelete.id,
+    );
+    if (audioToDelete) {
+      dispatch(deleteAudio(audioToDelete.id));
+      dispatch(deleteOneAudio({ audioId: audioToDelete.id }));
+    }
+  };
+
   // text Input pattern :
   return (
     <Box sx={{ px: 2, pb: 3 }}>
@@ -217,25 +241,28 @@ export default function VoiceInput({
             sx={{ width: '25%', height: '100%' }}
           >
             {isRecording && (
-              <Typography variant="h6" align="center" gutterBottom>
-                Recording: {recordingDuration}s <br />
-                <br />
+              <Typography variant="body1" align="center" gutterBottom>
+                Recording: {recordingDuration}s
               </Typography>
             )}
             {!isRecording && (
-              <Typography variant="h6" align="center" gutterBottom>
-                Click to record (max 30s)
+              <Typography variant="body1" align="center" gutterBottom>
+                Click to record
               </Typography>
             )}
 
             <IconButton
               variant="solid"
-              color="primary"
+              color={isRecording ? 'danger' : 'primary'}
               aria-label="recording"
               onClick={toggleRecording}
             >
-              {isRecording ? <MicOffRoundedIcon /> : <MicRoundedIcon />}
+              {isRecording ? <StopCircleRoundedIcon /> : <MicRoundedIcon />}
             </IconButton>
+
+            <Typography variant="caption" align="center" gutterBottom>
+              (max 30s)
+            </Typography>
           </Stack>
 
           {/* AudioChunks display */}
@@ -261,12 +288,25 @@ export default function VoiceInput({
                     size="sm"
                     variant="outlined"
                     color="danger"
-                    onClick={() => deleteAudioChunk(index)}
+                    onClick={() => deleteStoredAudio(index)}
                   >
                     <DeleteForeverRoundedIcon />
                   </Button>
                 </Box>
               ))}
+              {status.toSend == 'loading' && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <div>{audioChunks.length + 1}</div>
+
+                  <Skeleton
+                    variant="rounded"
+                    animation="wave"
+                    width={298}
+                    height={40}
+                  />
+                  <Skeleton variant="rounded" width={35} height={35} />
+                </Box>
+              )}
             </List>
           </Box>
 
@@ -278,27 +318,32 @@ export default function VoiceInput({
             spacing={1}
             sx={{ width: '25%', height: '100%' }}
           >
-            {audioChunks.length === 1 && status.toSend === 'idle' && (
-              <Typography variant="h6" align="center" gutterBottom>
-                Send 1 message
+            {!completed && (
+              <div>
+                <br></br>
+              </div>
+            )}
+            {completed && (
+              <Typography variant="body1" align="center" gutterBottom>
+                Click "Done" to end this exchange...
               </Typography>
             )}
-            {audioChunks.length > 1 && status.toSend === 'idle' && (
-              <Typography variant="h6" align="center" gutterBottom>
-                Send {audioChunks.length} messages
+            {completed && (
+              <Button
+                size="sm"
+                color="success"
+                endDecorator={<CheckIcon />}
+                sx={{ alignSelf: 'center', borderRadius: 'sm' }}
+                onClick={handleDismiss}
+              >
+                Done
+              </Button>
+            )}
+            {completed && (
+              <Typography variant="caption" align="center" gutterBottom>
+                ... or continue the conversation
               </Typography>
             )}
-            {audioChunks.length === 0 && (
-              <Typography variant="h6" align="center" gutterBottom>
-                Record some messages
-              </Typography>
-            )}
-            {audioChunks.length > 0 && status.toSend === 'loading' && (
-              <Typography variant="h6" align="center" gutterBottom>
-                Wait a few seconds
-              </Typography>
-            )}
-
             <IconButton
               variant="solid"
               aria-label="send"
@@ -308,6 +353,33 @@ export default function VoiceInput({
             >
               <SendRoundedIcon />
             </IconButton>
+
+            {audioChunks.length === 1 &&
+              status.toSend === 'idle' &&
+              !completed && (
+                <Typography variant="caption" align="center" gutterBottom>
+                  Send 1 message
+                </Typography>
+              )}
+            {audioChunks.length > 1 &&
+              status.toSend === 'idle' &&
+              !completed && (
+                <Typography variant="caption" align="center" gutterBottom>
+                  Send {audioChunks.length} messages
+                </Typography>
+              )}
+            {audioChunks.length === 0 &&
+              status.toSend !== 'loading' &&
+              !completed && (
+                <Typography variant="caption" align="center" gutterBottom>
+                  Record some messages
+                </Typography>
+              )}
+            {status.toSend === 'loading' && !completed && (
+              <Typography variant="caption" align="center" gutterBottom>
+                Wait a few seconds
+              </Typography>
+            )}
           </Stack>
         </Stack>
       </Box>

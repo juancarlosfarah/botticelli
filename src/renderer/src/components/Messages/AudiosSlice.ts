@@ -7,6 +7,7 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
+  DELETE_ONE_AUDIO_CHANNEL,
   GENERATE_AUDIO_TRANSCRIPTION_CHANNEL,
   POST_AUDIOS_CHANNEL,
   POST_ONE_AUDIO_CHANNEL,
@@ -17,6 +18,7 @@ import InputType from '@shared/enums/InputType';
 import {
   AddAudiosParams,
   Audio,
+  DeleteOneAudioParams,
   GenerateAudioTranscriptionParams,
   GetManyAudiosResponse,
   PostManyAudiosParams,
@@ -99,7 +101,17 @@ export const postAudios = createAsyncThunk<
     },
   );
 });
-
+export const deleteOneAudio = createAsyncThunk<string, DeleteOneAudioParams>(
+  'audios/deleteOneAudio',
+  async ({ audioId }) => {
+    return await IpcService.send<string, DeleteOneAudioParams>(
+      DELETE_ONE_AUDIO_CHANNEL,
+      {
+        params: { audioId },
+      },
+    );
+  },
+);
 async function convertArrayBufferToBlob(arrayBuffer) {
   const uint8Array = new Uint8Array(arrayBuffer);
   log.debug('uint8Array of length ', uint8Array.length);
