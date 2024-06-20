@@ -52,6 +52,13 @@ export const transcribeAudio = async (blobPath: string): Promise<String> => {
     // Transcribe the audio
     const transcript = await whisper.whisper(resampledFilePath, {
       modelName: 'base',
+      whisperOptions: {
+        language: 'auto', // default (use 'auto' for auto detect)
+        gen_file_txt: false, // outputs .txt file
+        gen_file_subtitle: false, // outputs .srt file
+        gen_file_vtt: false, // outputs .vtt file
+        word_timestamps: true,
+      },
     });
 
     // Process the transcription as needed
