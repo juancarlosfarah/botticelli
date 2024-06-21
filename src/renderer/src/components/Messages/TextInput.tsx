@@ -115,6 +115,7 @@ export default function TextInput({
               event.key === 'Enter' &&
               !(event.metaKey || event.ctrlKey || event.shiftKey)
             ) {
+              event.preventDefault();
               handleClick();
               // reset keypress data
               setKeypressData([]);
