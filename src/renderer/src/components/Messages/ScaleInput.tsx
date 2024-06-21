@@ -82,7 +82,15 @@ export default function ScaleInput({
             <Typography level="h4">Not At All</Typography>
             {/*todo: make dynamic*/}
             {[1, 2, 3, 4, 5, 6, 7].map((val) => (
-              <Radio key={val} value={val.toString()} label={val.toString()} />
+              <Radio
+                key={val}
+                value={val.toString()}
+                label={val.toString()}
+                sx={{
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              />
             ))}
             <Typography level="h4">Very Strongly</Typography>
           </RadioGroup>
