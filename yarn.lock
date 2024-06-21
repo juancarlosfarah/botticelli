@@ -2425,7 +2425,7 @@ __metadata:
     react-content-loader: "npm:6.2.1"
     react-dom: "npm:18.2.0"
     react-i18next: "npm:13.3.1"
-    react-markdown: "npm:9.0.0"
+    react-markdown: "npm:9.0.1"
     react-redux: "npm:8.1.3"
     react-router-dom: "npm:6.17.0"
     reflect-metadata: "npm:0.1.13"
@@ -6995,16 +6995,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-markdown@npm:9.0.0":
-  version: 9.0.0
-  resolution: "react-markdown@npm:9.0.0"
+"react-markdown@npm:9.0.1":
+  version: 9.0.1
+  resolution: "react-markdown@npm:9.0.1"
   dependencies:
     "@types/hast": "npm:^3.0.0"
     devlop: "npm:^1.0.0"
     hast-util-to-jsx-runtime: "npm:^2.0.0"
     html-url-attributes: "npm:^3.0.0"
     mdast-util-to-hast: "npm:^13.0.0"
-    micromark-util-sanitize-uri: "npm:^2.0.0"
     remark-parse: "npm:^11.0.0"
     remark-rehype: "npm:^11.0.0"
     unified: "npm:^11.0.0"
@@ -7013,7 +7012,7 @@ __metadata:
   peerDependencies:
     "@types/react": ">=18"
     react: ">=18"
-  checksum: 10/8cca0a0af0748241a592cdd3887203e3e0bcdd9bbd4884036d8dfddd7a70e591cbdbe2f6f28018524928488d27a53842db6f23ee9d805d0d3194c0a79c53a980
+  checksum: 10/71ce31f200982f641d363888a26e8fb52a199a589124f20295e9be870fa3aed26fcfa14d1dc766d83df666a15cb82359291bfda207bd55d5728ff376d217e079
   languageName: node
   linkType: hard
 

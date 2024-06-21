@@ -1,4 +1,5 @@
 import * as React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import Avatar from '@mui/joy/Avatar';
@@ -85,7 +86,7 @@ export default function ChatBubble({
                   : 'var(--joy-palette-text-primary)',
               }}
             >
-              {content}
+              <ReactMarkdown>{content}</ReactMarkdown>
             </Typography>
           </Sheet>
         </Box>
