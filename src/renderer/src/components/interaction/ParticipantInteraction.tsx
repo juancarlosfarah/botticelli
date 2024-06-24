@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
@@ -67,7 +68,9 @@ export default function ParticipantInteraction(): ReactElement {
         >
           {interaction.participantInstructions && (
             <Typography level="title-lg" sx={{ p: 10, textAlign: 'justify' }}>
-              {interaction.participantInstructions}
+              <ReactMarkdown>
+                {interaction.participantInstructions}
+              </ReactMarkdown>
             </Typography>
           )}
           <Button
@@ -104,7 +107,9 @@ export default function ParticipantInteraction(): ReactElement {
           }}
         >
           <Typography level="title-lg">
-            {interaction.participantInstructionsOnComplete}
+            <ReactMarkdown>
+              {interaction.participantInstructionsOnComplete}
+            </ReactMarkdown>
           </Typography>
         </Box>
       ) : (

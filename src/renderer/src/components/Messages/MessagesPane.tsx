@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CheckIcon from '@mui/icons-material/CheckRounded';
@@ -80,7 +81,7 @@ export default function MessagesPane({
   // the message showed upon reaching the hard limit is slightly
   // different to the one we show when the soft limit is reached
   const messageOnComplete = hardComplete
-    ? 'This exchange has been marked as completed. Please click "Done".'
+    ? 'This exchange has been marked as completed. Please click **Done**.'
     : exchange.participantInstructionsOnComplete;
 
   const handleDismiss = (): void => {
@@ -156,7 +157,7 @@ export default function MessagesPane({
                   </Button>
                 }
               >
-                {messageOnComplete}
+                <ReactMarkdown>{messageOnComplete}</ReactMarkdown>
               </Alert>
             )}
           </Stack>
