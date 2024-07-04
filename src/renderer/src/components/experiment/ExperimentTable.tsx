@@ -86,48 +86,53 @@ export default function ExperimentTable(): ReactElement {
             </tr>
           </thead>
           <tbody>
-            {stableSort(experiments, getComparator(order, 'id')).map((row) => (
-              <tr key={row.id}>
-                <td style={{ textAlign: 'center', width: 120 }}>
-                  <Checkbox
-                    size="sm"
-                    checked={selected.includes(row.id)}
-                    color={selected.includes(row.id) ? 'primary' : undefined}
-                    onChange={(event) => {
-                      setSelected((ids) =>
-                        event.target.checked
-                          ? ids.concat(row.id)
-                          : ids.filter((itemId) => itemId !== row.id),
-                      );
-                    }}
-                    slotProps={{ checkbox: { sx: { textAlign: 'left' } } }}
-                    sx={{ verticalAlign: 'text-bottom' }}
-                  />
-                </td>
-                <td>
-                  <Typography level="body-xs">
-                    {_.truncate(row.name, 25)}
-                  </Typography>
-                </td>
-                <td>
-                  <Typography level="body-xs">
-                    {_.truncate(row.description, 25)}
-                  </Typography>
-                </td>
-                <td>
-                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                    <Link
-                      level="body-xs"
-                      component={RouterLink}
-                      to={`/experiments/${row.id}`}
-                    >
-                      View
-                    </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteExperiment} />
-                  </Box>
-                </td>
-              </tr>
-            ))}
+            {stableSort(experiments, getComparator(order, 'name')).map(
+              (row) => (
+                <tr key={row.id}>
+                  <td style={{ textAlign: 'center', width: 120 }}>
+                    <Checkbox
+                      size="sm"
+                      checked={selected.includes(row.id)}
+                      color={selected.includes(row.id) ? 'primary' : undefined}
+                      onChange={(event) => {
+                        setSelected((ids) =>
+                          event.target.checked
+                            ? ids.concat(row.id)
+                            : ids.filter((itemId) => itemId !== row.id),
+                        );
+                      }}
+                      slotProps={{ checkbox: { sx: { textAlign: 'left' } } }}
+                      sx={{ verticalAlign: 'text-bottom' }}
+                    />
+                  </td>
+                  <td>
+                    <Typography level="body-xs">
+                      {_.truncate(row.name, 25)}
+                    </Typography>
+                  </td>
+                  <td>
+                    <Typography level="body-xs">
+                      {_.truncate(row.description, 25)}
+                    </Typography>
+                  </td>
+                  <td>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                      <Link
+                        level="body-xs"
+                        component={RouterLink}
+                        to={`/experiments/${row.id}`}
+                      >
+                        View
+                      </Link>
+                      <RowMenu
+                        rowId={row.id}
+                        deleteHandler={deleteExperiment}
+                      />
+                    </Box>
+                  </td>
+                </tr>
+              ),
+            )}
           </tbody>
         </Table>
       </Sheet>
