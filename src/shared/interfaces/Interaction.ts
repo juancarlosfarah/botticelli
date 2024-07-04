@@ -39,4 +39,9 @@ export type GetOneInteractionParams = {
   id: string;
 };
 
+export type SetCurrentExchangeParams = {
+  interactionId: string;
+  currentExchangeId: string;
+};
+
 export default Interaction;

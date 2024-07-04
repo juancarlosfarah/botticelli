@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
+import { Tooltip } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Link from '@mui/joy/Link';
@@ -16,6 +17,7 @@ import _ from 'lodash';
 
 import { AppDispatch } from '../../store';
 import { Order, getComparator, stableSort } from '../../utils/sort';
+import { setCurrentExchange } from '../interaction/InteractionsSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchExperiment, selectExperimentById } from './ExperimentsSlice';
 
@@ -48,6 +50,11 @@ export default function Experiment(): ReactElement {
   const interactions = experiment.interactions || [];
 
   interactionTemplates = _.orderBy(interactionTemplates, 'order', 'asc');
+
+  const handleClickExchange = async ({ interactionId, currentExchangeId }) => {
+    await dispatch(setCurrentExchange({ interactionId, currentExchangeId }));
+    dispatch(fetchExperiment({ id: experimentId }));
+  };
 
   return (
     <>
@@ -139,6 +146,18 @@ export default function Experiment(): ReactElement {
                     <td key={interaction.id} style={{ overflowX: 'scroll' }}>
                       {_.orderBy(interaction.exchanges, 'order', 'asc').map(
                         (exchange) => {
+                          // only show click if the exchange has not been dismissed
+                          // and the interaction has not been completed
+                          const handleClick =
+                            !exchange.dismissed && !interaction.completed
+                              ? () =>
+                                  handleClickExchange({
+                                    interactionId: interaction.id,
+                                    currentExchangeId: exchange.id,
+                                  })
+                              : undefined;
+                          const isCurrentExchange =
+                            exchange.id === interaction.currentExchange;
                           let color: ColorPaletteProp = 'primary';
                           if (exchange.started) {
                             color = 'warning';
@@ -146,18 +165,38 @@ export default function Experiment(): ReactElement {
                           if (exchange.completed) {
                             color = 'success';
                           }
+                          const border = isCurrentExchange
+                            ? `solid gray 2px`
+                            : 'none';
                           return (
                             <tr key={exchange.id}>
                               <td style={{ border: 'none' }}>
-                                <Chip
-                                  variant="soft"
-                                  color={color}
-                                  key={exchange.id}
+                                <Tooltip
+                                  title={
+                                    isCurrentExchange ? 'Current Exchange' : ''
+                                  }
                                 >
-                                  <Typography level="body-xs">
-                                    {exchange.name} {exchange.dismissed && '✓'}
-                                  </Typography>
-                                </Chip>
+                                  <Chip
+                                    variant="soft"
+                                    color={color}
+                                    key={exchange.id}
+                                    sx={{
+                                      border,
+                                      '&.Mui-disabled > button': {
+                                        // ensure the background color remains the same when disabled
+                                        backgroundColor: (theme) =>
+                                          theme.palette[color].softBg,
+                                      },
+                                    }}
+                                    disabled={isCurrentExchange}
+                                    onClick={handleClick}
+                                  >
+                                    <Typography level="body-xs">
+                                      {exchange.name}{' '}
+                                      {exchange.dismissed && '✓'}
+                                    </Typography>
+                                  </Chip>
+                                </Tooltip>
                               </td>
                             </tr>
                           );

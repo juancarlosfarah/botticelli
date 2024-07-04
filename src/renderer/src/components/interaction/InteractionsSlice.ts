@@ -11,9 +11,11 @@ import {
   POST_ONE_INTERACTION_CHANNEL,
 } from '@shared/channels';
 import { START_INTERACTION_CHANNEL } from '@shared/channels';
+import { SET_CURRENT_EXCHANGE_CHANNEL } from '@shared/channels';
 import Interaction from '@shared/interfaces/Interaction';
 import { NewInteractionParams } from '@shared/interfaces/Interaction';
 import { GetOneInteractionParams } from '@shared/interfaces/Interaction';
+import { SetCurrentExchangeParams } from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
@@ -98,6 +100,23 @@ export const startInteraction = createAsyncThunk<Interaction, string>(
   },
 );
 
+export const setCurrentExchange = createAsyncThunk<
+  Interaction,
+  SetCurrentExchangeParams
+>(
+  'interactions/setCurrentExchange',
+  async ({ currentExchangeId, interactionId }) => {
+    const response = await IpcService.send<
+      Interaction,
+      SetCurrentExchangeParams
+    >(SET_CURRENT_EXCHANGE_CHANNEL, {
+      params: { currentExchangeId, interactionId },
+    });
+    log.debug(`setCurrentExchange response`);
+    return response;
+  },
+);
+
 export const deleteInteraction = createAsyncThunk<
   string | number,
   string | number
@@ -132,6 +151,13 @@ const interactionsSlice = createSlice({
       })
       .addCase(startInteraction.pending, (state) => {
         state.status = 'loading';
+      })
+      .addCase(setCurrentExchange.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(setCurrentExchange.fulfilled, (state, action) => {
+        interactionsAdapter.setOne(state, action.payload);
+        state.status = 'idle';
       })
       .addCase(fetchInteraction.fulfilled, (state, action) => {
         interactionsAdapter.setOne(state, action.payload);

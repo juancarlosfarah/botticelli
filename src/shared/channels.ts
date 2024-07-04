@@ -74,6 +74,7 @@ export const DELETE_ONE_INTERACTION_TEMPLATE_CHANNEL =
 export const GET_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:get:one';
 export const START_INTERACTION_CHANNEL = 'interaction:start';
+export const SET_CURRENT_EXCHANGE_CHANNEL = 'interaction:set:current_exchange';
 
 // interactions
 export const POST_ONE_EXPERIMENT_CHANNEL = 'experiment:post:one';
