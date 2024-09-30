@@ -17,12 +17,13 @@ export class PostAgentChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, name, type } = request.params;
+    const { description, name, type, socialCues } = request.params;
 
     const agent = new Agent();
     agent.name = name;
     agent.description = description;
     agent.type = type;
+    agent.socialCues = socialCues;
 
     await AppDataSource.manager.save(agent);
     event.sender.send(request.responseChannel, instanceToPlain(agent));

@@ -24,6 +24,9 @@ export class Agent {
 
   @Column({ default: '' })
   description: string = '';
+  
+  @Column('text', { array: true })
+  socialCues: string[];
 
   @Column({ type: 'varchar' })
   type: AgentType;

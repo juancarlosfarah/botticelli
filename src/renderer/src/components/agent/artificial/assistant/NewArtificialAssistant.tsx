@@ -55,7 +55,7 @@ const NewArtificialAssistant = (): ReactElement => {
     setName(value);
   };
 
-  const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => { // Added handler for checkboxes
+  const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => { 
     const { value, checked } = event.target;
     setSocialCues((prevSocialCues) =>
       checked ? [...prevSocialCues, value] : prevSocialCues.filter((cue) => cue !== value),
@@ -76,15 +76,12 @@ const NewArtificialAssistant = (): ReactElement => {
           {`This is this agent's description, which will be sent to the language
           model.`}
         </FormHelperText>
-      </FormControl>
+        <FormLabel component="legend">Social Cues</FormLabel>
 
-      <FormControl component="fieldset" size="sm" sx={{ width: 400 }}>
-  <FormLabel component="legend">Social Cues</FormLabel>
-  
-  {/* Render each checkbox with the same structure as the first example */}
-  {socialCuesOptions.map((option) => (
+        {socialCuesOptions.map((option) => (
     <Checkbox
       key={option.value}
+      sx={{mt: 1}}
       value={option.value}
       checked={socialCues.includes(option.value)}
       onChange={handleSocialCuesChange}
@@ -95,13 +92,11 @@ const NewArtificialAssistant = (): ReactElement => {
       }
     />
   ))}
-
-  <FormHelperText>
-    {/* <Typography level="body-sm">
-      Select the social cues the agent should use.
-    </Typography> */}
-  </FormHelperText>
-</FormControl>
+          <FormHelperText>
+          {`This is this agent's social..., which will be sent to the language
+          model.`}
+        </FormHelperText>
+      </FormControl>
 
 
       <Button onClick={handleNewAgent}>Save</Button>
