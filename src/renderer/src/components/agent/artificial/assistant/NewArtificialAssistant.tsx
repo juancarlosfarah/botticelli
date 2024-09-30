@@ -1,8 +1,11 @@
 import { ChangeEvent, ReactElement, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import { Button, FormControl, FormHelperText, FormLabel, Checkbox } from '@mui/joy'; 
+import { FormGroup } from '@mui/material'; // Add this import from @mui/material
+
 import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
 
@@ -10,18 +13,28 @@ import log from 'electron-log/renderer';
 
 import { saveNewArtificialAssistant } from '../../AgentsSlice';
 
+// Added social cues options array
+const socialCuesOptions = [
+  { label: 'Humour', value: 'humor' },
+  { label: 'Formality', value: 'formal' },
+  { label: 'Emoticons', value: 'emoticons' },
+  { label: 'Small Talk', value: 'smalltalk' },
+];
+
 const NewArtificialAssistant = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [socialCues, setSocialCues] = useState<string[]>([]); 
 
   const handleNewAgent = async (): Promise<void> => {
     const { payload } = await dispatch(
       saveNewArtificialAssistant({
         description,
         name,
+        socialCues,
       }),
     );
     log.debug(`saveNewAgent response.payload:`, payload);
@@ -42,6 +55,13 @@ const NewArtificialAssistant = (): ReactElement => {
     setName(value);
   };
 
+  const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => { // Added handler for checkboxes
+    const { value, checked } = event.target;
+    setSocialCues((prevSocialCues) =>
+      checked ? [...prevSocialCues, value] : prevSocialCues.filter((cue) => cue !== value),
+    );
+  };
+
   return (
     <>
       <FormControl>
@@ -57,6 +77,33 @@ const NewArtificialAssistant = (): ReactElement => {
           model.`}
         </FormHelperText>
       </FormControl>
+
+      <FormControl component="fieldset" size="sm" sx={{ width: 400 }}>
+  <FormLabel component="legend">Social Cues</FormLabel>
+  
+  {/* Render each checkbox with the same structure as the first example */}
+  {socialCuesOptions.map((option) => (
+    <Checkbox
+      key={option.value}
+      value={option.value}
+      checked={socialCues.includes(option.value)}
+      onChange={handleSocialCuesChange}
+      label={
+        <React.Fragment>
+          {option.label}
+        </React.Fragment>
+      }
+    />
+  ))}
+
+  <FormHelperText>
+    {/* <Typography level="body-sm">
+      Select the social cues the agent should use.
+    </Typography> */}
+  </FormHelperText>
+</FormControl>
+
+
       <Button onClick={handleNewAgent}>Save</Button>
     </>
   );

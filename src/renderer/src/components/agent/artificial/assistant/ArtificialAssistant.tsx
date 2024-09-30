@@ -49,6 +49,7 @@ export default function ArtificialAssistant(): ReactElement {
       <Typography sx={{ mt: 1 }} level="title-md">
         Description
       </Typography>
+      <Typography>{agent.socialCues}</Typography>
       <Typography>{agent.description}</Typography>
     </>
   );
