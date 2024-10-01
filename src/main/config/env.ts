@@ -3,4 +3,4 @@ const { MAIN_VITE_OPENAI_API_KEY, MAIN_VITE_OPENAI_ORG_ID } = import.meta.env;
 export const OPENAI_API_KEY = MAIN_VITE_OPENAI_API_KEY;
 export const OPENAI_ORG_ID = MAIN_VITE_OPENAI_ORG_ID;
 
-export const OPENAI_MODEL = 'gpt-4o-2024-05-13';
+export const OPENAI_MODEL = 'gpt-4o-2024-08-06';
