@@ -24,9 +24,12 @@ export class Agent {
 
   @Column({ default: '' })
   description: string = '';
+
+  @Column({ default: '' })
+  avatarURL: string = '';
   
-  @Column('text', { array: true })
-  socialCues: string[];
+  // @Column('simple-array', { nullable: true, default: null })
+  // socialCues: string[] | null = null;  
 
   @Column({ type: 'varchar' })
   type: AgentType;

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import React from 'react';
 
 import { Button, FormControl, FormHelperText, FormLabel, Checkbox } from '@mui/joy'; 
-import { FormGroup } from '@mui/material'; // Add this import from @mui/material
 
 import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
@@ -27,14 +26,16 @@ const NewArtificialAssistant = (): ReactElement => {
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [socialCues, setSocialCues] = useState<string[]>([]); 
+  const [avatarURL, setAvatarURL] = useState('');
+
+  // const [socialCues, setSocialCues] = useState<string[]>([]); 
 
   const handleNewAgent = async (): Promise<void> => {
     const { payload } = await dispatch(
       saveNewArtificialAssistant({
         description,
         name,
-        socialCues,
+        avatarURL,
       }),
     );
     log.debug(`saveNewAgent response.payload:`, payload);
@@ -55,12 +56,15 @@ const NewArtificialAssistant = (): ReactElement => {
     setName(value);
   };
 
-  const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => { 
-    const { value, checked } = event.target;
-    setSocialCues((prevSocialCues) =>
-      checked ? [...prevSocialCues, value] : prevSocialCues.filter((cue) => cue !== value),
-    );
+  const handleAvatarURL = (event: ChangeEvent<HTMLInputElement>): void => {
+    const value = event.target.value;
+    setAvatarURL(value);
   };
+
+  // const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => { 
+  //   const value = event.target.value;
+  //   setSocialCues((prevSocialCues) => [...prevSocialCues, value]);
+  // };
 
   return (
     <>
@@ -76,7 +80,12 @@ const NewArtificialAssistant = (): ReactElement => {
           {`This is this agent's description, which will be sent to the language
           model.`}
         </FormHelperText>
-        <FormLabel component="legend">Social Cues</FormLabel>
+        <FormControl>
+          <FormLabel>Avatar URL</FormLabel>
+          <Input value={avatarURL} onChange={handleAvatarURL} />
+          <FormHelperText>{`This is the agent's URL.`}</FormHelperText>
+        </FormControl>
+        {/* <FormLabel component="legend">Social Cues</FormLabel>
 
         {socialCuesOptions.map((option) => (
     <Checkbox
@@ -95,7 +104,7 @@ const NewArtificialAssistant = (): ReactElement => {
           <FormHelperText>
           {`This is this agent's social..., which will be sent to the language
           model.`}
-        </FormHelperText>
+        </FormHelperText> */}
       </FormControl>
 
 

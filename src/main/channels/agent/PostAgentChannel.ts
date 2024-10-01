@@ -6,6 +6,7 @@ import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
 import { Agent } from '../../entity/Agent';
 import { IpcChannel } from '../../interfaces/IpcChannel';
+import { log } from 'console';
 
 export class PostAgentChannel implements IpcChannel {
   getName(): string {
@@ -17,13 +18,14 @@ export class PostAgentChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, name, type, socialCues } = request.params;
+    const { description, name, type, avatarURL } = request.params;
 
     const agent = new Agent();
     agent.name = name;
     agent.description = description;
     agent.type = type;
-    agent.socialCues = socialCues;
+    // agent.socialCues = [];
+    agent.avatarURL = avatarURL
 
     await AppDataSource.manager.save(agent);
     event.sender.send(request.responseChannel, instanceToPlain(agent));

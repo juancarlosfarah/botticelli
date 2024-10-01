@@ -47,7 +47,7 @@ export const fetchAgents = createAsyncThunk('agents/fetchAgents', async () => {
 
 export const saveNewAgent = createAsyncThunk<
   Agent,
-  { description: string; instructions: string}
+  { description: string; name: string}
 >('agents/saveNewAgent', async ({ description, name }) => {
   const response = await IpcService.send<{ agent: any }>(POST_AGENT_CHANNEL, {
     params: {
@@ -60,20 +60,19 @@ export const saveNewAgent = createAsyncThunk<
 
 export const saveNewArtificialAssistant = createAsyncThunk<
   Agent,
-  { description: string; name: string; socialCues: string[] },
-  { rejectValue: string }
->('agents/artificial/assistants/saveNew', async ({ description, name, socialCues }) => {
+  { description: string; name: string; avatarURL: string; }
+>('agents/artificial/assistants/saveNew', async ({ description, name, avatarURL }) => {
   const response = await IpcService.send<{ agent: Agent }>(
     POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
     {
       params: {
         description,
         name, 
-        socialCues
+        avatarURL,
       },
     },
   );
-  return response.agent;
+  return response;
 });
 
 export const saveNewArtificialParticipant = createAsyncThunk<
