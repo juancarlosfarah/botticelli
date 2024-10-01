@@ -1,0 +1,174 @@
+import {
+  ChangeEvent,
+  FocusEvent,
+  KeyboardEvent,
+  MouseEvent,
+  ReactElement,
+  useEffect,
+  useState,
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import Box from '@mui/joy/Box';
+import Chip from '@mui/joy/Chip';
+import Input from '@mui/joy/Input';
+import Option from '@mui/joy/Option';
+import Select from '@mui/joy/Select';
+import Textarea from '@mui/joy/Textarea';
+
+import { AppDispatch } from '../../store';
+import {
+  fetchAgents,
+  selectArtificialParticipants,
+} from '../agent/AgentsSlice';
+import {
+  fetchInteractionTemplates,
+  selectInteractionTemplates,
+} from '../interaction/InteractionTemplatesSlice';
+import { saveNewSimulation } from './SocialCuesSlice';
+
+const NewSimulation = (): ReactElement => {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const availableInteractionTemplates = useSelector(selectInteractionTemplates);
+  const availableParticipants = useSelector(selectArtificialParticipants);
+
+  const [description, setDescription] = useState('');
+  const [name, setName] = useState<string>('');
+  const [interactionTemplates, setInteractionTemplates] = useState<string[]>(
+    [],
+  );
+  const [participants, setParticipants] = useState<string[]>([]);
+
+  useEffect(() => {
+    dispatch(fetchAgents());
+    dispatch(fetchInteractionTemplates());
+  }, []);
+
+  const handleNewSimulation = async (): Promise<void> => {
+    const resultAction = await dispatch(
+      saveNewSimulation({
+        name,
+        description,
+        interactionTemplates,
+        participants,
+      }),
+    );
+    // todo: handle error
+    if (saveNewSimulation.fulfilled.match(resultAction)) {
+      const simulation = resultAction.payload;
+      navigate(`/simulations/${simulation.id}`);
+    }
+  };
+
+  const handleChangeDescription = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ): void => {
+    const value = event.target.value;
+    setDescription(value);
+  };
+
+  const handleChangeParticipants = (
+    _: MouseEvent | KeyboardEvent | FocusEvent | null,
+    newValue: string[],
+  ): void => {
+    setParticipants(newValue);
+  };
+
+  const handleChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
+    const value = event.target.value;
+    setName(value);
+  };
+
+  const handleChangeInteractionTemplates = (
+    _: MouseEvent | KeyboardEvent | FocusEvent | null,
+    newValue: string[],
+  ): void => {
+    setInteractionTemplates(newValue);
+  };
+
+  return (
+    <>
+      <FormControl>
+        <FormLabel>Name</FormLabel>
+        <Input value={name} onChange={handleChangeName} />
+        <FormHelperText>{`This is the simulation's name.`}</FormHelperText>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Description</FormLabel>
+        <Textarea value={description} onChange={handleChangeDescription} />
+        <FormHelperText>
+          This is an internal descriptions for this simulation.
+        </FormHelperText>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Interactions</FormLabel>
+        <Select
+          multiple
+          value={interactionTemplates}
+          onChange={handleChangeInteractionTemplates}
+          renderValue={(selected): ReactElement => (
+            <Box sx={{ display: 'flex', gap: '0.25rem' }}>
+              {selected.map((selectedOption) => (
+                <Chip variant="soft" color="primary" key={selectedOption.value}>
+                  {selectedOption.label}
+                </Chip>
+              ))}
+            </Box>
+          )}
+          slotProps={{
+            listbox: {
+              sx: {
+                width: '100%',
+              },
+            },
+          }}
+        >
+          {availableInteractionTemplates.map((interactionTemplate) => (
+            <Option value={interactionTemplate.id} key={interactionTemplate.id}>
+              {interactionTemplate.name}
+            </Option>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel>Participants</FormLabel>
+        <Select
+          multiple
+          value={participants}
+          onChange={handleChangeParticipants}
+          renderValue={(selected): ReactElement => (
+            <Box sx={{ display: 'flex', gap: '0.25rem' }}>
+              {selected.map((selectedOption) => (
+                <Chip variant="soft" color="primary" key={selectedOption.value}>
+                  {selectedOption.label}
+                </Chip>
+              ))}
+            </Box>
+          )}
+          slotProps={{
+            listbox: {
+              sx: {
+                width: '100%',
+              },
+            },
+          }}
+        >
+          {availableParticipants.map((participant) => (
+            <Option value={participant.id} key={participant.id}>
+              {participant.name}
+            </Option>
+          ))}
+        </Select>
+      </FormControl>
+      <Button onClick={handleNewSimulation}>Save</Button>
+    </>
+  );
+};
+
+export default NewSimulation;
