@@ -13,12 +13,12 @@ import log from 'electron-log/renderer';
 import { saveNewArtificialAssistant } from '../../AgentsSlice';
 
 // Added social cues options array
-const socialCuesOptions = [
-  { label: 'Humour', value: 'humor' },
-  { label: 'Formality', value: 'formal' },
-  { label: 'Emoticons', value: 'emoticons' },
-  { label: 'Small Talk', value: 'smalltalk' },
-];
+// const socialCuesOptions = [
+//   { label: 'Humour', value: 'humor' },
+//   { label: 'Formality', value: 'formal' },
+//   { label: 'Emoticons', value: 'emoticons' },
+//   { label: 'Small Talk', value: 'smalltalk' },
+// ];
 
 const NewArtificialAssistant = (): ReactElement => {
   const dispatch = useDispatch();
