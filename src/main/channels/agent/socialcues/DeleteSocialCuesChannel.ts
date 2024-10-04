@@ -5,12 +5,12 @@ import log from 'electron-log/main';
 import { DELETE_AGENT_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
-import { Agent } from '../../entity/Agent';
+import { SocialCue } from '../../entity/SocialCue';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 
-export class DeleteAgentChannel implements IpcChannel {
+export class DeleteSocialCueChannel implements IpcChannel {
   getName(): string {
-    return DELETE_AGENT_CHANNEL;
+    return DELETE_SOCIALCUE_CHANNEL;
   }
 
   async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
@@ -22,7 +22,7 @@ export class DeleteAgentChannel implements IpcChannel {
     // debugging
     log.debug(`handling delete agent:`, id);
 
-    const agent = await AppDataSource.manager.delete(Agent, { id });
-    event.sender.send(request.responseChannel, instanceToPlain(agent));
+    const socialcue = await AppDataSource.manager.delete(SocialCue, { id });
+    event.sender.send(request.responseChannel, instanceToPlain(socialcue));
   }
 }

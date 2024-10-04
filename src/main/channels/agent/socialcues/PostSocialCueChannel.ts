@@ -4,13 +4,13 @@ import { IpcMainEvent } from 'electron';
 import { POST_AGENT_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
-import { Agent } from '../../entity/Agent';
+import { SocialCue } from '../../entity/SocialCue';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 import { log } from 'console';
 
-export class PostAgentChannel implements IpcChannel {
+export class PostSocialCueChannel implements IpcChannel {
   getName(): string {
-    return POST_AGENT_CHANNEL;
+    return POST_SOCIALCUE_CHANNEL;
   }
 
   async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
@@ -18,15 +18,14 @@ export class PostAgentChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, name, type, avatarURL } = request.params;
+    const { description, name, type } = request.params;
 
-    const agent = new Agent();
-    agent.name = name;
-    agent.description = description;
-    agent.type = type;
-    agent.avatarURL = avatarURL
+    const socialCue = new socialCue();
+    socialCue.name = name;
+    socialCue.description = description;
+    socialCue.type = type;
 
-    await AppDataSource.manager.save(agent);
-    event.sender.send(request.responseChannel, instanceToPlain(agent));
+    await AppDataSource.manager.save(socialCue);
+    event.sender.send(request.responseChannel, instanceToPlain(socialCue));
   }
 }
