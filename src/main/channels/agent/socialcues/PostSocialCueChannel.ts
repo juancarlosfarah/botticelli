@@ -1,7 +1,7 @@
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 
-import { POST_AGENT_CHANNEL } from '../../../shared/channels';
+import { POST_SOCIALCUE_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
 import { SocialCue } from '../../entity/SocialCue';
