@@ -20,7 +20,7 @@ export class PostSocialCueChannel implements IpcChannel {
 
     const { description, name, type } = request.params;
 
-    const socialCue = new socialCue();
+    const socialCue = new SocialCue();
     socialCue.name = name;
     socialCue.description = description;
     socialCue.type = type;
