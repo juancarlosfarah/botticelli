@@ -45,6 +45,7 @@ import Simulations from './components/simulation/Simulations';
 import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
+import NewSocialCue from './components/socialcues/NewSocialCues';
 import './index.css';
 import store from './store';
 
@@ -53,6 +54,11 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
+      // social cue
+      {
+        path: 'socialcues',
+        element: <NewSocialCue />,
+      },
       {
         path: 'experiments',
         element: <Experiments />,

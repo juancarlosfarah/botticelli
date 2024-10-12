@@ -5,67 +5,68 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
-  DELETE_ONE_SIMULATION_CHANNEL,
-  GET_MANY_SIMULATIONS_CHANNEL,
-  GET_ONE_SIMULATION_CHANNEL,
-  POST_ONE_SIMULATION_CHANNEL,
+  DELETE_ONE_SOCIALCUE_CHANNEL,
+  GET_MANY_SOCIALCUES_CHANNEL,
+  GET_ONE_SOCIALCUE_CHANNEL,
+  POST_ONE_SOCIALCUE_CHANNEL,
 } from '@shared/channels';
-import Simulation from '@shared/interfaces/Simulation';
+import SocialCue from '@shared/interfaces/SocialCue';
 import {
-  DeleteOneSimulationParams,
-  DeleteOneSimulationResponse,
-  GetManySimulationsResponse,
-  GetOneSimulationParams,
-  GetOneSimulationResponse,
-  PostOneSimulationParams,
-  PostOneSimulationResponse,
-} from '@shared/interfaces/Simulation';
+  DeleteOneSocialCueParams,
+  DeleteOneSocialCueResponse,
+  GetManySocialCuesResponse,
+  GetOneSocialCueParams,
+  GetOneSocialCueResponse,
+  PostOneSocialCueParams,
+  PostOneSocialCueResponse,
+} from '@shared/interfaces/SocialCue';
 
 import { IpcService } from '../../services/IpcService';
 import { RootState } from '../../store';
 
-const simulationsAdapter = createEntityAdapter<Simulation>();
+const socialCuesAdapter = createEntityAdapter<SocialCue>();
 
-const initialState = simulationsAdapter.getInitialState({
+const initialState = socialCuesAdapter.getInitialState({
   status: 'idle',
 });
 
 // thunk functions
-export const fetchSimulation = createAsyncThunk<
-  GetOneSimulationResponse,
-  GetOneSimulationParams
->('simulations/fetchSimulation', async ({ id }) => {
+export const fetchSocialCue = createAsyncThunk<
+  GetOneSocialCueResponse,
+  GetOneSocialCueParams
+>('socialCues/fetchSocialCue', async ({ id }) => {
   const response = await IpcService.send<
-    GetOneSimulationResponse,
-    GetOneSimulationParams
-  >(GET_ONE_SIMULATION_CHANNEL, {
+    GetOneSocialCueResponse,
+    GetOneSocialCueParams
+  >(GET_ONE_SOCIALCUE_CHANNEL, {
     params: { id },
   });
   return response;
 });
 
-export const fetchSimulations = createAsyncThunk<GetManySimulationsResponse>(
-  'simulations/fetchSimulations',
+export const fetchSocialCues = createAsyncThunk<GetManySocialCuesResponse>(
+  'socialCues/fetchSocialCues',
   async () => {
-    return await IpcService.send<GetManySimulationsResponse>(
-      GET_MANY_SIMULATIONS_CHANNEL,
+    return await IpcService.send<GetManySocialCuesResponse>(
+      GET_MANY_SOCIALCUES_CHANNEL,
     );
   },
 );
 
-export const saveNewSimulation = createAsyncThunk<
-  PostOneSimulationResponse,
-  PostOneSimulationParams
+export const saveNewSocialCue = createAsyncThunk<
+  PostOneSocialCueResponse,
+  PostOneSocialCueParams
 >(
-  'simulations/saveNewSimulation',
-  async ({ description, interactionTemplates, name, participants }) => {
-    const response = await IpcService.send<Simulation, PostOneSimulationParams>(
-      POST_ONE_SIMULATION_CHANNEL,
+  'socialCues/saveNewSocialCue',
+  async ({ description, formulation, name, participants }) => {
+    const response = await IpcService.send<SocialCue, PostOneSocialCueParams>(
+      POST_ONE_SOCIALCUE_CHANNEL,
       {
         params: {
           name,
           description,
-          interactionTemplates,
+          formulation,
+          // interactionTemplates,
           participants,
         },
       },
@@ -74,59 +75,59 @@ export const saveNewSimulation = createAsyncThunk<
   },
 );
 
-export const deleteSimulation = createAsyncThunk<
-  DeleteOneSimulationResponse,
-  DeleteOneSimulationParams
->('simulations/deleteSimulation', async (id) => {
-  await IpcService.send<string, { id }>(DELETE_ONE_SIMULATION_CHANNEL, {
+export const deleteSocialCue = createAsyncThunk<
+  DeleteOneSocialCueResponse,
+  DeleteOneSocialCueParams
+>('socialCues/deleteSocialCue', async (id) => {
+  await IpcService.send<string, { id }>(DELETE_ONE_SOCIALCUE_CHANNEL, {
     params: { id },
   });
   return id;
 });
 
-const simulationsSlice = createSlice({
-  name: 'simulations',
+const socialCuesSlice = createSlice({
+  name: 'socialCues',
   initialState,
   reducers: {
-    simulationDeleted: simulationsAdapter.removeOne,
+    socialCueDeleted: socialCuesAdapter.removeOne,
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSimulations.pending, (state) => {
+      .addCase(fetchSocialCues.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(fetchSimulations.fulfilled, (state, action) => {
-        simulationsAdapter.setAll(state, action.payload);
+      .addCase(fetchSocialCues.fulfilled, (state, action) => {
+        socialCuesAdapter.setAll(state, action.payload);
         state.status = 'idle';
       })
-      .addCase(fetchSimulation.pending, (state) => {
+      .addCase(fetchSocialCue.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(fetchSimulation.fulfilled, (state, action) => {
-        simulationsAdapter.setOne(state, action.payload);
+      .addCase(fetchSocialCue.fulfilled, (state, action) => {
+        socialCuesAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
-      .addCase(saveNewSimulation.fulfilled, (state, action) => {
-        const simulation = action.payload;
-        simulationsAdapter.addOne(state, simulation);
+      .addCase(saveNewSocialCue.fulfilled, (state, action) => {
+        const socialCue = action.payload;
+        socialCuesAdapter.addOne(state, socialCue);
       })
-      .addCase(deleteSimulation.fulfilled, simulationsAdapter.removeOne);
+      .addCase(deleteSocialCue.fulfilled, socialCuesAdapter.removeOne);
   },
 });
 
-export const { simulationDeleted } = simulationsSlice.actions;
+export const { socialCueDeleted } = socialCuesSlice.actions;
 
-export default simulationsSlice.reducer;
+export default socialCuesSlice.reducer;
 
 export const {
-  selectAll: selectSimulations,
-  selectById: selectSimulationById,
-} = simulationsAdapter.getSelectors((state: RootState) => state.simulations);
+  selectAll: selectSocialCues,
+  selectById: selectSocialCueById,
+} = socialCuesAdapter.getSelectors((state: RootState) => state.socialCues);
 
-export const selectSimulationIds = createSelector(
+export const selectSocialCueIds = createSelector(
   // First, pass one or more "input selector" functions:
-  selectSimulations,
+  selectSocialCues,
   // Then, an "output selector" that receives all the input results as arguments
   // and returns a final result value
-  (simulations) => simulations.map((simulation) => simulation.id),
+  (socialCues) => socialCues.map((socialCue) => socialCue.id),
 );

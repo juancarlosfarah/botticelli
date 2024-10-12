@@ -2,7 +2,7 @@ import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
-import { DELETE_AGENT_CHANNEL } from '../../../shared/channels';
+import { DELETE_SOCIALCUE_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 import { AppDataSource } from '../../data-source';
 import { SocialCue } from '../../entity/SocialCue';

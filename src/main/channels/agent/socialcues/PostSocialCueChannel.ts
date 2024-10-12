@@ -18,11 +18,12 @@ export class PostSocialCueChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, name, type } = request.params;
+    const { description, name, type, formulation } = request.params;
 
     const socialCue = new SocialCue();
     socialCue.name = name;
     socialCue.description = description;
+    socialCue.formulation = formulation;
     socialCue.type = type;
 
     await AppDataSource.manager.save(socialCue);

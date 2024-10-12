@@ -15,13 +15,13 @@ import _ from 'lodash';
 
 import { Order, getComparator, stableSort } from '../../utils/sort';
 import RowMenu from '../common/RowMenu';
-import { deleteSimulation, selectSimulations } from './SocialCuesSlice';
+import { deleteSocialCue, selectSocialCues } from './SocialCuesSlice';
 
-export default function SimulationTable(): ReactElement {
+export default function SocialCueTable(): ReactElement {
   const [order] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
 
-  const simulations = useSelector(selectSimulations);
+  const socialCues = useSelector(selectSocialCues);
 
   return (
     <React.Fragment>
@@ -61,19 +61,19 @@ export default function SimulationTable(): ReactElement {
                   size="sm"
                   indeterminate={
                     selected.length > 0 &&
-                    selected.length !== simulations.length
+                    selected.length !== socialCues.length
                   }
-                  checked={selected.length === simulations.length}
+                  checked={selected.length === socialCues.length}
                   onChange={(event): void => {
                     setSelected(
                       event.target.checked
-                        ? simulations.map((row) => row.id)
+                        ? socialCues.map((row) => row.id)
                         : [],
                     );
                   }}
                   color={
                     selected.length > 0 ||
-                    selected.length === simulations.length
+                    selected.length === socialCues.length
                       ? 'primary'
                       : undefined
                   }
@@ -86,7 +86,7 @@ export default function SimulationTable(): ReactElement {
             </tr>
           </thead>
           <tbody>
-            {stableSort(simulations, getComparator(order, 'id')).map((row) => (
+            {stableSort(socialCues, getComparator(order, 'id')).map((row) => (
               <tr key={row.id}>
                 <td style={{ textAlign: 'center', width: 120 }}>
                   <Checkbox
@@ -119,11 +119,11 @@ export default function SimulationTable(): ReactElement {
                     <Link
                       level="body-xs"
                       component={RouterLink}
-                      to={`/simulations/${row.id}`}
+                      to={`/socialCues/${row.id}`}
                     >
                       View
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteSimulation} />
+                    <RowMenu rowId={row.id} deleteHandler={deleteSocialCue} />
                   </Box>
                 </td>
               </tr>

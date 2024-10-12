@@ -27,9 +27,9 @@ import {
   fetchInteractionTemplates,
   selectInteractionTemplates,
 } from '../interaction/InteractionTemplatesSlice';
-import { saveNewSimulation } from './SocialCuesSlice';
+import { saveNewSocialCue } from './SocialCuesSlice';
 
-const NewSimulation = (): ReactElement => {
+const NewSocialCue = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -38,6 +38,7 @@ const NewSimulation = (): ReactElement => {
 
   const [description, setDescription] = useState('');
   const [name, setName] = useState<string>('');
+  const [type, setType] = useState<string>('');
   const [interactionTemplates, setInteractionTemplates] = useState<string[]>(
     [],
   );
@@ -48,19 +49,20 @@ const NewSimulation = (): ReactElement => {
     dispatch(fetchInteractionTemplates());
   }, []);
 
-  const handleNewSimulation = async (): Promise<void> => {
+  const handleNewSocialCue = async (): Promise<void> => {
     const resultAction = await dispatch(
-      saveNewSimulation({
+      saveNewSocialCue({
         name,
         description,
-        interactionTemplates,
-        participants,
+        type,
+        // interactionTemplates,
+        // participants,
       }),
     );
     // todo: handle error
-    if (saveNewSimulation.fulfilled.match(resultAction)) {
-      const simulation = resultAction.payload;
-      navigate(`/simulations/${simulation.id}`);
+    if (saveNewSocialCue.fulfilled.match(resultAction)) {
+      const socialCue = resultAction.payload;
+      navigate(`/socialCues/${socialCue.id}`);
     }
   };
 
@@ -95,14 +97,14 @@ const NewSimulation = (): ReactElement => {
       <FormControl>
         <FormLabel>Name</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the simulation's name.`}</FormHelperText>
+        <FormHelperText>{`This is the socialCue's name.`}</FormHelperText>
       </FormControl>
 
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this simulation.
+          This is an internal descriptions for this socialCue.
         </FormHelperText>
       </FormControl>
 
@@ -166,9 +168,9 @@ const NewSimulation = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewSimulation}>Save</Button>
+      <Button onClick={handleNewSocialCue}>Save</Button>
     </>
   );
 };
 
-export default NewSimulation;
+export default NewSocialCue;

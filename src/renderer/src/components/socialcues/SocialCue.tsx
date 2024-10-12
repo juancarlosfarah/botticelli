@@ -17,37 +17,40 @@ import _ from 'lodash';
 import { AppDispatch, RootState } from '../../store';
 import { Order, getComparator, stableSort } from '../../utils/sort';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import { fetchSimulation, selectSimulationById } from './SocialCuesSlice';
+import { fetchSocialCue, selectSocialCueById } from './SocialCuesSlice';
 
-export default function Simulation(): ReactElement {
-  const { simulationId } = useParams();
+export default function SocialCue(): ReactElement {
+  const { socialCueId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const [order] = React.useState<Order>('desc');
 
-  if (!simulationId) {
-    return <div>Invalid Simulation ID</div>;
+  if (!socialCueId) {
+    return <div>Invalid SocialCue ID</div>;
   }
 
   useEffect(() => {
-    log.debug(`fetching simulation ${simulationId}`);
-    dispatch(fetchSimulation({ id: simulationId }));
-  }, [simulationId]);
+    log.debug(`fetching socialCue ${socialCueId}`);
+    dispatch(fetchSocialCue({ id: socialCueId }));
+  }, [socialCueId]);
 
-  const simulation = useSelector((state: RootState) =>
-    selectSimulationById(state, simulationId),
+  const socialCue = useSelector((state: RootState) =>
+    selectSocialCueById(state, socialCueId),
   );
 
-  if (!simulation) {
-    return <div>Simulation Not Found</div>;
+  if (!socialCue) {
+    return <div>SocialCue Not Found</div>;
   }
 
-  const participants = simulation.participants || [];
-  let interactionTemplates = simulation.interactionTemplates || [];
-  const interactions = simulation.interactions || [];
+  // Check this?
+
+  const participants = socialCue.participants || [];
+  let interactionTemplates = socialCue.interactionTemplates || [];
+  const interactions = socialCue.interactions || [];
 
   interactionTemplates = _.orderBy(interactionTemplates, 'order', 'asc');
 
+  //
   return (
     <>
       <CustomBreadcrumbs />
@@ -62,18 +65,18 @@ export default function Simulation(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">Simulation</Typography>
+        <Typography level="h2">SocialCue</Typography>
       </Box>
 
       <Typography sx={{}} level="title-md">
         Name
       </Typography>
-      <Typography>{simulation.name}</Typography>
+      <Typography>{socialCue.name}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         Description
       </Typography>
-      <Typography>{simulation.description}</Typography>
+      <Typography>{socialCue.description}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         Participants
@@ -91,7 +94,7 @@ export default function Simulation(): ReactElement {
         }}
       >
         <Table
-          aria-labelledby="simulation table"
+          aria-labelledby="socialCue table"
           stickyHeader
           hoverRow
           sx={{
@@ -173,7 +176,7 @@ export default function Simulation(): ReactElement {
                                 level="body-xs"
                                 component={RouterLink}
                                 sx={{ ml: 1 }}
-                                to={`/simulations/${simulationId}/participants/${row.id}/interactions/${interaction.id}`}
+                                to={`/socialCues/${socialCueId}/participants/${row.id}/interactions/${interaction.id}`}
                               >
                                 {viewParticipantInteractionText}
                               </Link>

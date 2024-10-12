@@ -163,6 +163,20 @@ export default function Sidebar(): ReactElement {
             </ListItemButton>
           </ListItem>
 
+          <ListItem>
+            <ListItemButton
+              selected={pathname === '/socialcues'}
+              role="menuitem"
+              component={Link}
+              to="/socialcues"
+            >
+              <AssignmentIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Social Cues</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+
           <ListItem nested>
             <Toggler
               renderToggle={({ open, setOpen }): ReactElement => (
