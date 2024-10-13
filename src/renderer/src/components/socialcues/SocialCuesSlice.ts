@@ -58,7 +58,7 @@ export const saveNewSocialCue = createAsyncThunk<
   PostOneSocialCueParams
 >(
   'socialCues/saveNewSocialCue',
-  async ({ description, formulation, name, participants }) => {
+  async ({ description, formulation, name, type }) => {
     const response = await IpcService.send<SocialCue, PostOneSocialCueParams>(
       POST_ONE_SOCIALCUE_CHANNEL,
       {
@@ -66,8 +66,7 @@ export const saveNewSocialCue = createAsyncThunk<
           name,
           description,
           formulation,
-          // interactionTemplates,
-          participants,
+          type,
         },
       },
     );

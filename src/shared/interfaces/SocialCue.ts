@@ -1,4 +1,4 @@
-import Agent from './Agent';
+// import Agent from './Agent';
 // import Interaction from './Interaction';
 // import SocialCueInteractionTemplate from './SocialCueInteractionTemplate';
 
@@ -8,7 +8,7 @@ type SocialCue = {
   name: string;
   forumlation: string;
   type: string;
-  participants: Agent[];
+  // participants: Agent[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -20,7 +20,7 @@ export type PostOneSocialCueParams = {
   type: string;
   // ids
   // interactionTemplates: string[];
-  participants: string[];
+  // participants: string[];
 };
 
 export type GetOneSocialCueParams = {

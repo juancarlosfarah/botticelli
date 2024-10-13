@@ -10,7 +10,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import { Button, FormControl, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
@@ -19,35 +19,30 @@ import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
 import { AppDispatch } from '../../store';
-import {
-  fetchAgents,
-  selectArtificialParticipants,
-} from '../agent/AgentsSlice';
-import {
-  fetchInteractionTemplates,
-  selectInteractionTemplates,
-} from '../interaction/InteractionTemplatesSlice';
+// import {
+//   fetchAgents,
+//   selectArtificialParticipants,
+// } from '../agent/AgentsSlice';
+// import {
+//   fetchInteractionTemplates,
+//   selectInteractionTemplates,
+// } from '../interaction/InteractionTemplatesSlice';
 import { saveNewSocialCue } from './SocialCuesSlice';
 
 const NewSocialCue = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const availableInteractionTemplates = useSelector(selectInteractionTemplates);
-  const availableParticipants = useSelector(selectArtificialParticipants);
-
   const [description, setDescription] = useState('');
   const [name, setName] = useState<string>('');
   const [type, setType] = useState<string>('');
-  const [interactionTemplates, setInteractionTemplates] = useState<string[]>(
-    [],
-  );
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [formulation, setFormulation] = useState<string>('');
+  // const [participants, setParticipants] = useState<string[]>([]);
 
-  useEffect(() => {
-    dispatch(fetchAgents());
-    dispatch(fetchInteractionTemplates());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(fetchAgents());
+  //   dispatch(fetchInteractionTemplates());
+  // }, []);
 
   const handleNewSocialCue = async (): Promise<void> => {
     const resultAction = await dispatch(
@@ -55,6 +50,7 @@ const NewSocialCue = (): ReactElement => {
         name,
         description,
         type,
+        formulation,
         // interactionTemplates,
         // participants,
       }),
@@ -73,23 +69,20 @@ const NewSocialCue = (): ReactElement => {
     setDescription(value);
   };
 
-  const handleChangeParticipants = (
-    _: MouseEvent | KeyboardEvent | FocusEvent | null,
-    newValue: string[],
-  ): void => {
-    setParticipants(newValue);
-  };
-
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
     const value = event.target.value;
     setName(value);
   };
-
-  const handleChangeInteractionTemplates = (
-    _: MouseEvent | KeyboardEvent | FocusEvent | null,
-    newValue: string[],
+  const handleChangeFormulation = (
+    event: ChangeEvent<HTMLTextAreaElement>,
   ): void => {
-    setInteractionTemplates(newValue);
+    const value = event.target.value;
+    setFormulation(value);
+  };
+  
+  const handleChangeType = (event: ChangeEvent<HTMLInputElement>): void => {
+    const value = event.target.value;
+    setType(value);
   };
 
   return (
@@ -109,6 +102,27 @@ const NewSocialCue = (): ReactElement => {
       </FormControl>
 
       <FormControl>
+        <FormLabel>Formulation</FormLabel>
+        <Textarea value={formulation} onChange={handleChangeFormulation} />
+        <FormHelperText>
+          This is the formulation for this socialCue.
+        </FormHelperText>
+      </FormControl>
+
+      <FormControl>
+      <FormLabel>Type</FormLabel>
+      <RadioGroup defaultValue="none" name="radio-buttons-group" value={type} onChange={handleChangeType}>
+      <Radio
+      value="humour"
+      label="humour"
+      />
+    <Radio value="emoticons" label="emoticons" />
+    <Radio value="formality" label="formality" />
+  </RadioGroup>
+  <FormHelperText>Choose the most appropriate type for this social cue.</FormHelperText>
+</FormControl>
+
+      {/* <FormControl>
         <FormLabel>Interactions</FormLabel>
         <Select
           multiple
@@ -137,8 +151,8 @@ const NewSocialCue = (): ReactElement => {
             </Option>
           ))}
         </Select>
-      </FormControl>
-      <FormControl>
+      </FormControl> */}
+      {/* <FormControl>
         <FormLabel>Participants</FormLabel>
         <Select
           multiple
@@ -167,7 +181,7 @@ const NewSocialCue = (): ReactElement => {
             </Option>
           ))}
         </Select>
-      </FormControl>
+      </FormControl> */}
       <Button onClick={handleNewSocialCue}>Save</Button>
     </>
   );

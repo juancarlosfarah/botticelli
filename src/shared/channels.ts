@@ -24,8 +24,8 @@ export const DELETE_ONE_SOCIALCUE_CHANNEL = 'socialcue:delete:one';
 export const GET_MANY_SOCIALCUES_CHANNEL = 'socialcues:get:many';
 export const GET_ONE_SOCIALCUE_CHANNEL = 'socialcue:get:one';
 export const POST_ONE_SOCIALCUE_CHANNEL = 'socialcue:post:one';
-export const DELETE_SOCIALCUE_CHANNEL = 'socialcue:post:one';
-export const GET_SOCIALCUE_CHANNEL = 'socialcue:get:one';
+// export const DELETE_SOCIALCUE_CHANNEL = 'socialcue:delete:one';
+// export const GET_SOCIALCUE_CHANNEL = 'socialcue:get:one';
 
 export const GET_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
   'agent:artificial:assistant:get:one';
