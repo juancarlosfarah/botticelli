@@ -22,6 +22,7 @@ import { Message } from './entity/Message';
 import { Simulation } from './entity/Simulation';
 import { SimulationInteractionTemplate } from './entity/SimulationInteractionTemplate';
 import { Trigger } from './entity/Trigger';
+import { SocialCue } from './entity/SocialCue';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
@@ -48,6 +49,7 @@ export const AppDataSource = new DataSource({
     ExperimentInteractionTemplate,
     Simulation,
     SimulationInteractionTemplate,
+    SocialCue,
     Event,
     KeyPressEvent,
   ],
