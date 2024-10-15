@@ -45,6 +45,12 @@ import Simulations from './components/simulation/Simulations';
 import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
+import NewSocialCue from './components/socialcues/NewSocialCues';
+import SocialCue from './components/socialcues/SocialCue';
+import SocialCues from './components/socialcues/SocialCues';
+import NewSocialCueGroup from './components/socialcuegroup/NewSocialCueGroup';
+import SocialCueGroup from './components/socialcuegroup/SocialCueGroup';
+import SocialCueGroups from './components/socialcuegroup/SocialCueGroups';
 import './index.css';
 import store from './store';
 
@@ -209,6 +215,30 @@ const router = createBrowserRouter([
       {
         path: 'simulations/:simulationId',
         element: <Simulation />,
+      },
+      {
+        path: 'socialcues',
+        element: <SocialCues />,
+      },
+      {
+        path: 'socialcues/new',
+        element: <NewSocialCue />,
+      },
+      {
+        path: 'socialcues/:socialCueId',
+        element: <SocialCue />,
+      },
+      {
+        path: 'socialcuegroups',
+        element: <SocialCueGroups />,
+      },
+      {
+        path: 'socialcuegroups/new',
+        element: <NewSocialCueGroup />,
+      },
+      {
+        path: 'socialcuegroups/:socialCueGroupId',
+        element: <SocialCueGroup />,
       },
     ],
   },

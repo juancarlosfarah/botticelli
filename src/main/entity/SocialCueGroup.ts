@@ -10,12 +10,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import AgentType from '../../shared/interfaces/AgentType';
 import { Message } from './Message';
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
-export class Agent {
+export class SocialCueGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,16 +23,7 @@ export class Agent {
 
   @Column({ default: '' })
   description: string = '';
-
-  @Column({ default: '' })
-  avatarURL: string = '';
   
-  // @Column('simple-array', { nullable: true, default: null })
-  // socialCues: string[] | null = null;  
-
-  @Column({ type: 'varchar' })
-  type: AgentType;
-
   @OneToMany(() => Message, (message) => message.sender)
   messages: Relation<Message>[];
 

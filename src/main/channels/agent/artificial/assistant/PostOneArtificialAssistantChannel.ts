@@ -20,11 +20,12 @@ export class PostOneArtificialAssistantChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, name } = request.params;
+    const { description, name, avatarURL } = request.params;
 
     const agent = new ArtificialAssistant();
     agent.name = name;
     agent.description = description;
+    agent.avatarURL = avatarURL;
 
     await AppDataSource.manager.save(agent);
     event.sender.send(request.responseChannel, instanceToPlain(agent));

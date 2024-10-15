@@ -5,6 +5,7 @@ type Agent = {
   type: AgentType;
   description: string;
   name: string;
+  avatarURL: string;
 };
 
 export default Agent;
