@@ -24,6 +24,15 @@ export const DELETE_ONE_SOCIALCUE_CHANNEL = 'socialcue:delete:one';
 export const GET_MANY_SOCIALCUES_CHANNEL = 'socialcues:get:many';
 export const GET_ONE_SOCIALCUE_CHANNEL = 'socialcue:get:one';
 export const POST_ONE_SOCIALCUE_CHANNEL = 'socialcue:post:one';
+
+// SocialCueGroups
+
+export const DELETE_ONE_SOCIALCUEGROUP_CHANNEL = 'socialcuegroup:delete:one';
+export const GET_MANY_SOCIALCUEGROUPS_CHANNEL = 'socialcuegroups:get:many';
+export const GET_ONE_SOCIALCUEGROUP_CHANNEL = 'socialcuegroup:get:one';
+export const POST_ONE_SOCIALCUEGROUP_CHANNEL = 'socialcuegroup:post:one';
+
+
 // export const DELETE_SOCIALCUE_CHANNEL = 'socialcue:delete:one';
 // export const GET_SOCIALCUE_CHANNEL = 'socialcue:get:one';
 

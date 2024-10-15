@@ -1,25 +1,25 @@
-import { GET_ONE_SOCIALCUE_CHANNEL } from '@shared/channels';
+import { GET_ONE_SOCIALCUEGROUP_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
-import { GetOneSocialCueParams } from '@shared/interfaces/SocialCue';
+import { GetOneSocialCueGroupParams } from '@shared/interfaces/SocialCueGroup';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
 import { AppDataSource } from '../../data-source';
-import { SocialCue } from '../../entity/SocialCue';
+import { SocialCueGroup } from '../../entity/SocialCueGroup';
 import { GetOneChannel } from '../common/GetOneChannel';
 
-export class GetOneSocialCueChannel extends GetOneChannel {
+export class GetOneSocialCueGroupChannel extends GetOneChannel {
   constructor() {
     super({
-      name: GET_ONE_SOCIALCUE_CHANNEL,
-      entity: SocialCue,
+      name: GET_ONE_SOCIALCUEGROUP_CHANNEL,
+      entity: SocialCueGroup,
     });
   }
 
   async handle(
     event: IpcMainEvent,
-    request: IpcRequest<GetOneSocialCueParams>,
+    request: IpcRequest<GetOneSocialCueGroupParams>,
   ): Promise<void> {
     log.debug(`handling ${this.name}...`);
 

@@ -163,20 +163,6 @@ export default function Sidebar(): ReactElement {
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
-            <ListItemButton
-              selected={pathname === '/socialcues'}
-              role="menuitem"
-              component={Link}
-              to="/socialcues"
-            >
-              <AssignmentIcon />
-              <ListItemContent>
-                <Typography level="title-sm">Social Cues</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
-
           <ListItem nested>
             <Toggler
               renderToggle={({ open, setOpen }): ReactElement => (
@@ -192,17 +178,6 @@ export default function Sidebar(): ReactElement {
               )}
             >
               <List sx={{ gap: 0.5 }}>
-                {/*<ListItemButton*/}
-                {/*  sx={{ mt: 0.5 }}*/}
-                {/*  selected={pathname === '/interactions'}*/}
-                {/*  role="menuitem"*/}
-                {/*  component={Link}*/}
-                {/*  to="/interactions"*/}
-                {/*>*/}
-                {/*  <ListItemContent>*/}
-                {/*    <Typography level="body-sm">Interactions</Typography>*/}
-                {/*  </ListItemContent>*/}
-                {/*</ListItemButton>*/}
                 <ListItemButton
                   sx={{ mt: 0.5 }}
                   selected={pathname === '/interactions/templates'}
@@ -233,17 +208,6 @@ export default function Sidebar(): ReactElement {
               )}
             >
               <List sx={{ gap: 0.5 }}>
-                {/*<ListItemButton*/}
-                {/*  sx={{ mt: 0.5 }}*/}
-                {/*  selected={pathname === '/exchanges'}*/}
-                {/*  role="menuitem"*/}
-                {/*  component={Link}*/}
-                {/*  to="/exchanges"*/}
-                {/*>*/}
-                {/*  <ListItemContent>*/}
-                {/*    <Typography level="body-sm">Exchanges</Typography>*/}
-                {/*  </ListItemContent>*/}
-                {/*</ListItemButton>*/}
                 <ListItemButton
                   sx={{ mt: 0.5 }}
                   selected={pathname === '/exchanges/templates'}
@@ -342,6 +306,32 @@ export default function Sidebar(): ReactElement {
                   </Toggler>
                 </ListItem>
 
+                <ListItem>
+            <ListItemButton
+              selected={pathname === '/socialcues'}
+              role="menuitem"
+              component={Link}
+              to="/socialcues"
+            >
+              <AssignmentIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Social Cues</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton
+              selected={pathname === '/socialcuegroups'}
+              role="menuitem"
+              component={Link}
+              to="/socialcuegroups"
+            >
+              <AssignmentIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Social Cue Groups</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
                 <ListItem nested>
                   <Toggler
                     renderToggle={({ open, setOpen }): ReactElement => (

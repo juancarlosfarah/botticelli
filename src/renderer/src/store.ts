@@ -10,6 +10,7 @@ import interactionsReducer from './components/interaction/InteractionsSlice';
 import simulationsReducer from './components/simulation/SimulationsSlice';
 import triggersReducer from './components/trigger/TriggersSlice';
 import socialCuesReducer from './components/socialcues/SocialCuesSlice';
+import socialCueGroupsReducer from './components/socialcuegroup/SocialCueGroupSlice';
 
 const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
     experiments: experimentsReducer,
     simulations: simulationsReducer,
     socialCues: socialCuesReducer,
+    socialCueGroups: socialCueGroupsReducer,
   },
 });
 

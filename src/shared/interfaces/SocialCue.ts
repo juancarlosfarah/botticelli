@@ -1,14 +1,11 @@
-// import Agent from './Agent';
-// import Interaction from './Interaction';
-// import SocialCueInteractionTemplate from './SocialCueInteractionTemplate';
+
 
 type SocialCue = {
   id: string;
   description: string;
   name: string;
-  forumlation: string;
-  type: string;
-  // participants: Agent[];
+  formulation: string;
+  group: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -17,10 +14,7 @@ export type PostOneSocialCueParams = {
   description: string;
   name: string;
   formulation: string;
-  type: string;
-  // ids
-  // interactionTemplates: string[];
-  // participants: string[];
+  group: string;
 };
 
 export type GetOneSocialCueParams = {
@@ -28,8 +22,6 @@ export type GetOneSocialCueParams = {
 };
 
 export type DeleteOneSocialCueParams = string;
-
-// responses are currently simulations
 export type PostOneSocialCueResponse = SocialCue;
 export type GetOneSocialCueResponse = SocialCue;
 export type GetManySocialCuesResponse = SocialCue[];

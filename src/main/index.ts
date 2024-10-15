@@ -61,6 +61,10 @@ import { DeleteOneSocialCueChannel } from './channels/socialCues/DeleteOneSocial
 import { GetManySocialCueChannel } from './channels/socialCues/GetManySocialCueChannel';
 import { GetOneSocialCueChannel } from './channels/socialCues/GetOneSocialCueChannel';
 import { PostOneSocialCueChannel } from './channels/socialCues/PostOneSocialCueChannel';
+import { DeleteOneSocialCueGroupChannel } from './channels/socialCueGroups/DeleteOneSocialCueGroupChannel';
+import { GetManySocialCueGroupChannel } from './channels/socialCueGroups/GetManySocialCueGroupChannel';
+import { GetOneSocialCueGroupChannel } from './channels/socialCueGroups/GetOneSocialCueGroupChannel';
+import { PostOneSocialCueGroupChannel } from './channels/socialCueGroups/PostOneSocialCueGroupChannel';
 import { DeleteOneSimulationChannel } from './channels/simulation/DeleteOneSimulationChannel';
 import { GetManySimulationsChannel } from './channels/simulation/GetManySimulationsChannel';
 import { GetOneSimulationChannel } from './channels/simulation/GetOneSimulationChannel';
@@ -251,6 +255,13 @@ new Main().init([
   new GetOneSocialCueChannel(),
   new GetManySocialCueChannel(),
   new DeleteOneSocialCueChannel(),
+
+  // social cue groups
+  new PostOneSocialCueGroupChannel(),
+  new GetOneSocialCueGroupChannel(),
+  new GetManySocialCueGroupChannel(),
+  new DeleteOneSocialCueGroupChannel(),
+
   // events
   new PostOneKeyPressEventChannel(),
   new PostManyKeyPressEventsChannel(),

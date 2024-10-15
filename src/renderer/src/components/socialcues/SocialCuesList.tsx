@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
 
-export default function SimulationList(): ReactElement {
+export default function SocialCueList(): ReactElement {
   return <></>;
 }

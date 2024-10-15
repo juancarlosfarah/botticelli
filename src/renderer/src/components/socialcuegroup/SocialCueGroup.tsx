@@ -4,12 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
-import Chip from '@mui/joy/Chip';
-import Link from '@mui/joy/Link';
-import Sheet from '@mui/joy/Sheet';
-import Table from '@mui/joy/Table';
 import Typography from '@mui/joy/Typography';
-import { ColorPaletteProp } from '@mui/joy/styles';
 
 import log from 'electron-log/renderer';
 import _ from 'lodash';
@@ -17,31 +12,31 @@ import _ from 'lodash';
 import { AppDispatch, RootState } from '../../store';
 import { Order, getComparator, stableSort } from '../../utils/sort';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import { fetchSocialCue, selectSocialCueById } from './SocialCuesSlice';
+import { fetchSocialCueGroup, selectSocialCueGroupById } from './SocialCueGroupSlice';
 
-export default function SocialCue(): ReactElement {
-  const { socialCueId } = useParams();
+export default function SocialCueGroup(): ReactElement {
+  const { socialCueGroupId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const [order] = React.useState<Order>('desc');
 
-  log.debug(`socialCueId: ${socialCueId}`);
+  log.debug(`socialCueGroupId: ${socialCueGroupId}`);
 
-  if (!socialCueId) {
-    return <div>Invalid SocialCue ID</div>;
+  if (!socialCueGroupId) {
+    return <div>Invalid SocialCueGroup ID</div>;
   }
 
   useEffect(() => {
-    log.debug(`fetching socialCue ${socialCueId}`);
-    dispatch(fetchSocialCue({ id: socialCueId }));
-  }, [socialCueId]);
+    log.debug(`fetching socialCueGroup ${socialCueGroupId}`);
+    dispatch(fetchSocialCueGroup({ id: socialCueGroupId }));
+  }, [socialCueGroupId]);
 
-  const socialCue = useSelector((state: RootState) =>
-    selectSocialCueById(state, socialCueId),
+  const socialCueGroup = useSelector((state: RootState) =>
+    selectSocialCueGroupById(state, socialCueGroupId),
   );
 
-  if (!socialCue) {
-    return <div>SocialCue Not Found</div>;
+  if (!socialCueGroup) {
+    return <div>SocialCueGroup Not Found</div>;
   }
 
   return (
@@ -58,26 +53,17 @@ export default function SocialCue(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">SocialCue</Typography>
+        <Typography level="h2">Social Cue Group</Typography>
       </Box>
 
       <Typography sx={{}} level="title-md">
         Name
       </Typography>
-      <Typography>{socialCue.name}</Typography>
-
-      <Typography sx={{ mt: 1 }} level="title-md">
-        Group
-      </Typography>
-      <Typography>{socialCue.group}</Typography>
-      <Typography sx={{ mt: 1 }} level="title-md">
-        Formulation
-      </Typography>
-      <Typography>{socialCue.formulation}</Typography>
+      <Typography>{socialCueGroup.name}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Description
       </Typography>
-      <Typography>{socialCue.description}</Typography>
+      <Typography>{socialCueGroup.description}</Typography>
     
     </>
   );

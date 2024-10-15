@@ -58,7 +58,7 @@ export const saveNewSocialCue = createAsyncThunk<
   PostOneSocialCueParams
 >(
   'socialCues/saveNewSocialCue',
-  async ({ description, formulation, name, type }) => {
+  async ({ description, formulation, name, group }) => {
     const response = await IpcService.send<SocialCue, PostOneSocialCueParams>(
       POST_ONE_SOCIALCUE_CHANNEL,
       {
@@ -66,10 +66,11 @@ export const saveNewSocialCue = createAsyncThunk<
           name,
           description,
           formulation,
-          type,
+          group,
         },
       },
     );
+    console.log('Response:', response);
     return response;
   },
 );
@@ -108,6 +109,7 @@ const socialCuesSlice = createSlice({
       })
       .addCase(saveNewSocialCue.fulfilled, (state, action) => {
         const socialCue = action.payload;
+        console.debug('saveNewSocialCue.fulfilled', socialCue);
         socialCuesAdapter.addOne(state, socialCue);
       })
       .addCase(deleteSocialCue.fulfilled, socialCuesAdapter.removeOne);

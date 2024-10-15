@@ -14,7 +14,7 @@ import { Message } from './Message';
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
-export class SocialCue {
+export class SocialCueGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -23,13 +23,7 @@ export class SocialCue {
 
   @Column({ default: '' })
   description: string = '';
-
-  @Column({ default: '' })
-  formulation: string = '';
   
-  @Column({ default: '' })
-  group: string = '';
-
   @OneToMany(() => Message, (message) => message.sender)
   messages: Relation<Message>[];
 

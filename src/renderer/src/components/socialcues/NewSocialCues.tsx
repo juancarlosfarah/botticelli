@@ -1,8 +1,5 @@
 import {
   ChangeEvent,
-  FocusEvent,
-  KeyboardEvent,
-  MouseEvent,
   ReactElement,
   useEffect,
   useState,
@@ -11,78 +8,58 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, FormControl, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/joy';
-import Box from '@mui/joy/Box';
-import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
-import Option from '@mui/joy/Option';
-import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
 import { AppDispatch } from '../../store';
-// import {
-//   fetchAgents,
-//   selectArtificialParticipants,
-// } from '../agent/AgentsSlice';
-// import {
-//   fetchInteractionTemplates,
-//   selectInteractionTemplates,
-// } from '../interaction/InteractionTemplatesSlice';
 import { saveNewSocialCue } from './SocialCuesSlice';
+import { fetchSocialCueGroups, selectSocialCueGroups } from '../socialcuegroup/SocialCueGroupSlice';
 
 const NewSocialCue = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const socialCueGroups = useSelector(selectSocialCueGroups); 
 
   const [description, setDescription] = useState('');
   const [name, setName] = useState<string>('');
-  const [type, setType] = useState<string>('');
+  const [group, setGroup] = useState<string>('');
   const [formulation, setFormulation] = useState<string>('');
-  // const [participants, setParticipants] = useState<string[]>([]);
 
-  // useEffect(() => {
-  //   dispatch(fetchAgents());
-  //   dispatch(fetchInteractionTemplates());
-  // }, []);
+  useEffect(() => {
+    // Fetch the social cue groups once when the component mounts
+    dispatch(fetchSocialCueGroups());
+  }, [dispatch]);
 
   const handleNewSocialCue = async (): Promise<void> => {
     const resultAction = await dispatch(
       saveNewSocialCue({
         name,
         description,
-        type,
+        group,
         formulation,
-        // interactionTemplates,
-        // participants,
       }),
     );
-    // todo: handle error
+
     if (saveNewSocialCue.fulfilled.match(resultAction)) {
       const socialCue = resultAction.payload;
       navigate(`/socialCues/${socialCue.id}`);
     }
   };
 
-  const handleChangeDescription = (
-    event: ChangeEvent<HTMLTextAreaElement>,
-  ): void => {
-    const value = event.target.value;
-    setDescription(value);
+  const handleChangeDescription = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+    setDescription(event.target.value);
   };
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
-    const value = event.target.value;
-    setName(value);
+    setName(event.target.value);
   };
-  const handleChangeFormulation = (
-    event: ChangeEvent<HTMLTextAreaElement>,
-  ): void => {
-    const value = event.target.value;
-    setFormulation(value);
+
+  const handleChangeFormulation = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+    setFormulation(event.target.value);
   };
-  
-  const handleChangeType = (event: ChangeEvent<HTMLInputElement>): void => {
-    const value = event.target.value;
-    setType(value);
+
+  const handleChangeGroup = (event: ChangeEvent<HTMLInputElement>): void => {
+    setGroup(event.currentTarget.value);
   };
 
   return (
@@ -90,14 +67,14 @@ const NewSocialCue = (): ReactElement => {
       <FormControl>
         <FormLabel>Name</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the socialCue's name.`}</FormHelperText>
+        <FormHelperText>{`This is the social cue's name.`}</FormHelperText>
       </FormControl>
 
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this socialCue.
+          This is an internal description for this social cue.
         </FormHelperText>
       </FormControl>
 
@@ -105,83 +82,27 @@ const NewSocialCue = (): ReactElement => {
         <FormLabel>Formulation</FormLabel>
         <Textarea value={formulation} onChange={handleChangeFormulation} />
         <FormHelperText>
-          This is the formulation for this socialCue.
+          This is the formulation for this social cue.
         </FormHelperText>
       </FormControl>
 
       <FormControl>
-      <FormLabel>Type</FormLabel>
-      <RadioGroup defaultValue="none" name="radio-buttons-group" value={type} onChange={handleChangeType}>
-      <Radio
-      value="humour"
-      label="humour"
-      />
-    <Radio value="emoticons" label="emoticons" />
-    <Radio value="formality" label="formality" />
-  </RadioGroup>
-  <FormHelperText>Choose the most appropriate type for this social cue.</FormHelperText>
-</FormControl>
+        <FormLabel>Group</FormLabel>
+        <RadioGroup
+          defaultValue="none"
+          name="radio-buttons-group"
+          value={group}
+          onChange={handleChangeGroup}
+        >
+          {socialCueGroups.map((cueGroup) => (
+            <Radio key={cueGroup.id} value={cueGroup.name} label={cueGroup.name} />
+          ))}
+        </RadioGroup>
+        <FormHelperText>
+          Choose the most appropriate group for this social cue.
+        </FormHelperText>
+      </FormControl>
 
-      {/* <FormControl>
-        <FormLabel>Interactions</FormLabel>
-        <Select
-          multiple
-          value={interactionTemplates}
-          onChange={handleChangeInteractionTemplates}
-          renderValue={(selected): ReactElement => (
-            <Box sx={{ display: 'flex', gap: '0.25rem' }}>
-              {selected.map((selectedOption) => (
-                <Chip variant="soft" color="primary" key={selectedOption.value}>
-                  {selectedOption.label}
-                </Chip>
-              ))}
-            </Box>
-          )}
-          slotProps={{
-            listbox: {
-              sx: {
-                width: '100%',
-              },
-            },
-          }}
-        >
-          {availableInteractionTemplates.map((interactionTemplate) => (
-            <Option value={interactionTemplate.id} key={interactionTemplate.id}>
-              {interactionTemplate.name}
-            </Option>
-          ))}
-        </Select>
-      </FormControl> */}
-      {/* <FormControl>
-        <FormLabel>Participants</FormLabel>
-        <Select
-          multiple
-          value={participants}
-          onChange={handleChangeParticipants}
-          renderValue={(selected): ReactElement => (
-            <Box sx={{ display: 'flex', gap: '0.25rem' }}>
-              {selected.map((selectedOption) => (
-                <Chip variant="soft" color="primary" key={selectedOption.value}>
-                  {selectedOption.label}
-                </Chip>
-              ))}
-            </Box>
-          )}
-          slotProps={{
-            listbox: {
-              sx: {
-                width: '100%',
-              },
-            },
-          }}
-        >
-          {availableParticipants.map((participant) => (
-            <Option value={participant.id} key={participant.id}>
-              {participant.name}
-            </Option>
-          ))}
-        </Select>
-      </FormControl> */}
       <Button onClick={handleNewSocialCue}>Save</Button>
     </>
   );
