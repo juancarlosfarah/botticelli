@@ -3,14 +3,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToMany,
   PrimaryGeneratedColumn,
   Relation,
+  ManyToOne,
   TableInheritance,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Message } from './Message';
+import { Agent } from './Agent';
+import { SocialCueGroup } from './SocialCueGroup';
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
@@ -19,25 +21,28 @@ export class SocialCue {
   id: string;
 
   @Column({ default: '' })
-  name: string = '';
+  name: string;
 
   @Column({ default: '' })
-  description: string = '';
+  description: string;
 
   @Column({ default: '' })
-  formulation: string = '';
+  formulation: string;
   
   @Column({ default: '' })
-  group: string = '';
-
-  @OneToMany(() => Message, (message) => message.sender)
-  messages: Relation<Message>[];
+  group: string;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
+
+  @ManyToMany(() => Agent, (agent) => agent.socialCues)
+  agents: Agent[];
+
+  @ManyToOne(() => SocialCueGroup, (socialCueGroup) => socialCueGroup.socialCues)
+  socialCueGroup: SocialCueGroup;
 
   @AfterLoad()
   getCreatedAt(): void {

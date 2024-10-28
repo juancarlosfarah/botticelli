@@ -95,7 +95,7 @@ const NewSocialCue = (): ReactElement => {
           onChange={handleChangeGroup}
         >
           {socialCueGroups.map((cueGroup) => (
-            <Radio key={cueGroup.id} value={cueGroup.name} label={cueGroup.name} />
+            <Radio key={cueGroup.id} value={cueGroup.id} label={cueGroup.name} />
           ))}
         </RadioGroup>
         <FormHelperText>

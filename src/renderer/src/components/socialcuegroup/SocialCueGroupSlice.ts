@@ -5,10 +5,10 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
-  DELETE_ONE_SOCIALCUEGROUP_CHANNEL,
-  GET_MANY_SOCIALCUEGROUPS_CHANNEL,
-  GET_ONE_SOCIALCUEGROUP_CHANNEL,
-  POST_ONE_SOCIALCUEGROUP_CHANNEL,
+  DELETE_ONE_SOCIAL_CUE_GROUP_CHANNEL,
+  GET_MANY_SOCIAL_CUE_GROUPS_CHANNEL,
+  GET_ONE_SOCIAL_CUE_GROUP_CHANNEL,
+  POST_ONE_SOCIAL_CUE_GROUP_CHANNEL,
 } from '@shared/channels';
 import SocialCueGroup from '@shared/interfaces/SocialCueGroup';
 import {
@@ -38,7 +38,7 @@ export const fetchSocialCueGroup = createAsyncThunk<
   const response = await IpcService.send<
     GetOneSocialCueGroupResponse,
     GetOneSocialCueGroupParams
-  >(GET_ONE_SOCIALCUEGROUP_CHANNEL, {
+  >(GET_ONE_SOCIAL_CUE_GROUP_CHANNEL, {
     params: { id },
   });
   return response;
@@ -48,7 +48,7 @@ export const fetchSocialCueGroups = createAsyncThunk<GetManySocialCueGroupsRespo
   'socialCues/fetchSocialCueGroups',
   async () => {
     return await IpcService.send<GetManySocialCueGroupsResponse>(
-      GET_MANY_SOCIALCUEGROUPS_CHANNEL,
+      GET_MANY_SOCIAL_CUE_GROUPS_CHANNEL,
     );
   },
 );
@@ -60,7 +60,7 @@ export const saveNewSocialCueGroup = createAsyncThunk<
   'socialCues/saveNewSocialCueGroup',
   async ({ description, name }) => {
     const response = await IpcService.send<SocialCueGroup, PostOneSocialCueGroupParams>(
-      POST_ONE_SOCIALCUEGROUP_CHANNEL,
+      POST_ONE_SOCIAL_CUE_GROUP_CHANNEL,
       {
         params: {
           name,
@@ -77,7 +77,7 @@ export const deleteSocialCueGroup = createAsyncThunk<
   DeleteOneSocialCueGroupResponse,
   DeleteOneSocialCueGroupParams
 >('socialCues/deleteSocialCueGroup', async (id) => {
-  await IpcService.send<string, { id }>(DELETE_ONE_SOCIALCUEGROUP_CHANNEL, {
+  await IpcService.send<string, { id }>(DELETE_ONE_SOCIAL_CUE_GROUP_CHANNEL, {
     params: { id },
   });
   return id;

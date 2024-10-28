@@ -1,4 +1,4 @@
-import { POST_ONE_SOCIALCUE_CHANNEL } from '@shared/channels';
+import { POST_ONE_SOCIAL_CUE_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { PostOneSocialCueParams } from '@shared/interfaces/SocialCue';
 import { instanceToPlain } from 'class-transformer';
@@ -13,7 +13,7 @@ import { PostOneChannel } from '../common/PostOneChannel';
 export class PostOneSocialCueChannel extends PostOneChannel {
   constructor() {
     super({
-      name: POST_ONE_SOCIALCUE_CHANNEL,
+      name: POST_ONE_SOCIAL_CUE_CHANNEL,
       entity: SocialCue,
     });
   }
@@ -30,11 +30,11 @@ export class PostOneSocialCueChannel extends PostOneChannel {
 
     // todo: error handling
     if (!request.params) {
-      event.sender.send(request.responseChannel, {});
+      event.sender.send(request.responseChannel, { error: 'Missing request parameters' });
       return;
     }
 
-    // // repositories
+    // repositories
     const socialCueRepository = AppDataSource.getRepository(SocialCue);
 
     const { description, name, group, formulation } =
@@ -42,12 +42,18 @@ export class PostOneSocialCueChannel extends PostOneChannel {
 
     const socialCue = new SocialCue();
     socialCue.name = name;
-    socialCue.group = group;
     socialCue.formulation = formulation;
     socialCue.description = description;
 
     const savedSocialCue = await socialCueRepository.save(socialCue);
     log.debug(`saved socialCue ${savedSocialCue.id}`);
+
+    const savedSocialCueGroup = await socialCueRepository.findOneBy({
+      id: group,
+    });
+    if (savedSocialCueGroup) {
+      socialCue.group = savedSocialCueGroup;
+    }
 
     event.sender.send(
       request.responseChannel,

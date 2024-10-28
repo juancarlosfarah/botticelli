@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Message } from './Message';
+import { SocialCue } from './SocialCue';
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
@@ -23,15 +23,15 @@ export class SocialCueGroup {
 
   @Column({ default: '' })
   description: string = '';
-  
-  @OneToMany(() => Message, (message) => message.sender)
-  messages: Relation<Message>[];
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
+
+  @OneToMany(() => SocialCue, (socialCue) => socialCue.group)
+  socialCues: SocialCue[];
 
   @AfterLoad()
   getCreatedAt(): void {

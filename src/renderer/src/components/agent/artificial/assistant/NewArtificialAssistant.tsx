@@ -1,5 +1,10 @@
-import { ChangeEvent, ReactElement, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import {
+  ChangeEvent,
+  ReactElement,
+  useEffect,
+  useState,
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 
@@ -11,31 +16,34 @@ import Textarea from '@mui/joy/Textarea';
 import log from 'electron-log/renderer';
 
 import { saveNewArtificialAssistant } from '../../AgentsSlice';
-
-// Added social cues options array
-// const socialCuesOptions = [
-//   { label: 'Humour', value: 'humor' },
-//   { label: 'Formality', value: 'formal' },
-//   { label: 'Emoticons', value: 'emoticons' },
-//   { label: 'Small Talk', value: 'smalltalk' },
-// ];
+import {
+  fetchSocialCues,
+  selectSocialCues,
+} from '../../../socialcues/SocialCuesSlice';
 
 const NewArtificialAssistant = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    dispatch(fetchSocialCues());
+  }, []);
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [avatarURL, setAvatarURL] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [socialCues, setSocialCues] = useState<string[]>([]); 
 
-  // const [socialCues, setSocialCues] = useState<string[]>([]); 
+  const availableSocialCues = useSelector(selectSocialCues);
+
 
   const handleNewAgent = async (): Promise<void> => {
     const { payload } = await dispatch(
       saveNewArtificialAssistant({
         description,
         name,
-        avatarURL,
+        avatarUrl,
+        socialCues,
       }),
     );
     log.debug(`saveNewAgent response.payload:`, payload);
@@ -43,6 +51,8 @@ const NewArtificialAssistant = (): ReactElement => {
       navigate(`/agents/artificial/assistants/${payload.id}`);
     }
   };
+
+  console.log('socialCues:', availableSocialCues);
 
   const handleChangeDescription = (
     event: ChangeEvent<HTMLTextAreaElement>,
@@ -56,15 +66,16 @@ const NewArtificialAssistant = (): ReactElement => {
     setName(value);
   };
 
-  const handleAvatarURL = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleAvatarUrl = (event: ChangeEvent<HTMLInputElement>): void => {
     const value = event.target.value;
-    setAvatarURL(value);
+    setAvatarUrl(value);
   };
 
-  // const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => { 
-  //   const value = event.target.value;
-  //   setSocialCues((prevSocialCues) => [...prevSocialCues, value]);
-  // };
+  const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => { 
+    const value = event.target.value;
+    setSocialCues((prevSocialCues) => [...prevSocialCues, value]);
+    console.log('socialCues:', socialCues);
+  };
 
   return (
     <>
@@ -81,22 +92,22 @@ const NewArtificialAssistant = (): ReactElement => {
           model.`}
         </FormHelperText>
         <FormControl>
-          <FormLabel>Avatar URL</FormLabel>
-          <Input value={avatarURL} onChange={handleAvatarURL} />
-          <FormHelperText>{`This is the agent's URL.`}</FormHelperText>
+          <FormLabel>Avatar Url</FormLabel>
+          <Input value={avatarUrl} onChange={handleAvatarUrl} />
+          <FormHelperText>{`This is the agent's Url.`}</FormHelperText>
         </FormControl>
-        {/* <FormLabel component="legend">Social Cues</FormLabel>
+        <FormLabel component="legend">Social Cues</FormLabel>
 
-        {socialCuesOptions.map((option) => (
+        {availableSocialCues.map((option) => (
     <Checkbox
-      key={option.value}
+      key={option.name}
       sx={{mt: 1}}
-      value={option.value}
-      checked={socialCues.includes(option.value)}
+      value={option.name}
+      checked={socialCues.includes(option.name)}
       onChange={handleSocialCuesChange}
       label={
         <React.Fragment>
-          {option.label}
+          {option.name}
         </React.Fragment>
       }
     />
@@ -104,7 +115,7 @@ const NewArtificialAssistant = (): ReactElement => {
           <FormHelperText>
           {`This is this agent's social..., which will be sent to the language
           model.`}
-        </FormHelperText> */}
+        </FormHelperText>
       </FormControl>
 
 

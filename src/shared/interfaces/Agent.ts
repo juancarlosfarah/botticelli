@@ -5,7 +5,8 @@ type Agent = {
   type: AgentType;
   description: string;
   name: string;
-  avatarURL: string;
+  avatarUrl: string;
+  socialCues: string[];
 };
 
 export default Agent;

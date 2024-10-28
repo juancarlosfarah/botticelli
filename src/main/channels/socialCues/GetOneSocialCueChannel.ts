@@ -1,4 +1,4 @@
-import { GET_ONE_SOCIALCUE_CHANNEL } from '@shared/channels';
+import { GET_ONE_SOCIAL_CUE_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { GetOneSocialCueParams } from '@shared/interfaces/SocialCue';
 import { instanceToPlain } from 'class-transformer';
@@ -12,7 +12,7 @@ import { GetOneChannel } from '../common/GetOneChannel';
 export class GetOneSocialCueChannel extends GetOneChannel {
   constructor() {
     super({
-      name: GET_ONE_SOCIALCUE_CHANNEL,
+      name: GET_ONE_SOCIAL_CUE_CHANNEL,
       entity: SocialCue,
     });
   }

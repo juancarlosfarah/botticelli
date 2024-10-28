@@ -4,11 +4,15 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  ManyToMany,
   PrimaryGeneratedColumn,
   Relation,
+  JoinTable,
   TableInheritance,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { SocialCue } from './SocialCue';
 
 import AgentType from '../../shared/interfaces/AgentType';
 import { Message } from './Message';
@@ -26,16 +30,23 @@ export class Agent {
   description: string = '';
 
   @Column({ default: '' })
-  avatarURL: string = '';
+  avatarUrl: string = '';
+
+  @OneToMany(() => Message, (message) => message.sender, {
+    cascade: true,
+    onDelete: 'CASCADE', 
+  })
+  messages: Message[];
   
-  // @Column('simple-array', { nullable: true, default: null })
-  // socialCues: string[] | null = null;  
+  @ManyToMany(() => SocialCue, (socialCue) => socialCue.agents, {
+    cascade: true,
+    onDelete: 'CASCADE', 
+  })
+  @JoinTable()
+  socialCues: SocialCue[];
 
   @Column({ type: 'varchar' })
   type: AgentType;
-
-  @OneToMany(() => Message, (message) => message.sender)
-  messages: Relation<Message>[];
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

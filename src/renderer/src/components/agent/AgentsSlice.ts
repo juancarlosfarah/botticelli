@@ -60,15 +60,16 @@ export const saveNewAgent = createAsyncThunk<
 
 export const saveNewArtificialAssistant = createAsyncThunk<
   Agent,
-  { description: string; name: string; avatarURL: string; }
->('agents/artificial/assistants/saveNew', async ({ description, name, avatarURL }) => {
+  { description: string; name: string; avatarUrl: string; socialCues: string[] }
+>('agents/artificial/assistants/saveNew', async ({ description, name, avatarUrl, socialCues }) => {
   const response = await IpcService.send<{ agent: Agent }>(
     POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
     {
       params: {
         description,
         name, 
-        avatarURL,
+        avatarUrl,
+        socialCues,
       },
     },
   );

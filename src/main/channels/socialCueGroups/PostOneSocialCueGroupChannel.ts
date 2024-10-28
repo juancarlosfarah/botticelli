@@ -1,4 +1,4 @@
-import { POST_ONE_SOCIALCUEGROUP_CHANNEL } from '@shared/channels';
+import { POST_ONE_SOCIAL_CUE_GROUP_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { PostOneSocialCueGroupParams } from '@shared/interfaces/SocialCueGroup';
 import { instanceToPlain } from 'class-transformer';
@@ -13,7 +13,7 @@ import { PostOneChannel } from '../common/PostOneChannel';
 export class PostOneSocialCueGroupChannel extends PostOneChannel {
   constructor() {
     super({
-      name: POST_ONE_SOCIALCUEGROUP_CHANNEL,
+      name: POST_ONE_SOCIAL_CUE_GROUP_CHANNEL,
       entity: SocialCueGroup,
     });
   }
