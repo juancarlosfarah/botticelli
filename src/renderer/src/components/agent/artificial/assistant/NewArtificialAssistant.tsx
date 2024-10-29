@@ -10,6 +10,10 @@ import React from 'react';
 
 import { Button, FormControl, FormHelperText, FormLabel, Checkbox } from '@mui/joy'; 
 import Input from '@mui/joy/Input';
+import Box from '@mui/joy/Box';
+import Chip from '@mui/joy/Chip';
+import Option from '@mui/joy/Option';
+import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
 import log from 'electron-log/renderer';
@@ -24,16 +28,10 @@ const NewArtificialAssistant = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+
   useEffect(() => {
     dispatch(fetchSocialCues());
-  }, [dispatch]);
-
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [socialCues, setSocialCues] = useState<string[]>([]); 
-
-  const availableSocialCues = useSelector(selectSocialCues);
+  }, []);
 
   const handleNewArtificialAssistant = async (): Promise<void> => {
     const { payload } = await dispatch(
@@ -50,6 +48,14 @@ const NewArtificialAssistant = (): ReactElement => {
     }
   };
 
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [socialCues, setSocialCues] = useState<string[]>([]); 
+
+  const availableSocialCues = useSelector(selectSocialCues);
+
+
   const handleChangeDescription = (event: ChangeEvent<HTMLTextAreaElement>): void => {
     setDescription(event.target.value);
   };
@@ -62,16 +68,13 @@ const NewArtificialAssistant = (): ReactElement => {
     setAvatarUrl(event.target.value);
   };
 
-  const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    const value = event.target.value;
-    setSocialCues((prevSocialCues) => {
-      const newSocialCues = prevSocialCues.includes(value)
-        ? prevSocialCues.filter((cue) => cue !== value)
-        : [...prevSocialCues, value];
-      console.log('Updated socialCues:', newSocialCues);
-      return newSocialCues;
-    });
+  const handleSocialCuesChange = (
+    _: MouseEvent | KeyboardEvent | FocusEvent | null,
+    newValue: string[],
+  ): void => {
+    setSocialCues(newValue);
   };
+
 
   return (
     <>
@@ -93,7 +96,7 @@ const NewArtificialAssistant = (): ReactElement => {
         <FormHelperText>This is the agent's URL.</FormHelperText>
       </FormControl>
 
-      <FormControl>
+      {/* <FormControl>
         <FormLabel>Social Cues</FormLabel>
         {availableSocialCues.map((option) => (
           <Checkbox
@@ -106,6 +109,37 @@ const NewArtificialAssistant = (): ReactElement => {
           />
         ))}
         <FormHelperText>This is the agent's social cues, which will be sent to the language model.</FormHelperText>
+      </FormControl> */}
+
+      <FormControl>
+        <FormLabel>Social Cues</FormLabel>
+        <Select
+          multiple
+          value={socialCues}
+          onChange={handleSocialCuesChange}
+          renderValue={(selected): ReactElement => (
+            <Box sx={{ display: 'flex', gap: '0.25rem' }}>
+              {selected.map((selectedOption) => (
+                <Chip variant="soft" color="primary" key={selectedOption.value}>
+                  {selectedOption.label}
+                </Chip>
+              ))}
+            </Box>
+          )}
+          slotProps={{
+            listbox: {
+              sx: {
+                width: '100%',
+              },
+            },
+          }}
+        >
+          {availableSocialCues.map((socialCue) => (
+            <Option value={socialCue.id} key={socialCue.id}>
+              {socialCue.name}
+            </Option>
+          ))}
+        </Select>
       </FormControl>
 
       <Button onClick={handleNewArtificialAssistant}>Save</Button>

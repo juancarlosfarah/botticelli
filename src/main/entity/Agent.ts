@@ -32,16 +32,10 @@ export class Agent {
   @Column({ default: '' })
   avatarUrl: string = '';
 
-  @OneToMany(() => Message, (message) => message.sender, {
-    cascade: true,
-    onDelete: 'CASCADE', 
-  })
+  @OneToMany(() => Message, (message) => message.sender)
   messages: Message[];
   
-  @ManyToMany(() => SocialCue, (socialCue) => socialCue, {
-    cascade: true,
-    onDelete: 'CASCADE', 
-  })
+  @ManyToMany(() => SocialCue, { eager: true })
   @JoinTable()
   socialCues: SocialCue[];
 

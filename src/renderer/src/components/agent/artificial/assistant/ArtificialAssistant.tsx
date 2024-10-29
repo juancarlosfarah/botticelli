@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
+import List from '@mui/joy/List';
+import ListItem from '@mui/joy/ListItem';
 
 import log from 'electron-log/renderer';
 
@@ -21,6 +23,8 @@ export default function ArtificialAssistant(): ReactElement {
   }, [agentId]);
 
   const agent = useSelector((state) => selectAgentById(state, agentId));
+  const socialCues = agent?.socialCues || [];
+
 
   if (!agent) {
     return <div>Agent Not Found</div>;
@@ -52,12 +56,25 @@ export default function ArtificialAssistant(): ReactElement {
       <Typography>{agent.avatarUrl}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
         Social Cues
-        </Typography>
-      <Typography>{agent.socialCues}</Typography>
+      </Typography>
+      <List component="ol" marker="decimal">
+        {socialCues.length > 0 ? (
+          socialCues.map((cue) => (
+            <ListItem key={cue.id}>
+              <Typography level="body-md">{cue.name}: {cue.description}</Typography>
+            </ListItem>
+          ))
+        ) : (
+          <ListItem>
+            <Typography level="body-md">No social cues available</Typography>
+          </ListItem>
+        )}
+      </List>
       <Typography sx={{ mt: 1 }} level="title-md">
         Description
-        </Typography>
+      </Typography>
       <Typography>{agent.description}</Typography>
     </>
   );
+  
 }

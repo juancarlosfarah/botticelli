@@ -1,4 +1,5 @@
 import AgentType from './AgentType';
+import SocialCue from './SocialCue';
 
 type Agent = {
   id: string;
@@ -6,7 +7,7 @@ type Agent = {
   description: string;
   name: string;
   avatarUrl: string;
-  socialCues: string[];
+  socialCues: SocialCue[];
 };
 
 export default Agent;
