@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import React from 'react';
 
 import { Button, FormControl, FormHelperText, FormLabel, Checkbox } from '@mui/joy'; 
-
 import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
 
@@ -27,7 +26,7 @@ const NewArtificialAssistant = (): ReactElement => {
 
   useEffect(() => {
     dispatch(fetchSocialCues());
-  }, []);
+  }, [dispatch]);
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -36,90 +35,80 @@ const NewArtificialAssistant = (): ReactElement => {
 
   const availableSocialCues = useSelector(selectSocialCues);
 
-
-  const handleNewAgent = async (): Promise<void> => {
+  const handleNewArtificialAssistant = async (): Promise<void> => {
     const { payload } = await dispatch(
       saveNewArtificialAssistant({
         description,
         name,
         avatarUrl,
         socialCues,
-      }),
+      })
     );
-    log.debug(`saveNewAgent response.payload:`, payload);
+    log.debug('saveNewAgent response.payload:', payload);
     if (payload.id) {
       navigate(`/agents/artificial/assistants/${payload.id}`);
     }
   };
 
-  console.log('socialCues:', availableSocialCues);
-
-  const handleChangeDescription = (
-    event: ChangeEvent<HTMLTextAreaElement>,
-  ): void => {
-    const value = event.target.value;
-    setDescription(value);
+  const handleChangeDescription = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+    setDescription(event.target.value);
   };
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
-    const value = event.target.value;
-    setName(value);
+    setName(event.target.value);
   };
 
   const handleAvatarUrl = (event: ChangeEvent<HTMLInputElement>): void => {
-    const value = event.target.value;
-    setAvatarUrl(value);
+    setAvatarUrl(event.target.value);
   };
 
-  const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => { 
+  const handleSocialCuesChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const value = event.target.value;
-    setSocialCues((prevSocialCues) => [...prevSocialCues, value]);
-    console.log('socialCues:', socialCues);
+    setSocialCues((prevSocialCues) => {
+      const newSocialCues = prevSocialCues.includes(value)
+        ? prevSocialCues.filter((cue) => cue !== value)
+        : [...prevSocialCues, value];
+      console.log('Updated socialCues:', newSocialCues);
+      return newSocialCues;
+    });
   };
 
   return (
     <>
       <FormControl>
-        <FormControl>
-          <FormLabel>Name</FormLabel>
-          <Input value={name} onChange={handleChangeName} />
-          <FormHelperText>{`This is the agent's name.`}</FormHelperText>
-        </FormControl>
-        <FormLabel>Description</FormLabel>
-        <Textarea value={description} onChange={handleChangeDescription} />
-        <FormHelperText>
-          {`This is this agent's description, which will be sent to the language
-          model.`}
-        </FormHelperText>
-        <FormControl>
-          <FormLabel>Avatar Url</FormLabel>
-          <Input value={avatarUrl} onChange={handleAvatarUrl} />
-          <FormHelperText>{`This is the agent's Url.`}</FormHelperText>
-        </FormControl>
-        <FormLabel component="legend">Social Cues</FormLabel>
-
-        {availableSocialCues.map((option) => (
-    <Checkbox
-      key={option.name}
-      sx={{mt: 1}}
-      value={option.name}
-      checked={socialCues.includes(option.name)}
-      onChange={handleSocialCuesChange}
-      label={
-        <React.Fragment>
-          {option.name}
-        </React.Fragment>
-      }
-    />
-  ))}
-          <FormHelperText>
-          {`This is this agent's social..., which will be sent to the language
-          model.`}
-        </FormHelperText>
+        <FormLabel>Name</FormLabel>
+        <Input value={name} onChange={handleChangeName} />
+        <FormHelperText>This is the agent's name.</FormHelperText>
       </FormControl>
 
+      <FormControl>
+        <FormLabel>Description</FormLabel>
+        <Textarea value={description} onChange={handleChangeDescription} />
+        <FormHelperText>This is the agent's description, which will be sent to the language model.</FormHelperText>
+      </FormControl>
 
-      <Button onClick={handleNewAgent}>Save</Button>
+      <FormControl>
+        <FormLabel>Avatar URL</FormLabel>
+        <Input value={avatarUrl} onChange={handleAvatarUrl} />
+        <FormHelperText>This is the agent's URL.</FormHelperText>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Social Cues</FormLabel>
+        {availableSocialCues.map((option) => (
+          <Checkbox
+            key={option.name}
+            sx={{ mt: 1 }}
+            value={option.name}
+            checked={socialCues.includes(option.name)}
+            onChange={handleSocialCuesChange}
+            label={option.name}
+          />
+        ))}
+        <FormHelperText>This is the agent's social cues, which will be sent to the language model.</FormHelperText>
+      </FormControl>
+
+      <Button onClick={handleNewArtificialAssistant}>Save</Button>
     </>
   );
 };

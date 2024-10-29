@@ -6,6 +6,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   Relation,
+  JoinTable,
   ManyToOne,
   TableInheritance,
   UpdateDateColumn,
@@ -39,7 +40,8 @@ export class SocialCue {
   updatedAt: Date;
 
   @ManyToMany(() => Agent, (agent) => agent.socialCues)
-  agents: Agent[];
+  @JoinTable()
+  socialCues: SocialCue[];
 
   @ManyToOne(() => SocialCueGroup, (socialCueGroup) => socialCueGroup.socialCues)
   socialCueGroup: SocialCueGroup;

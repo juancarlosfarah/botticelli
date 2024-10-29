@@ -48,11 +48,12 @@ export const fetchAgents = createAsyncThunk('agents/fetchAgents', async () => {
 export const saveNewAgent = createAsyncThunk<
   Agent,
   { description: string; name: string}
->('agents/saveNewAgent', async ({ description, name }) => {
+>('agents/saveNewAgent', async ({ description, name, type }) => {
   const response = await IpcService.send<{ agent: any }>(POST_AGENT_CHANNEL, {
     params: {
       description,
       name,
+      type
     },
   });
   return response;

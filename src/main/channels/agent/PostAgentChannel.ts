@@ -1,5 +1,7 @@
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
+import log from 'electron-log/main';
+
 
 import { POST_AGENT_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
@@ -17,15 +19,15 @@ export class PostAgentChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const agent = new Agent();
-    console.log('agent:', agent); // debugging
+    const { description, name, type, socialCues } = request.params;
 
+    const agent = new Agent();
     agent.name = name;
     agent.description = description;
     agent.type = type;
-    agent.avatarUrl = avatarUrl
-    agent.socialCues = ["test", "test2"];
+    agent.socialCues = socialCues;
 
+    log.debug(`got agent:`, agent);
 
     await AppDataSource.manager.save(agent);
     event.sender.send(request.responseChannel, instanceToPlain(agent));

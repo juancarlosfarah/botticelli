@@ -28,7 +28,6 @@ export class PostOneArtificialAssistantChannel extends PostOneChannel {
     agent.avatarUrl = avatarUrl;
     agent.socialCues = socialCues;
 
-
     await AppDataSource.manager.save(agent);
     event.sender.send(request.responseChannel, instanceToPlain(agent));
   }

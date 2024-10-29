@@ -38,7 +38,7 @@ export class Agent {
   })
   messages: Message[];
   
-  @ManyToMany(() => SocialCue, (socialCue) => socialCue.agents, {
+  @ManyToMany(() => SocialCue, (socialCue) => socialCue, {
     cascade: true,
     onDelete: 'CASCADE', 
   })
