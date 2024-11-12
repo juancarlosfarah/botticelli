@@ -57,6 +57,14 @@ import { StartInteractionChannel } from './channels/interaction/StartInteraction
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
+import { DeleteOneSocialCueChannel } from './channels/socialCues/DeleteOneSocialCueChannel';
+import { GetManySocialCueChannel } from './channels/socialCues/GetManySocialCueChannel';
+import { GetOneSocialCueChannel } from './channels/socialCues/GetOneSocialCueChannel';
+import { PostOneSocialCueChannel } from './channels/socialCues/PostOneSocialCueChannel';
+import { DeleteOneSocialCueGroupChannel } from './channels/socialCueGroups/DeleteOneSocialCueGroupChannel';
+import { GetManySocialCueGroupChannel } from './channels/socialCueGroups/GetManySocialCueGroupChannel';
+import { GetOneSocialCueGroupChannel } from './channels/socialCueGroups/GetOneSocialCueGroupChannel';
+import { PostOneSocialCueGroupChannel } from './channels/socialCueGroups/PostOneSocialCueGroupChannel';
 import { DeleteOneSimulationChannel } from './channels/simulation/DeleteOneSimulationChannel';
 import { GetManySimulationsChannel } from './channels/simulation/GetManySimulationsChannel';
 import { GetOneSimulationChannel } from './channels/simulation/GetOneSimulationChannel';
@@ -150,6 +158,8 @@ class Main {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: false,
         devTools: is.dev,
+        webSecurity: false, // Disable this if security is not a concern (use with caution)
+        nodeIntegration: true, // If you need Node.js support
       },
     });
 
@@ -241,6 +251,19 @@ new Main().init([
   new GetOneSimulationChannel(),
   new GetManySimulationsChannel(),
   new DeleteOneSimulationChannel(),
+
+  // social cues
+  new PostOneSocialCueChannel(),
+  new GetOneSocialCueChannel(),
+  new GetManySocialCueChannel(),
+  new DeleteOneSocialCueChannel(),
+
+  // social cue groups
+  new PostOneSocialCueGroupChannel(),
+  new GetOneSocialCueGroupChannel(),
+  new GetManySocialCueGroupChannel(),
+  new DeleteOneSocialCueGroupChannel(),
+
   // events
   new PostOneKeyPressEventChannel(),
   new PostManyKeyPressEventsChannel(),

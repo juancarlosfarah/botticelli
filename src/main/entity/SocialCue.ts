@@ -3,50 +3,48 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
   ManyToMany,
   PrimaryGeneratedColumn,
   Relation,
   JoinTable,
+  ManyToOne,
   TableInheritance,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SocialCue } from './SocialCue';
-
-import AgentType from '../../shared/interfaces/AgentType';
-import { Message } from './Message';
+import { Agent } from './Agent';
+import { SocialCueGroup } from './SocialCueGroup';
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
-export class Agent {
+export class SocialCue {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ default: '' })
-  name: string = '';
+  name: string;
 
   @Column({ default: '' })
-  description: string = '';
+  description: string;
 
   @Column({ default: '' })
-  avatarUrl: string = '';
-
-  @OneToMany(() => Message, (message) => message.sender)
-  messages: Message[];
+  formulation: string;
   
-  @ManyToMany(() => SocialCue, { eager: true })
-  @JoinTable()
-  socialCues: SocialCue[];
-
-  @Column({ type: 'varchar' })
-  type: AgentType;
+  @Column({ default: '' })
+  group: string;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
+
+  @ManyToMany(() => Agent, (agent) => agent.socialCues)
+  @JoinTable()
+  socialCues: SocialCue[];
+
+  @ManyToOne(() => SocialCueGroup, (socialCueGroup) => socialCueGroup.socialCues)
+  socialCueGroup: SocialCueGroup;
 
   @AfterLoad()
   getCreatedAt(): void {

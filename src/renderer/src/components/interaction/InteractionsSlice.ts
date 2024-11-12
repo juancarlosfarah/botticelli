@@ -65,11 +65,6 @@ export const saveNewInteraction = createAsyncThunk<
   async ({
     name,
     description,
-    // modelInstructions,
-    // participantInstructions,
-    // experiment,
-    // template,
-    // participant,
     exchanges,
   }) => {
     const response = await IpcService.send<{ interaction: Interaction }>(

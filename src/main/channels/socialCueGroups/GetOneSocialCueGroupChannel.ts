@@ -1,28 +1,25 @@
-import { GET_ONE_ARTIFICIAL_ASSISTANT_CHANNEL } from '@shared/channels';
-
-import { ArtificialAssistant } from '../../../../entity/ArtificialAssistant';
-import { GetOneChannel } from '../../../common/GetOneChannel';
-import { GetOneAgentParams } from '@shared/interfaces/Agent';
-
+import { GET_ONE_SOCIAL_CUE_GROUP_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
+import { GetOneSocialCueGroupParams } from '@shared/interfaces/SocialCueGroup';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
-import { AppDataSource } from '../../../../data-source';
+import { AppDataSource } from '../../data-source';
+import { SocialCueGroup } from '../../entity/SocialCueGroup';
+import { GetOneChannel } from '../common/GetOneChannel';
 
-
-export class GetOneArtificialAssistantChannel extends GetOneChannel {
+export class GetOneSocialCueGroupChannel extends GetOneChannel {
   constructor() {
     super({
-      name: GET_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
-      entity: ArtificialAssistant,
-    }); 
+      name: GET_ONE_SOCIAL_CUE_GROUP_CHANNEL,
+      entity: SocialCueGroup,
+    });
   }
 
   async handle(
     event: IpcMainEvent,
-    request: IpcRequest<GetOneAgentParams>,
+    request: IpcRequest<GetOneSocialCueGroupParams>,
   ): Promise<void> {
     log.debug(`handling ${this.name}...`);
 
@@ -31,17 +28,23 @@ export class GetOneArtificialAssistantChannel extends GetOneChannel {
     }
 
     // todo: error handling
-    const { params } = request;
+    if (!request.params) {
+      event.sender.send(request.responseChannel, {});
+      return;
+    }
+
+    const params = request?.params;
 
     // debugging
-    log.debug(`using query: ${params}`);
+    log.debug(`using params:`, params);
 
     const repository = AppDataSource.getRepository(this.entity);
     const instances = await repository.find({
       where: {
         ...params,
       },
-      relations: { socialCues: true },
+      relations: {
+      },
       take: 1,
     });
 
@@ -49,11 +52,11 @@ export class GetOneArtificialAssistantChannel extends GetOneChannel {
 
     // debugging
     if (instance) {
-      log.debug(`got agent ${instance.id}`);
+      log.debug(`got socialCue ${instance.id}`);
     }
+
+    // todo: handle 404
 
     event.sender.send(request.responseChannel, instanceToPlain(instance));
   }
 }
-
-

@@ -47,12 +47,13 @@ export const fetchAgents = createAsyncThunk('agents/fetchAgents', async () => {
 
 export const saveNewAgent = createAsyncThunk<
   Agent,
-  { description: string; instructions: string }
->('agents/saveNewAgent', async ({ description, name }) => {
+  { description: string; name: string}
+>('agents/saveNewAgent', async ({ description, name, type }) => {
   const response = await IpcService.send<{ agent: any }>(POST_AGENT_CHANNEL, {
     params: {
       description,
       name,
+      type
     },
   });
   return response;
@@ -60,14 +61,22 @@ export const saveNewAgent = createAsyncThunk<
 
 export const saveNewArtificialAssistant = createAsyncThunk<
   Agent,
-  { description: string; instructions: string }
->('agents/artificial/assistants/saveNew', async ({ description, name }) => {
-  const response = await IpcService.send<{ agent: any }>(
+  { description: string; name: string; avatarUrl: string; socialCues: string[] }
+>('agents/artificial/assistants/saveNew', 
+  async ({ 
+  description, 
+  name, 
+  avatarUrl, 
+  socialCues, 
+}) => {
+  const response = await IpcService.send<{ agent: Agent }>(
     POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
     {
       params: {
         description,
-        name,
+        name, 
+        avatarUrl,
+        socialCues,
       },
     },
   );

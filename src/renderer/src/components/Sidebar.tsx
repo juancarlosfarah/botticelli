@@ -26,7 +26,7 @@ import ListItemButton, { listItemButtonClasses } from '@mui/joy/ListItemButton';
 import ListItemContent from '@mui/joy/ListItemContent';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
-
+import Groups3Icon from '@mui/icons-material/Groups3';
 import { closeSidebar } from '../utils';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import Toggler from './layout/Toggler';
@@ -178,17 +178,6 @@ export default function Sidebar(): ReactElement {
               )}
             >
               <List sx={{ gap: 0.5 }}>
-                {/*<ListItemButton*/}
-                {/*  sx={{ mt: 0.5 }}*/}
-                {/*  selected={pathname === '/interactions'}*/}
-                {/*  role="menuitem"*/}
-                {/*  component={Link}*/}
-                {/*  to="/interactions"*/}
-                {/*>*/}
-                {/*  <ListItemContent>*/}
-                {/*    <Typography level="body-sm">Interactions</Typography>*/}
-                {/*  </ListItemContent>*/}
-                {/*</ListItemButton>*/}
                 <ListItemButton
                   sx={{ mt: 0.5 }}
                   selected={pathname === '/interactions/templates'}
@@ -219,17 +208,6 @@ export default function Sidebar(): ReactElement {
               )}
             >
               <List sx={{ gap: 0.5 }}>
-                {/*<ListItemButton*/}
-                {/*  sx={{ mt: 0.5 }}*/}
-                {/*  selected={pathname === '/exchanges'}*/}
-                {/*  role="menuitem"*/}
-                {/*  component={Link}*/}
-                {/*  to="/exchanges"*/}
-                {/*>*/}
-                {/*  <ListItemContent>*/}
-                {/*    <Typography level="body-sm">Exchanges</Typography>*/}
-                {/*  </ListItemContent>*/}
-                {/*</ListItemButton>*/}
                 <ListItemButton
                   sx={{ mt: 0.5 }}
                   selected={pathname === '/exchanges/templates'}
@@ -327,7 +305,6 @@ export default function Sidebar(): ReactElement {
                     </List>
                   </Toggler>
                 </ListItem>
-
                 <ListItem nested>
                   <Toggler
                     renderToggle={({ open, setOpen }): ReactElement => (
@@ -371,6 +348,46 @@ export default function Sidebar(): ReactElement {
               </List>
             </Toggler>
           </ListItem>
+          <ListItem nested>
+  <Toggler
+    renderToggle={({ open, setOpen }): ReactElement => (
+      <ListItemButton onClick={(): void => setOpen(!open)}>
+        <Groups3Icon />
+        <ListItemContent>
+          <Typography level="title-sm">Social</Typography>
+        </ListItemContent>
+        <KeyboardArrowDownIcon
+          sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
+        />
+      </ListItemButton>
+    )}
+  >
+    <List sx={{ gap: 0.5 }}>
+      <ListItemButton
+        sx={{ mt: 0.5 }}
+        selected={pathname === '/socialcues'}
+        role="menuitem"
+        component={Link}
+        to="/socialcues"
+      >
+        <ListItemContent>
+          <Typography level="body-sm">Cues</Typography>
+        </ListItemContent>
+      </ListItemButton>
+      <ListItemButton
+        sx={{ mt: 0.5 }}
+        selected={pathname === '/socialcuegroups'}
+        role="menuitem"
+        component={Link}
+        to="/socialcuegroups"
+      >
+        <ListItemContent>
+          <Typography level="body-sm">Cue Groups</Typography>
+        </ListItemContent>
+      </ListItemButton>
+    </List>
+  </Toggler>
+              </ListItem>
         </List>
 
         <List
