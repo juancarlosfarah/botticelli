@@ -3,13 +3,18 @@ import {
   ReactElement,
   useEffect,
   useState,
+  MouseEvent,
+  KeyboardEvent,
+  FocusEvent,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel, Radio, RadioGroup } from '@mui/joy';
+import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
 import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
+import Select from '@mui/joy/Select';
+import Option from '@mui/joy/Option'; 
 
 import { AppDispatch } from '../../store';
 import { saveNewSocialCue } from './SocialCuesSlice';
@@ -24,6 +29,7 @@ const NewSocialCue = (): ReactElement => {
   const [name, setName] = useState<string>('');
   const [group, setGroup] = useState<string>('');
   const [formulation, setFormulation] = useState<string>('');
+
 
   useEffect(() => {
     // Fetch the social cue groups once when the component mounts
@@ -58,8 +64,13 @@ const NewSocialCue = (): ReactElement => {
     setFormulation(event.target.value);
   };
 
-  const handleChangeGroup = (event: ChangeEvent<HTMLInputElement>): void => {
-    setGroup(event.currentTarget.value);
+
+  const handleSocialCueGroupChange = (event: any, newValue: string | null) => {
+    if (newValue) {
+      setGroup(newValue);
+      const selectedGroup = socialCueGroups.find((g) => g.id === newValue);
+      console.log(`Selected group: ${selectedGroup?.name} (ID: ${newValue})`);
+    }
   };
 
   return (
@@ -87,21 +98,16 @@ const NewSocialCue = (): ReactElement => {
       </FormControl>
 
       <FormControl>
-        <FormLabel>Group</FormLabel>
-        <RadioGroup
-          defaultValue="none"
-          name="radio-buttons-group"
-          value={group}
-          onChange={handleChangeGroup}
-        >
+        <FormLabel>Social Cue Group</FormLabel>
+        <Select value={group} onChange={handleSocialCueGroupChange}>
           {socialCueGroups.map((cueGroup) => (
-            <Radio key={cueGroup.id} value={cueGroup.id} label={cueGroup.name} />
+            <Option value={cueGroup.id} key={cueGroup.id}>
+              {cueGroup.name}
+            </Option>
           ))}
-        </RadioGroup>
-        <FormHelperText>
-          Choose the most appropriate group for this social cue.
-        </FormHelperText>
-      </FormControl>
+        </Select>
+      <FormHelperText>Select the most appropriate group for this social cue.</FormHelperText>
+    </FormControl>
 
       <Button onClick={handleNewSocialCue}>Save</Button>
     </>

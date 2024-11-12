@@ -158,6 +158,8 @@ class Main {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: false,
         devTools: is.dev,
+        webSecurity: false, // Disable this if security is not a concern (use with caution)
+        nodeIntegration: true, // If you need Node.js support
       },
     });
 
