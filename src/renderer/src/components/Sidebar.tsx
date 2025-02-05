@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -33,6 +34,8 @@ import Toggler from './layout/Toggler';
 
 export default function Sidebar(): ReactElement {
   const { pathname } = useLocation();
+
+  const { t } = useTranslation();
 
   return (
     <Sheet
@@ -130,7 +133,7 @@ export default function Sidebar(): ReactElement {
             >
               <HomeRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Home</Typography>
+                <Typography level="title-sm">{t('Home')}</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -144,7 +147,7 @@ export default function Sidebar(): ReactElement {
             >
               <ScienceIcon />
               <ListItemContent>
-                <Typography level="title-sm">Experiments</Typography>
+                <Typography level="title-sm">{t('Experiments')}</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
