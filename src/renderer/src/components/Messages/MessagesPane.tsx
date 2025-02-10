@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -47,6 +48,8 @@ export default function MessagesPane({
     selectExchangeById(state, exchangeId),
   );
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     dispatch(fetchExchange({ id: exchangeId }));
     dispatch(fetchMessages({ exchangeId }));
@@ -59,7 +62,7 @@ export default function MessagesPane({
   }, [exchange]);
 
   if (!exchange) {
-    return <>Exchange Not Found</>;
+    return <>{t('Exchange Not Found')}</>;
   }
 
   // completed is flagged when we reached the soft limit
@@ -81,7 +84,7 @@ export default function MessagesPane({
   // the message showed upon reaching the hard limit is slightly
   // different to the one we show when the soft limit is reached
   const messageOnComplete = hardComplete
-    ? 'This exchange has been marked as completed. Please click **Done**.'
+    ? t('This exchange has been marked as completed. Please click **Done**.')
     : exchange.participantInstructionsOnComplete;
 
   const handleDismiss = (): void => {
@@ -127,7 +130,7 @@ export default function MessagesPane({
                     content={message.content}
                     // timestamp={message.updatedAt.toString()}
                     attachment={false}
-                    sender={isYou ? 'You' : message?.sender}
+                    sender={isYou ? t('You') : message?.sender}
                   />
                 </Stack>
               );
@@ -153,7 +156,7 @@ export default function MessagesPane({
                     onClick={handleDismiss}
                     disabled={readOnly || exchange.dismissed}
                   >
-                    Done
+                    {t('Done')}
                   </Button>
                 }
               >

@@ -1,5 +1,5 @@
 import { electronAPI } from '@electron-toolkit/preload';
-import { contextBridge } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import log from 'electron-log/renderer';
 
 // Custom APIs for renderer
@@ -12,6 +12,10 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI);
     contextBridge.exposeInMainWorld('api', api);
+    contextBridge.exposeInMainWorld('languageChange', {
+      language: (callback) =>
+        ipcRenderer.on('languageSignal', (_event, value) => callback(value)),
+    });
   } catch (error) {
     log.error(error);
   }

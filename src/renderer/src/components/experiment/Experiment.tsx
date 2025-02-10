@@ -1,5 +1,6 @@
 import { ReactElement, useEffect } from 'react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
@@ -25,6 +26,8 @@ export default function Experiment(): ReactElement {
   const { experimentId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
+  const { t } = useTranslation();
+
   const [order, setOrder] = React.useState<Order>('desc');
 
   useEffect(() => {
@@ -34,7 +37,7 @@ export default function Experiment(): ReactElement {
   }, [experimentId]);
 
   if (!experimentId) {
-    return <div>Invalid Experiment ID</div>;
+    return <div>{t('Invalid Experiment ID')}</div>;
   }
 
   const experiment = useSelector((state) =>
@@ -42,7 +45,7 @@ export default function Experiment(): ReactElement {
   );
 
   if (!experiment) {
-    return <div>Experiment Not Found</div>;
+    return <div>{t('Experiment Not Found')}</div>;
   }
 
   const participants = experiment.participants || [];
@@ -140,8 +143,8 @@ export default function Experiment(): ReactElement {
                   'asc',
                 ).map((interaction) => {
                   const viewParticipantInteractionText = !interaction.started
-                    ? 'Start'
-                    : 'Resume';
+                    ? t('Start')
+                    : t('Resume');
                   return (
                     <td key={interaction.id} style={{ overflowX: 'scroll' }}>
                       {_.orderBy(interaction.exchanges, 'order', 'asc').map(

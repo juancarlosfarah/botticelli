@@ -268,6 +268,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.23.2":
+  version: 7.26.7
+  resolution: "@babel/runtime@npm:7.26.7"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 10/c7a661a6836b332d9d2e047cba77ba1862c1e4f78cec7146db45808182ef7636d8a7170be9797e5d8fd513180bffb9fa16f6ca1c69341891efec56113cf22bfc
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.22.15, @babel/template@npm:^7.24.0":
   version: 7.24.0
   resolution: "@babel/template@npm:7.24.0"
@@ -2414,7 +2423,10 @@ __metadata:
     electron-vite: "npm:1.0.27"
     eslint: "npm:8.53.0"
     eslint-plugin-react: "npm:7.33.2"
-    i18next: "npm:23.6.0"
+    i18next: "npm:24.2.2"
+    i18next-electron-fs-backend: "npm:3.0.3"
+    i18next-fs-backend: "npm:2.6.0"
+    i18next-resources-to-backend: "npm:1.2.1"
     lodash.capitalize: "npm:4.2.1"
     lodash.delay: "npm:4.1.1"
     lodash.isnull: "npm:3.0.0"
@@ -4638,12 +4650,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:23.6.0":
-  version: 23.6.0
-  resolution: "i18next@npm:23.6.0"
+"i18next-electron-fs-backend@npm:3.0.3":
+  version: 3.0.3
+  resolution: "i18next-electron-fs-backend@npm:3.0.3"
   dependencies:
-    "@babel/runtime": "npm:^7.22.5"
-  checksum: 10/cf5ad02fdd0805cc92a5ae214818cca10590784dcefa063d9f2b1f1654da7c7842d320c95f2574674e2ac835eed118001b99e214901bb171af20d59c534534cf
+    lodash.clonedeep: "npm:^4.5.0"
+    lodash.merge: "npm:^4.6.2"
+  checksum: 10/fcc7378fbb03906cba8414cea62ba3cf11f6c70686380bd296276161ae4e0e5dbc76b9fe9676228024fa5d8aff8aab7c8ccb5ce6f36a54afbc790ae29b7ae5f4
+  languageName: node
+  linkType: hard
+
+"i18next-fs-backend@npm:2.6.0":
+  version: 2.6.0
+  resolution: "i18next-fs-backend@npm:2.6.0"
+  checksum: 10/e23b6337326bea870c9e0a3e004241a27dcc56ac803946b859992bc2030e5f8d41cb10fbf3b74424155055387587f8d308b60118e07f75104198865f329013a9
+  languageName: node
+  linkType: hard
+
+"i18next-resources-to-backend@npm:1.2.1":
+  version: 1.2.1
+  resolution: "i18next-resources-to-backend@npm:1.2.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+  checksum: 10/93e3d5ede02f4f9b1515759fe7c4f0b911aec1deceb1836e4b25926ff5c54d27d24e5e42c62a55ad1d911d9f9a0965d48b03fdf0028183215b5cd4f5d9465e5f
+  languageName: node
+  linkType: hard
+
+"i18next@npm:24.2.2":
+  version: 24.2.2
+  resolution: "i18next@npm:24.2.2"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+  peerDependencies:
+    typescript: ^5
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10/f66ed9e56d9412e59502f5df39163631daf9f1264774732fb21edbd66a528ca7a6b67dc2e2aec95683c6c7956e42c651587a54bd8ee082bd12008880ce6cd326
   languageName: node
   linkType: hard
 
@@ -5340,6 +5383,13 @@ __metadata:
   version: 4.2.1
   resolution: "lodash.capitalize@npm:4.2.1"
   checksum: 10/54d61121bd040212954faee94703a999282987a104fab4ea6a85027d5fb2ce482a737478b76d292d07753da1c15911541adf0f6db840abf121c4cab85b92e962
+  languageName: node
+  linkType: hard
+
+"lodash.clonedeep@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.clonedeep@npm:4.5.0"
+  checksum: 10/957ed243f84ba6791d4992d5c222ffffca339a3b79dbe81d2eaf0c90504160b500641c5a0f56e27630030b18b8e971ea10b44f928a977d5ced3c8948841b555f
   languageName: node
   linkType: hard
 

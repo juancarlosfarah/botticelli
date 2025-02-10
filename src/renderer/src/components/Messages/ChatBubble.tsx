@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
@@ -24,6 +25,8 @@ export default function ChatBubble({
 }: ChatBubbleProps): React.ReactElement {
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
+  const { t } = useTranslation();
+
   return (
     <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
       <Stack
@@ -33,7 +36,7 @@ export default function ChatBubble({
         sx={{ mb: 0.25 }}
       >
         <Typography level="body-xs">
-          {sender === 'You' ? sender : sender.name}
+          {sender === t('You') ? sender : sender.name}
         </Typography>
         {timestamp && (
           <Typography level="body-xs">

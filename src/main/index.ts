@@ -5,11 +5,14 @@ import installExtension, {
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
 import log from 'electron-log/main';
+import fs from 'fs';
+import i18nextBackend from 'i18next-electron-fs-backend';
 import { join } from 'path';
 import 'reflect-metadata';
 import 'reflect-metadata';
 
 import icon from '../../resources/icon.png?asset';
+import i18nextMainBackend from '../shared/locales/i18n.main.config';
 import { DeleteAgentChannel } from './channels/agent/DeleteAgentChannel';
 import { GetAgentChannel } from './channels/agent/GetAgentChannel';
 import { GetAgentsChannel } from './channels/agent/GetAgentsChannel';
@@ -67,6 +70,7 @@ import { GetOneTriggerChannel } from './channels/trigger/GetOneTriggerChannel';
 import { PostOneTriggerChannel } from './channels/trigger/PostOneTriggerChannel';
 import { AppDataSource } from './data-source';
 import { IpcChannel } from './interfaces/IpcChannel';
+import MenuFactory from './menu';
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
@@ -151,6 +155,33 @@ class Main {
         sandbox: false,
         devTools: is.dev,
       },
+    });
+
+    // Sets up main bindings for our i18next backend
+    i18nextBackend.mainBindings(ipcMain, mainWindow, fs);
+
+    const menuBuilder = MenuFactory(mainWindow, app.name);
+
+    menuBuilder.buildMenu(i18nextMainBackend);
+
+    // Set up necessary bindings to update the menu items
+    // based on the current language selected
+    i18nextMainBackend.on('initialized', (loaded) => {
+      i18nextMainBackend.changeLanguage('en');
+      i18nextMainBackend.off('initialized'); // Remove listener to this event as it's not needed anymore
+    });
+
+    // When the i18n framework starts up, this event is called
+    // (presumably when the default language is initialized)
+    // BEFORE the "initialized" event is fired - this causes an
+    // error in the logs. To prevent said error, we only call the
+    // below code until AFTER the i18n framework has finished its
+    // "initialized" event.
+    i18nextMainBackend.on('languageChanged', (lng) => {
+      if (i18nextMainBackend.isInitialized) {
+        menuBuilder.buildMenu(i18nextMainBackend);
+        mainWindow.webContents.send('languageSignal', lng);
+      }
     });
 
     mainWindow.on('ready-to-show', () => {

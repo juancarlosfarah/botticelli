@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
@@ -23,8 +24,10 @@ export default function ParticipantInteraction(): ReactElement {
   const { experimentId, participantId, interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
+  const { t } = useTranslation();
+
   if (!interactionId || !experimentId || !participantId) {
-    return <div>Interaction Not Found</div>;
+    return <div>{t('Interaction Not Found')}</div>;
   }
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export default function ParticipantInteraction(): ReactElement {
   );
 
   if (!interaction) {
-    return <div>Interaction Not Found</div>;
+    return <div>{t('Interaction Not Found')}</div>;
   }
 
   const handleStartInteraction = (): void => {
@@ -51,7 +54,7 @@ export default function ParticipantInteraction(): ReactElement {
         <Link
           underline="none"
           color="neutral"
-          aria-label="Back"
+          aria-label={t('Back')}
           component={RouterLink}
           to={`/experiments/${experimentId}`}
           sx={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 10000 }}
@@ -78,7 +81,7 @@ export default function ParticipantInteraction(): ReactElement {
             sx={{ mt: 3, mx: 'auto' }}
             onClick={handleStartInteraction}
           >
-            Start
+            {t('Start')}
           </Button>
         </Box>
       </>
@@ -90,7 +93,7 @@ export default function ParticipantInteraction(): ReactElement {
       <Link
         underline="none"
         color="neutral"
-        aria-label="Back"
+        aria-label={t('Back')}
         component={RouterLink}
         to={`/experiments/${experimentId}`}
         sx={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 10000 }}
