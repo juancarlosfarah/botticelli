@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
@@ -45,6 +46,7 @@ import Simulations from './components/simulation/Simulations';
 import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
+import i18n from './config/i18nResources';
 import './index.css';
 import store from './store';
 
@@ -221,10 +223,12 @@ const router = createBrowserRouter([
 // this is a call to add the app at the root of the document
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <StyledEngineProvider injectFirst>
-      <Provider store={store}>
-        <RouterProvider router={router} />
-      </Provider>
-    </StyledEngineProvider>
+    <I18nextProvider i18n={i18n}>
+      <StyledEngineProvider injectFirst>
+        <Provider store={store}>
+          <RouterProvider router={router} />
+        </Provider>
+      </StyledEngineProvider>
+    </I18nextProvider>
   </React.StrictMode>,
 );

@@ -1,9 +1,11 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
 import CssBaseline from '@mui/joy/CssBaseline';
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
+
+import i18next from 'i18next';
 
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -11,6 +13,16 @@ import Sidebar from './components/Sidebar';
 const theme = extendTheme();
 
 export default function JoyOrderDashboardTemplate(): ReactElement {
+  const [language, setLanguage] = useState('en');
+
+  useEffect(() => {
+    window.languageChange.language((value) => {
+      setLanguage(value);
+    });
+
+    i18next.changeLanguage(language);
+  }, [language]);
+
   return (
     <CssVarsProvider theme={theme} disableTransitionOnChange>
       <CssBaseline />

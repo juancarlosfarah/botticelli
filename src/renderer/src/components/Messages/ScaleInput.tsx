@@ -1,4 +1,5 @@
 import { ChangeEvent, ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
@@ -31,6 +32,8 @@ export default function ScaleInput({
 }: ScaleInputProps): ReactElement {
   const [value, setValue] = useState<string | null>(null);
   const [keypressData, setKeypressData] = useState<KeyPressData[]>([]);
+
+  const { t } = useTranslation();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -79,7 +82,7 @@ export default function ScaleInput({
             value={value}
             onChange={handleChange}
           >
-            <Typography level="h4">Not At All</Typography>
+            <Typography level="h4">{t('Not At All')}</Typography>
             {/*todo: make dynamic*/}
             {[1, 2, 3, 4, 5, 6, 7].map((val) => (
               <Radio
@@ -92,7 +95,7 @@ export default function ScaleInput({
                 }}
               />
             ))}
-            <Typography level="h4">Very Strongly</Typography>
+            <Typography level="h4">{t('Very Strongly')}</Typography>
           </RadioGroup>
         </FormControl>
         <Box

@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
@@ -33,6 +34,8 @@ export default function TextInput({
   const [keypressData, setKeypressData] = useState<KeyPressData[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const { t } = useTranslation();
 
   const focusOnTextArea = (): void => {
     const textareaElement = textAreaRef?.current?.querySelector('textarea');
@@ -69,8 +72,8 @@ export default function TextInput({
     <Box sx={{ px: 2, pb: 3 }}>
       <FormControl>
         <Textarea
-          placeholder="Type something here…"
-          aria-label="Message"
+          placeholder={t('Type something here…')}
+          aria-label={t('Message')}
           ref={textAreaRef}
           onChange={(e): void => {
             setTextAreaValue(e.target.value);
@@ -98,7 +101,7 @@ export default function TextInput({
                 endDecorator={<SendRoundedIcon />}
                 onClick={handleClick}
               >
-                Send
+                {t('Send')}
               </Button>
             </Stack>
           }

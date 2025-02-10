@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import InputType from '@shared/enums/InputType';
 
@@ -21,6 +22,7 @@ export default function MessageInput({
   interactionId,
   completed,
 }: MessageInputProps): ReactElement {
+  const { t } = useTranslation();
   switch (inputType) {
     case InputType.Text:
       return (
@@ -53,6 +55,6 @@ export default function MessageInput({
         />
       );
     default:
-      return <div>No Input</div>;
+      return <div>{t('No Input')}</div>;
   }
 }
