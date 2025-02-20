@@ -42,7 +42,7 @@ export default function Trigger(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">{`Trigger #${triggerId}`}</Typography>
+        <Typography level="h2">Trigger</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
         Name
