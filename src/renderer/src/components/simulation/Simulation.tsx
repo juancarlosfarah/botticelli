@@ -168,7 +168,7 @@ export default function Simulation(): ReactElement {
                       <table>
                         <tr>
                           {!interaction.completed && (
-                            <td>
+                            <td style={{ display: 'none' }}>
                               <Link
                                 level="body-xs"
                                 component={RouterLink}
