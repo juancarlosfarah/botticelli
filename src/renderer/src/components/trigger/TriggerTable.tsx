@@ -103,12 +103,12 @@ export default function TriggerTable(): ReactElement {
                 </td>
                 <td>
                   <Typography level="body-xs">
-                    {_.truncate(row.name, {length: 25})}
+                    {_.truncate(row.name, { length: 25 })}
                   </Typography>
                 </td>
                 <td>
                   <Typography level="body-xs">
-                    {_.truncate(row.description,{length: 25})}
+                    {_.truncate(row.description, { length: 25 })}
                   </Typography>
                 </td>
                 <td>
