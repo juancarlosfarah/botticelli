@@ -174,6 +174,7 @@ export default function Simulation(): ReactElement {
                                 component={RouterLink}
                                 sx={{ ml: 1 }}
                                 to={`/simulations/${simulationId}/participants/${row.id}/interactions/${interaction.id}`}
+                                disabled
                               >
                                 {viewParticipantInteractionText}
                               </Link>
