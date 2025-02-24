@@ -10,6 +10,7 @@ import Select from '@mui/joy/Select';
 import Typography from '@mui/joy/Typography';
 
 import Language from '@shared/enums/Language';
+import ModelKey from '@shared/enums/ModelKey';
 import capitalize from 'lodash.capitalize';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
@@ -18,6 +19,7 @@ const EditSettings = (): ReactElement => {
   const { t } = useTranslation();
 
   const languages = Object.values(Language);
+  const models = Object.values(ModelKey);
 
   return (
     <>
@@ -51,14 +53,31 @@ const EditSettings = (): ReactElement => {
         <Typography level="h2">{t('Edit Settings')}</Typography>
       </Box>
       <FormControl>
+        <FormLabel>
+          {t('Select an AI model to process and generate responses.')}
+        </FormLabel>
+        <Select value={''} onChange={() => {}}>
+          {models.map((model) => (
+            <Option value={model} key={model}>
+              {model}
+            </Option>
+          ))}
+        </Select>
+        <FormHelperText>
+          {t('Models may vary in accuracy, speed and cost.')}
+        </FormHelperText>
+      </FormControl>
+
+      <FormControl>
         <FormLabel>{t('OpenAI API Key')}</FormLabel>
-        <Input value={''} onChange={() => {}} />
+        <Input value={''} onChange={() => {}}></Input>
         <FormHelperText>
           {t(
             `Your OpenAI API key is used to communicate with the OpenAI services.`,
           )}
         </FormHelperText>
       </FormControl>
+
       <FormControl>
         <FormLabel> {t('Language')}</FormLabel>
         <Select value={''} onChange={() => {}}>
@@ -72,6 +91,10 @@ const EditSettings = (): ReactElement => {
           {t('This is the language of the Botticelli interface.')}
         </FormHelperText>
       </FormControl>
+
+      <Button color="danger" onClick={() => {}}>
+        {t('Reset to Default Settings')}
+      </Button>
     </>
   );
 };

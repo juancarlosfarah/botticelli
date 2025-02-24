@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -47,6 +48,7 @@ import { deleteOneExchange, selectAllExchanges } from './ExchangesSlice';
 export default function ExchangeTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
+  const { t } = useTranslation();
 
   const exchanges = useSelector(selectAllExchanges);
 
@@ -105,7 +107,7 @@ export default function ExchangeTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 100, padding: '12px 6px' }}>
                 Number of Messages
@@ -166,7 +168,7 @@ export default function ExchangeTable(): ReactElement {
                       component={RouterLink}
                       to={`/exchanges/${row.id}`}
                     >
-                      View
+                      {t('View')}
                     </Link>
                     <RowMenu rowId={row.id} deleteHandler={deleteOneExchange} />
                   </Box>

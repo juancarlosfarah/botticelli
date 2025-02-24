@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ import { fetchAgents } from './AgentsSlice';
 
 export default function Agents(): ReactElement {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -16,7 +18,7 @@ export default function Agents(): ReactElement {
   return (
     <div>
       <Button color="primary" to="/agents/new" component={RouterLink}>
-        New Agent
+        {t('New Agent')}
       </Button>
       <AgentTable />
     </div>

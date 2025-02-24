@@ -73,10 +73,10 @@ export default function Experiment(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">Experiment</Typography>
+        <Typography level="h2">{t('Experiment')}</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{experiment.name}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
@@ -114,7 +114,7 @@ export default function Experiment(): ReactElement {
         >
           <thead>
             <tr>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}></th>
               {interactionTemplates.map((interactionTemplate) => {
                 return (
                   <th

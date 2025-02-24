@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -23,6 +24,7 @@ import {
 export default function InteractionTemplateTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
+  const { t } = useTranslation();
 
   const interactionTemplates = useSelector(selectInteractionTemplates);
 
@@ -83,7 +85,7 @@ export default function InteractionTemplateTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
             </tr>
@@ -125,7 +127,7 @@ export default function InteractionTemplateTable(): ReactElement {
                         component={RouterLink}
                         to={`/interactions/templates/${row.id}`}
                       >
-                        View
+                        {t('View')}
                       </Link>
                       <RowMenu
                         rowId={row.id}

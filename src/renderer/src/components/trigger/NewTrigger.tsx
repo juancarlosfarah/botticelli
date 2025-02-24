@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +22,7 @@ import { saveNewTrigger } from './TriggersSlice';
 
 const NewTrigger = (): ReactElement => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const evaluators = useSelector(selectEvaluators);
@@ -76,26 +78,28 @@ const NewTrigger = (): ReactElement => {
   return (
     <>
       <FormControl>
-        <FormLabel>Name</FormLabel>
+        <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the trigger's name.`}</FormHelperText>
+        <FormHelperText>{t("This is the trigger's name.")}</FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this trigger.
+          {t('This is an internal description for this trigger.')}
         </FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Instructions</FormLabel>
         <Textarea value={criteria} onChange={handleChangeCriteria} />
         <FormHelperText>
-          These are the instructions that will be sent to the language model.
+          {t(
+            'These are the instructions that will be sent to the language model.',
+          )}
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Evaluator</FormLabel>
+        <FormLabel>{t('Evaluator')}</FormLabel>
         <Select value={evaluator} onChange={handleChangeEvaluator}>
           {evaluators.map((agent) => (
             <Option value={agent.id} key={agent.id}>

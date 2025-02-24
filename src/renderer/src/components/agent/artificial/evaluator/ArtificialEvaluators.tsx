@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ import ArtificialEvaluatorTable from './ArtificialEvaluatorTable';
 
 export default function ArtificialEvaluators(): ReactElement {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -20,7 +22,7 @@ export default function ArtificialEvaluators(): ReactElement {
         to="/agents/artificial/evaluators/new"
         component={RouterLink}
       >
-        New Artificial Evaluator
+        {t('New Artificial Evaluator')}
       </Button>
       <ArtificialEvaluatorTable />
     </div>

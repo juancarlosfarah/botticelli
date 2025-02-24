@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ import { fetchAgent, selectAgentById } from '../../AgentsSlice';
 export default function ArtificialParticipant(): ReactElement {
   const { agentId } = useParams();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const query = { id: agentId };
@@ -23,7 +25,7 @@ export default function ArtificialParticipant(): ReactElement {
   const agent = useSelector((state) => selectAgentById(state, agentId));
 
   if (!agent) {
-    return <div>Agent Not Found</div>;
+    return <div>{t('Agent Not Found')}</div>;
   }
 
   return (
@@ -43,7 +45,7 @@ export default function ArtificialParticipant(): ReactElement {
         <Typography level="h2">Agent</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{agent.name}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">

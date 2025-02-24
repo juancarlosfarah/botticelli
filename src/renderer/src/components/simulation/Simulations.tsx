@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -11,6 +12,7 @@ import { fetchSimulations } from './SimulationsSlice';
 
 export default function Simulations(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchSimulations());
@@ -19,7 +21,7 @@ export default function Simulations(): JSX.Element {
   return (
     <div>
       <Button color="primary" to="/simulations/new" component={RouterLink}>
-        New Simulation
+        {t('New Simulation')}
       </Button>
       <SimulationTable />
       <SimulationList />

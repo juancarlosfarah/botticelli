@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -14,6 +15,7 @@ import { fetchTrigger, selectTriggerById } from './TriggersSlice';
 export default function Trigger(): ReactElement {
   const { triggerId } = useParams();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const query = { id: triggerId };
@@ -25,7 +27,7 @@ export default function Trigger(): ReactElement {
   const trigger = useSelector((state) => selectTriggerById(state, triggerId));
 
   if (!trigger) {
-    return <div>Trigger Not Found</div>;
+    return <div>{t('Trigger Not Found')}</div>;
   }
 
   return (
@@ -42,10 +44,10 @@ export default function Trigger(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">Trigger</Typography>
+        <Typography level="h2">{t('Trigger')}</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{trigger.name}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
@@ -53,11 +55,11 @@ export default function Trigger(): ReactElement {
       </Typography>
       <Typography>{trigger.description}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
-        Criteria
+        {t('Criteria')}
       </Typography>
       <Typography>{trigger.criteria}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
-        Evaluator
+        {t('Evaluator')}
       </Typography>
       <Typography>{trigger?.evaluator?.name || '—'}</Typography>
     </>

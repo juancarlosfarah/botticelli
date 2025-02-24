@@ -35,11 +35,11 @@ function RowMenu() {
         <MoreHorizRoundedIcon />
       </MenuButton>
       <Menu size="sm" sx={{ minWidth: 140 }}>
-        <MenuItem>Edit</MenuItem>
-        <MenuItem>Rename</MenuItem>
-        <MenuItem>Move</MenuItem>
+        <MenuItem>{t('Edit')}</MenuItem>
+        <MenuItem>{t('Rename')}</MenuItem>
+        <MenuItem>{t('Move')}</MenuItem>
         <Divider />
-        <MenuItem color="danger">Delete</MenuItem>
+        <MenuItem color="danger">{t('Delete')}</MenuItem>
       </Menu>
     </Dropdown>
   );
@@ -94,7 +94,7 @@ export default function OrderList(): ReactElement {
                   sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}
                 >
                   <Link level="body-sm" component="button">
-                    Download
+                    {t('Download')}
                   </Link>
                   <RowMenu />
                 </Box>
@@ -141,7 +141,7 @@ export default function OrderList(): ReactElement {
           <KeyboardArrowLeftIcon />
         </IconButton>
         <Typography level="body-sm" mx="auto">
-          Page 1 of 10
+          {'Page 1 of 10'}
         </Typography>
         <IconButton
           aria-label="next page"

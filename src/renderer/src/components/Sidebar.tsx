@@ -102,7 +102,7 @@ export default function Sidebar(): ReactElement {
       <Input
         size="sm"
         startDecorator={<SearchRoundedIcon />}
-        placeholder="Search"
+        placeholder={t('Search')}
       />
       <Box
         sx={{
@@ -200,7 +200,7 @@ export default function Sidebar(): ReactElement {
                   to="/interactions/templates"
                 >
                   <ListItemContent>
-                    <Typography level="body-sm">Templates</Typography>
+                    <Typography level="body-sm">{t('Templates')}</Typography>
                   </ListItemContent>
                 </ListItemButton>
               </List>
@@ -213,7 +213,7 @@ export default function Sidebar(): ReactElement {
                 <ListItemButton onClick={(): void => setOpen(!open)}>
                   <QuestionAnswerRoundedIcon />
                   <ListItemContent>
-                    <Typography level="title-sm">Exchanges</Typography>
+                    <Typography level="title-sm">{t('Exchanges')}</Typography>
                   </ListItemContent>
                   <KeyboardArrowDownIcon
                     sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
@@ -241,7 +241,7 @@ export default function Sidebar(): ReactElement {
                   to="/exchanges/templates"
                 >
                   <ListItemContent>
-                    <Typography level="body-sm">Templates</Typography>
+                    <Typography level="body-sm">{t('Templates')}</Typography>
                   </ListItemContent>
                 </ListItemButton>
               </List>
@@ -257,7 +257,7 @@ export default function Sidebar(): ReactElement {
             >
               <ElectricBoltIcon />
               <ListItemContent>
-                <Typography level="title-sm">Triggers</Typography>
+                <Typography level="title-sm">{t('Triggers')}</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -283,7 +283,9 @@ export default function Sidebar(): ReactElement {
                       <ListItemButton onClick={(): void => setOpen(!open)}>
                         <RobotIcon />
                         <ListItemContent>
-                          <Typography level="title-sm">Artificial</Typography>
+                          <Typography level="title-sm">
+                            {t('Artificial')}
+                          </Typography>
                         </ListItemContent>
                         <KeyboardArrowDownIcon
                           sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
@@ -311,7 +313,9 @@ export default function Sidebar(): ReactElement {
                         to="/agents/artificial/evaluators"
                       >
                         <ListItemContent>
-                          <Typography level="body-sm">Evaluators</Typography>
+                          <Typography level="body-sm">
+                            {t('Evaluators')}
+                          </Typography>
                         </ListItemContent>
                       </ListItemButton>
                       <ListItemButton
@@ -337,7 +341,7 @@ export default function Sidebar(): ReactElement {
                       <ListItemButton onClick={(): void => setOpen(!open)}>
                         <GroupRoundedIcon />
                         <ListItemContent>
-                          <Typography level="title-sm">Human</Typography>
+                          <Typography level="title-sm">{t('Human')}</Typography>
                         </ListItemContent>
                         <KeyboardArrowDownIcon
                           sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
@@ -400,7 +404,7 @@ export default function Sidebar(): ReactElement {
               to="/settings"
             >
               <SettingsRoundedIcon />
-              Settings
+              {t('Settings')}
             </ListItemButton>
           </ListItem>
         </List>

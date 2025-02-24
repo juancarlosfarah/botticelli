@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,6 +30,7 @@ import { saveNewExperiment } from './ExperimentsSlice';
 
 const NewExperiment = (): ReactElement => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const availableInteractionTemplates = useSelector(selectInteractionTemplates);
@@ -88,15 +90,15 @@ const NewExperiment = (): ReactElement => {
   return (
     <>
       <FormControl>
-        <FormLabel>Name</FormLabel>
+        <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the experiment's name.`}</FormHelperText>
+        <FormHelperText>{t("This is the experiment's name.")}</FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this experiment.
+          {t('This is an internal description for this experiment.')}
         </FormHelperText>
       </FormControl>
       <FormControl>
@@ -159,7 +161,7 @@ const NewExperiment = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewExperiment}>Save</Button>
+      <Button onClick={handleNewExperiment}>{t('Save')}</Button>
     </>
   );
 };
