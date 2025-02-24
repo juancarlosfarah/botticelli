@@ -393,7 +393,12 @@ export default function Sidebar(): ReactElement {
             </ListItemButton>
           </ListItem>
           <ListItem>
-            <ListItemButton>
+            <ListItemButton
+              selected={pathname === '/settings'}
+              role="menuitem"
+              component={Link}
+              to="/settings"
+            >
               <SettingsRoundedIcon />
               Settings
             </ListItemButton>
