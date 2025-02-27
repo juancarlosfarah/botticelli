@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -10,6 +11,7 @@ import { fetchInteractions } from './InteractionsSlice';
 
 export default function Interactions(): JSX.Element {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchInteractions());
@@ -18,7 +20,7 @@ export default function Interactions(): JSX.Element {
   return (
     <div>
       <Button color="primary" to="/interactions/new" component={RouterLink}>
-        New Interaction
+        {t('New Interaction')}
       </Button>
       <InteractionTable />
       <InteractionList />

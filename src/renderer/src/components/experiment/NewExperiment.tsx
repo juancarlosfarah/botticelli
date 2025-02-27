@@ -7,10 +7,17 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Typography,
+} from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
@@ -29,6 +36,7 @@ import { saveNewExperiment } from './ExperimentsSlice';
 
 const NewExperiment = (): ReactElement => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const availableInteractionTemplates = useSelector(selectInteractionTemplates);
@@ -87,16 +95,39 @@ const NewExperiment = (): ReactElement => {
 
   return (
     <>
+      <Button
+        color="neutral"
+        onClick={() => navigate(-1)}
+        style={{
+          maxWidth: '50px',
+          maxHeight: '50px',
+        }}
+      >
+        {t('Back')}
+      </Button>
+      <Typography level="h2">{t('New Experiment')}</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+          gap: 1,
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'start', sm: 'center' },
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+        }}
+      ></Box>
+
       <FormControl>
-        <FormLabel>Name</FormLabel>
+        <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the experiment's name.`}</FormHelperText>
+        <FormHelperText>{t("This is the experiment's name.")}</FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this experiment.
+          {t('This is an internal description for this experiment.')}
         </FormHelperText>
       </FormControl>
       <FormControl>
@@ -159,7 +190,7 @@ const NewExperiment = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewExperiment}>Save</Button>
+      <Button onClick={handleNewExperiment}>{t('Save')}</Button>
     </>
   );
 };

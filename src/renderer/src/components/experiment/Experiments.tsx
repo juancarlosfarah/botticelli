@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -10,6 +11,7 @@ import { fetchExperiments } from './ExperimentsSlice';
 
 export default function Experiments(): JSX.Element {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchExperiments());
@@ -18,7 +20,7 @@ export default function Experiments(): JSX.Element {
   return (
     <div>
       <Button color="primary" to="/experiments/new" component={RouterLink}>
-        New Experiment
+        {t('New Experiment')}
       </Button>
       <ExperimentTable />
       <ExperimentList />

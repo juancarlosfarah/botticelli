@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,6 +27,7 @@ import { saveNewInteraction } from './InteractionsSlice';
 const NewInteraction = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const availableExchanges = useSelector(selectAllExchanges);
 
@@ -82,24 +84,26 @@ const NewInteraction = (): ReactElement => {
       <FormControl>
         <FormLabel>Name</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the interaction's name.`}</FormHelperText>
+        <FormHelperText>{t("This is the Interaction's name.")}</FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this interaction.
+          {t('This is an internal descriptions for this interaction.')}
         </FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Instructions</FormLabel>
         <Textarea value={instructions} onChange={handleChangeInstructions} />
         <FormHelperText>
-          These are the instructions that will be sent to the language model.
+          {t(
+            'These are the instructions that will be sent to the language model.',
+          )}
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Exchanges</FormLabel>
+        <FormLabel>{t('Exchanges')}</FormLabel>
         <Select
           multiple
           value={exchanges}
@@ -128,7 +132,7 @@ const NewInteraction = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewInteraction}>Save</Button>
+      <Button onClick={handleNewInteraction}>{t('Save')}</Button>
     </>
   );
 };

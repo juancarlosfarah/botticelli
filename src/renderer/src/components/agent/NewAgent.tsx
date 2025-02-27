@@ -1,4 +1,5 @@
 import { ChangeEvent, ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,6 +16,7 @@ import { saveNewAgent } from './AgentsSlice';
 const NewAgent = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [name, setName] = useState('');
   const [type, setType] = useState('bot');
@@ -55,22 +57,23 @@ const NewAgent = (): ReactElement => {
     <>
       <FormControl>
         <FormControl>
-          <FormLabel>Name</FormLabel>
+          <FormLabel>{t('Name')}</FormLabel>
           <Input value={name} onChange={handleChangeName} />
-          <FormHelperText>{`This is the agent's name.`}</FormHelperText>
+          <FormHelperText>{t("This is the agent's name.")}</FormHelperText>
         </FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          {`This is this agent's description, which will be sent to the language
-          model.`}
+          {t(
+            "This is this agent's description, which will be sent to the language model.",
+          )}
         </FormHelperText>
         <Select value={type} label="Type" onChange={handleChangeType}>
           <Option value="bot">Bot</Option>
-          <Option value="user">User</Option>
+          <Option value="user">{t('User')}</Option>
         </Select>
       </FormControl>
-      <Button onClick={handleNewAgent}>Save</Button>
+      <Button onClick={handleNewAgent}>{t('Save')}</Button>
     </>
   );
 };

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -25,6 +26,7 @@ export default function ExchangeTemplateTable(): ReactElement {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
 
   const exchangeTemplates = useSelector(selectAllExchangeTemplates);
+  const { t } = useTranslation();
 
   const handleSetOrder = (): void => {
     if (order === 'desc') {
@@ -94,7 +96,7 @@ export default function ExchangeTemplateTable(): ReactElement {
                 />
               </th>
               <th style={{ width: 100, padding: '12px 6px' }}>
-                <Link onClick={handleSetOrder}>Name</Link>
+                <Link onClick={handleSetOrder}>{t('Name')}</Link>
               </th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
@@ -137,7 +139,7 @@ export default function ExchangeTemplateTable(): ReactElement {
                         component={RouterLink}
                         to={`/exchanges/templates/${row.id}`}
                       >
-                        View
+                        {t('View')}
                       </Link>
                       <RowMenu
                         rowId={row.id}

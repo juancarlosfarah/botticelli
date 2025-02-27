@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -10,6 +11,7 @@ import { fetchTriggers } from './TriggersSlice';
 
 export default function Triggers(): JSX.Element {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchTriggers());
@@ -18,7 +20,7 @@ export default function Triggers(): JSX.Element {
   return (
     <div>
       <Button color="primary" to="/triggers/new" component={RouterLink}>
-        New Trigger
+        {t('New Trigger')}
       </Button>
       <TriggerTable />
       <TriggerList />

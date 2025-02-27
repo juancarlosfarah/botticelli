@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -11,6 +12,7 @@ import { fetchExchangeTemplates } from './ExchangeTemplatesSlice';
 
 export default function ExchangeTemplates(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchExchangeTemplates());
@@ -23,7 +25,7 @@ export default function ExchangeTemplates(): JSX.Element {
         to="/exchanges/templates/new"
         component={RouterLink}
       >
-        New Exchange Template
+        {t('New Exchange Template')}
       </Button>
       <ExchangeTemplateTable />
       <ExchangeTemplateList />

@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ import HumanParticipantTable from './HumanParticipantTable';
 
 export default function HumanParticipants(): ReactElement {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -20,7 +22,7 @@ export default function HumanParticipants(): ReactElement {
         to="/agents/human/participants/new"
         component={RouterLink}
       >
-        New Human Participant
+        {t('New Human Participant')}
       </Button>
       <HumanParticipantTable />
     </div>

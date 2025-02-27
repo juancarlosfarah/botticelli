@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -22,6 +23,7 @@ import {
 export default function InteractionTemplate(): ReactElement {
   const { interactionTemplateId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
 
   if (typeof interactionTemplateId === 'undefined') {
     return <div>Interaction Not Found</div>;
@@ -62,7 +64,7 @@ export default function InteractionTemplate(): ReactElement {
       </Box>
 
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{interactionTemplate.name}</Typography>
 
@@ -72,24 +74,24 @@ export default function InteractionTemplate(): ReactElement {
       <Typography>{interactionTemplate.description}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Model Instructions
+        {t('Model Instructions')}
       </Typography>
       <Typography>{interactionTemplate.modelInstructions}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Participant Instructions
+        {t('Participant Instructions')}
       </Typography>
       <Typography>{interactionTemplate.participantInstructions}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Participant Instructions On Complete
+        {t('Participant Instructions On Complete')}
       </Typography>
       <Typography>
         {interactionTemplate.participantInstructionsOnComplete}
       </Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Exchange Templates
+        {t('Exchange Templates')}
       </Typography>
       <List component="ol" marker="decimal">
         {_.orderBy(exchangeTemplates, 'order').map(
