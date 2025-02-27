@@ -3,7 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Typography,
+} from '@mui/joy';
 import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
 
@@ -46,6 +52,17 @@ const NewHumanParticipant = (): ReactElement => {
 
   return (
     <>
+      <Button
+        color="neutral"
+        onClick={() => navigate(-1)}
+        style={{
+          maxWidth: '50px',
+          maxHeight: '50px',
+        }}
+      >
+        {t('Back')}
+      </Button>
+      <Typography level="h2">{t('New Human Participant')}</Typography>
       <FormControl>
         <FormControl>
           <FormLabel>{t('Name')}</FormLabel>

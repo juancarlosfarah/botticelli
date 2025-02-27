@@ -11,7 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Typography,
+} from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
@@ -108,6 +114,17 @@ const NewInteractionTemplate = (): ReactElement => {
 
   return (
     <>
+      <Button
+        color="neutral"
+        onClick={() => navigate(-1)}
+        style={{
+          maxWidth: '50px',
+          maxHeight: '50px',
+        }}
+      >
+        {t('Back')}
+      </Button>
+      <Typography level="h2">{t('New Interaction')}</Typography>
       <FormControl>
         <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />

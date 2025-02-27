@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 import { FormControl, FormHelperText, FormLabel } from '@mui/joy';
 import Box from '@mui/joy/Box';
@@ -17,6 +18,7 @@ import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 
 const EditSettings = (): ReactElement => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const languages = Object.values(Language);
   const models = Object.values(ModelKey);
@@ -32,9 +34,13 @@ const EditSettings = (): ReactElement => {
           flexDirection: 'row',
           alignItems: 'end',
           flexWrap: 'wrap',
-          justifyContent: 'end',
+          justifyContent: 'space-between',
         }}
       >
+        <Button color="neutral" onClick={() => navigate(-1)}>
+          {t('Back')}
+        </Button>
+
         <Button color="primary" onClick={() => {}}>
           {t('Save')}
         </Button>

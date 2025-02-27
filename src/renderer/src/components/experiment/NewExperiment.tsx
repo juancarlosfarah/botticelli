@@ -11,7 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Typography,
+} from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
@@ -89,6 +95,29 @@ const NewExperiment = (): ReactElement => {
 
   return (
     <>
+      <Button
+        color="neutral"
+        onClick={() => navigate(-1)}
+        style={{
+          maxWidth: '50px',
+          maxHeight: '50px',
+        }}
+      >
+        {t('Back')}
+      </Button>
+      <Typography level="h2">{t('New Experiment')}</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+          gap: 1,
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'start', sm: 'center' },
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+        }}
+      ></Box>
+
       <FormControl>
         <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />
