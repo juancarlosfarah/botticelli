@@ -1,8 +1,9 @@
 import { ReactElement, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
 
@@ -15,6 +16,7 @@ export default function Agent(): ReactElement {
   const { agentId } = useParams();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const query = { id: agentId };
@@ -31,6 +33,12 @@ export default function Agent(): ReactElement {
   return (
     <>
       <CustomBreadcrumbs />
+      <Box sx={{ display: 'flex', my: 1 }}>
+        <Button color="neutral" onClick={() => navigate(-1)}>
+          {t('Back')}
+        </Button>
+      </Box>
+
       <Box
         sx={{
           display: 'flex',
