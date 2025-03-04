@@ -2,8 +2,9 @@ import { ReactElement, useEffect } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Link from '@mui/joy/Link';
@@ -24,6 +25,7 @@ export default function Simulation(): ReactElement {
   const { simulationId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [order] = React.useState<Order>('desc');
 
@@ -52,6 +54,16 @@ export default function Simulation(): ReactElement {
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+        }}
+      >
+        <Button color="neutral" onClick={() => navigate(-1)}>
+          {t('Back')}
+        </Button>
+      </Box>
       <CustomBreadcrumbs />
       <Box
         sx={{

@@ -253,7 +253,6 @@ const NewExchangeTemplate = (): ReactElement => {
           {t(
             'These are the instructions that are shown to the participant when the exchange has been marked as completed.',
           )}
-          '
         </FormHelperText>
       </FormControl>
 

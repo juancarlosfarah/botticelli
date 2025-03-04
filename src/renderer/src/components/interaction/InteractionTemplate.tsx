@@ -1,8 +1,9 @@
 import { ReactElement, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
@@ -24,6 +25,7 @@ export default function InteractionTemplate(): ReactElement {
   const { interactionTemplateId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   if (typeof interactionTemplateId === 'undefined') {
     return <div>Interaction Not Found</div>;
@@ -48,6 +50,16 @@ export default function InteractionTemplate(): ReactElement {
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+        }}
+      >
+        <Button color="neutral" onClick={() => navigate(-1)}>
+          {t('Back')}
+        </Button>
+      </Box>
       <CustomBreadcrumbs />
       <Box
         sx={{

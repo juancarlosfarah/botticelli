@@ -1,8 +1,9 @@
 import { ReactElement, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
 import List from '@mui/joy/List';
@@ -21,6 +22,7 @@ export default function Interaction(): ReactElement {
   const { interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   if (typeof interactionId === 'undefined') {
     return <div>{t('Interaction Not Found')}</div>;
@@ -45,6 +47,17 @@ export default function Interaction(): ReactElement {
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+        }}
+      >
+        <Button color="neutral" onClick={() => navigate(-1)}>
+          {t('Back')}
+        </Button>
+      </Box>
+
       <CustomBreadcrumbs />
       <Box
         sx={{

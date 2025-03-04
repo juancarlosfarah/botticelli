@@ -2,7 +2,7 @@ import { ReactElement, useEffect } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
