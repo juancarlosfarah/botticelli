@@ -115,11 +115,15 @@ function ArtificialParticipantTable(): ReactElement {
                     <Link
                       level="body-xs"
                       component={RouterLink}
-                      to={`/agents/${row.id}`}
+                      to={`/agents/artificial/participants/${row.id}`}
                     >
                       {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteAgent} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteAgent}
+                      editPath={`/agents/artificial/participants/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

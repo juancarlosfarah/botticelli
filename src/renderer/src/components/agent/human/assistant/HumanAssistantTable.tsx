@@ -115,11 +115,15 @@ function HumanAssistantTable(): ReactElement {
                     <Link
                       level="body-xs"
                       component={RouterLink}
-                      to={`/agents/${row.id}`}
+                      to={`/agents/human/assistants/${row.id}`}
                     >
                       {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteAgent} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteAgent}
+                      editPath={`/agents/human/assistants/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

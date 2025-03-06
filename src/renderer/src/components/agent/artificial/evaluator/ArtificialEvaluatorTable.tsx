@@ -115,11 +115,15 @@ function ArtificialEvaluatorTable(): ReactElement {
                     <Link
                       level="body-xs"
                       component={RouterLink}
-                      to={`/agents/${row.id}`}
+                      to={`/agents/artificial/evaluators/${row.id}`}
                     >
                       {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteAgent} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteAgent}
+                      editPath={`/agents/artificial/evaluators/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

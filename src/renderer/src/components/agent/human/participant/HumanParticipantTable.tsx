@@ -115,11 +115,15 @@ function HumanParticipantTable(): ReactElement {
                     <Link
                       level="body-xs"
                       component={RouterLink}
-                      to={`/agents/${row.id}`}
+                      to={`/agents/human/participants/${row.id}`}
                     >
                       {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteAgent} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteAgent}
+                      editPath={`/agents/human/participants/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>
