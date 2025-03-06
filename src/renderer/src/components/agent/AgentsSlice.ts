@@ -4,20 +4,21 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
-import Agent from '@shared/interfaces/Agent';
-import log from 'electron-log/renderer';
-
 import {
   DELETE_AGENT_CHANNEL,
   GET_AGENTS_CHANNEL,
   GET_AGENT_CHANNEL,
+  PATCH_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
   POST_AGENT_CHANNEL,
   POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
   POST_ONE_ARTIFICIAL_EVALUATOR_CHANNEL,
   POST_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL,
   POST_ONE_HUMAN_ASSISTANT_CHANNEL,
   POST_ONE_HUMAN_PARTICIPANT_CHANNEL,
-} from '../../../../shared/channels';
+} from '@shared/channels';
+import Agent, { PatchOneAgentParams } from '@shared/interfaces/Agent';
+import log from 'electron-log/renderer';
+
 import { IpcService } from '../../services/IpcService';
 
 const agentsAdapter = createEntityAdapter<Agent>();
@@ -152,6 +153,20 @@ export const deleteAgent = createAsyncThunk<string | number, string | number>(
   },
 );
 
+export const editArtificialAssistant = createAsyncThunk<
+  Agent,
+  PatchOneAgentParams
+>('agents/editArtificialAssistant', async ({ id, name, description }) => {
+  console.log(id, name, description);
+  const response = await IpcService.send<Agent, PatchOneAgentParams>(
+    PATCH_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
 const agentsSlice = createSlice({
   name: 'agents',
   initialState,
@@ -166,6 +181,10 @@ const agentsSlice = createSlice({
       .addCase(fetchAgents.fulfilled, (state, action) => {
         agentsAdapter.setAll(state, action.payload);
         state.status = 'idle';
+      })
+      .addCase(editArtificialAssistant.fulfilled, (state, action) => {
+        const agent = action.payload;
+        agentsAdapter.setOne(state, agent);
       })
       .addCase(saveNewAgent.fulfilled, (state, action) => {
         const agent = action.payload;

@@ -7,4 +7,10 @@ type Agent = {
   name: string;
 };
 
+export type PatchOneAgentParams = {
+  id: string;
+  name?: string;
+  description?: string;
+};
+
 export default Agent;

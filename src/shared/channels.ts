@@ -27,6 +27,8 @@ export const GET_MANY_ARTIFICIAL_ASSISTANTS_CHANNEL =
   'agents:artificial:assistant:get:many';
 export const DELETE_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
   'agent:artificial:assistant:delete:one';
+export const PATCH_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
+  'agent:artificial:assistant:patch:one';
 
 export const GET_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL =
   'agent:artificial:participant:get:one';

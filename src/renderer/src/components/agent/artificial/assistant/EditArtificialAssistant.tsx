@@ -1,4 +1,5 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,18 +16,27 @@ import Textarea from '@mui/joy/Textarea';
 
 import log from 'electron-log/renderer';
 
-import { fetchAgent, selectAgentById } from '../../AgentsSlice';
+import { AppDispatch } from '../../../../store';
+import {
+  editArtificialAssistant,
+  fetchAgent,
+  selectAgentById,
+} from '../../AgentsSlice';
 
 const EditArtificialAssistant = (): ReactElement => {
   const { agentId } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const agent = useSelector((state) => selectAgentById(state, agentId));
 
   const [name, setName] = useState(agent?.name);
   const [description, setDescription] = useState(agent?.description);
+
+  if (!agentId) {
+    return <div>{t('Invalid Agent ID')}</div>;
+  }
 
   useEffect(() => {
     const query = { id: agentId };
@@ -47,8 +57,14 @@ const EditArtificialAssistant = (): ReactElement => {
   };
 
   const handleEditAgent = async (): Promise<void> => {
-    // we do all the editing
-    // ...
+    const { payload, type } = await dispatch(
+      editArtificialAssistant({
+        id: agentId,
+        description,
+        name,
+      }),
+    );
+    log.debug(type, payload);
 
     // navigate back to the view page
     navigate(`/agents/artificial/assistants/${agentId}`);
