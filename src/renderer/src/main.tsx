@@ -7,11 +7,9 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { StyledEngineProvider } from '@mui/joy/styles';
 
 import App from './App.tsx';
-import Agent from './components/agent/Agent';
-import Agents from './components/agent/Agents';
-import NewAgent from './components/agent/NewAgent';
 import ArtificialAssistant from './components/agent/artificial/assistant/ArtificialAssistant';
 import ArtificialAssistants from './components/agent/artificial/assistant/ArtificialAssistants';
+import EditArtificialAssistant from './components/agent/artificial/assistant/EditArtificialAssistant';
 import NewArtificialAssistant from './components/agent/artificial/assistant/NewArtificialAssistant';
 import ArtificialEvaluator from './components/agent/artificial/evaluator/ArtificialEvaluator';
 import ArtificialEvaluators from './components/agent/artificial/evaluator/ArtificialEvaluators';
@@ -125,18 +123,6 @@ const router = createBrowserRouter([
         path: 'triggers/:triggerId',
         element: <Trigger />,
       },
-      {
-        path: 'agents',
-        element: <Agents />,
-      },
-      {
-        path: 'agents/new',
-        element: <NewAgent />,
-      },
-      {
-        path: 'agents/:agentId',
-        element: <Agent />,
-      },
       // artificial assistants
       {
         path: 'agents/artificial/assistants',
@@ -149,6 +135,10 @@ const router = createBrowserRouter([
       {
         path: 'agents/artificial/assistants/:agentId',
         element: <ArtificialAssistant />,
+      },
+      {
+        path: 'agents/artificial/assistants/:agentId/edit',
+        element: <EditArtificialAssistant />,
       },
       // artificial participants
       {
