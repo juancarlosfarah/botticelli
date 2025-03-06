@@ -51,7 +51,7 @@ const EditHumanAssistant = (): ReactElement => {
     // ...
 
     // navigate back to the view page
-    navigate(`/agents/human/asisstants/${agentId}`);
+    navigate(`/agents/human/assistants/${agentId}`);
   };
 
   return (

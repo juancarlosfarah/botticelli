@@ -39,8 +39,6 @@ export default function RowMenu({
       </MenuButton>
       <Menu size="sm" sx={{ minWidth: 140 }}>
         <MenuItem onClick={() => navigate(editPath)}>{t('Edit')}</MenuItem>
-        <MenuItem>{t('Rename')}</MenuItem>
-        <MenuItem>{t('Move')}</MenuItem>
         <Divider />
         <MenuItem color="danger" onClick={handleDelete}>
           {t('Delete')}

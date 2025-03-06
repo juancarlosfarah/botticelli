@@ -51,7 +51,7 @@ const EditArtificialParticipant = (): ReactElement => {
     // ...
 
     // navigate back to the view page
-    navigate(`/agents/artificial/evaluators/${agentId}`);
+    navigate(`/agents/artificial/participants/${agentId}`);
   };
 
   return (
