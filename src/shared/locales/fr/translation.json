@@ -109,5 +109,9 @@
   "When the exchange reaches this total number of user messages, the exchange will be marked as completed. Participants will be able to continue to send messages, but they will be also able to dismiss the exchange. Zero means there is no limit.": "Lorsque l'échange atteint ce nombre total de messages utilisateur, il sera marqué comme terminé. Les participants pourront continuer à envoyer des messages, mais ils auront également la possibilité de clôturer l'échange. Zéro signifie qu'il n'y a pas de limite.",
   "When the exchange reaches this total number of user messages, the exchange will be marked as blocked. Participants will not longer be able to send messages. Zero means there is no limit.": "Lorsque l'échange atteint ce nombre total de messages utilisateur, il sera marqué comme bloqué. Les participants ne pourront plus envoyer de messages. Zéro signifie qu'il n'y a pas de limite.",
   "These are the instructions that are shown to the participant when the exchange has been marked as completed.": "Ces instructions sont montrées au participant lorsque l'échange a été marqué comme terminé.",
-  "Page 1 of 10": "Page 1 sur 10"
+  "Page 1 of 10": "Page 1 sur 10",
+  "Select an AI model to process and generate responses.": "Sélectionnez un modèle d'IA pour traiter et générer des réponses.",
+  "Your OpenAI API key is used to communicate with the OpenAI services.": "Votre clé API OpenAI est utilisée pour communiquer avec les services OpenAI.",
+  "This is the language of the Botticelli interface.": "Ceci est la langue de l'interface Botticelli.",
+  "Models may vary in accuracy, speed and cost.": "Les modèles peuvent varier en termes de précision, de rapidité et de coût."
 }
