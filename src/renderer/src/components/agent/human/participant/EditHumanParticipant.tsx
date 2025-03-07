@@ -35,7 +35,7 @@ const EditHumanParticipant = (): ReactElement => {
   const [description, setDescription] = useState(agent?.description);
 
   if (!agentId) {
-    <div>return {t('Invalid Agent ID')}</div>;
+    return <div> {t('Invalid Agent ID')}</div>;
   }
   useEffect(() => {
     const query = { id: agentId };
