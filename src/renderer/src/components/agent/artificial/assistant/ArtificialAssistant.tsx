@@ -12,6 +12,15 @@ import log from 'electron-log/renderer';
 import CustomBreadcrumbs from '../../../layout/CustomBreadcrumbs';
 import { fetchAgent, selectAgentById } from '../../AgentsSlice';
 
+/**
+ * Renders the ArtificialAssistant component that displays an agent's information.
+ *
+ * The component retrieves the agent ID from the URL, dispatches an action to fetch the corresponding agent data,
+ * and selects the agent from the Redux store. If the agent exists, it renders the agent's name and description along with
+ * navigation controls and breadcrumbs; otherwise, it displays a localized "Agent Not Found" message.
+ *
+ * @returns A React element containing either the agent details or a not-found message.
+ */
 export default function ArtificialAssistant(): ReactElement {
   const { agentId } = useParams();
   const dispatch = useDispatch();

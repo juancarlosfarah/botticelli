@@ -17,6 +17,13 @@ import { fetchMessages } from '../Messages/MessagesSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchExchange, selectExchangeById } from './ExchangesSlice';
 
+/**
+ * Renders detailed information about an exchange.
+ *
+ * This component retrieves the exchange ID from the URL parameters and dispatches actions to fetch exchange data and its related messages. It displays key exchange details such as name, description, instructions, assistant, participant, interaction, order, trigger, and limits. If the exchange ID is invalid or the exchange data is not found, it renders an appropriate error message. Static text elements are internationalized using the translation hook.
+ *
+ * @returns A React element displaying the exchange details or an error message if the exchange ID is invalid or not found.
+ */
 export default function Exchange(): ReactElement {
   const { exchangeId } = useParams();
   const dispatch = useDispatch<AppDispatch>();

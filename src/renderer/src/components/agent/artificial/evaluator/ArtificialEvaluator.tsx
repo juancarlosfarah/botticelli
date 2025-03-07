@@ -12,6 +12,14 @@ import log from 'electron-log/renderer';
 import CustomBreadcrumbs from '../../../layout/CustomBreadcrumbs';
 import { fetchAgent, selectAgentById } from '../../AgentsSlice';
 
+/**
+ * Renders the Artificial Evaluator component.
+ *
+ * The component reads the agent ID from the URL parameters, dispatches a Redux action to fetch the agent's data,
+ * and selects the agent from the store. If no agent is found, it displays a localized "Agent Not Found" message.
+ * Otherwise, it renders breadcrumbs, a back button for navigation, and displays the agent's name and description
+ * using localized labels.
+ */
 export default function ArtificialEvaluator(): ReactElement {
   const { agentId } = useParams();
   const dispatch = useDispatch();

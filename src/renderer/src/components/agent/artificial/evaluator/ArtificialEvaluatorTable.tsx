@@ -16,6 +16,16 @@ import _ from 'lodash';
 import RowMenu from '../../../common/RowMenu';
 import { deleteAgent, selectArtificialEvaluators } from '../../AgentsSlice';
 
+/**
+ * Renders a table displaying a list of artificial evaluators with selection and action options.
+ *
+ * The component retrieves evaluator data from the Redux store and uses internationalization support to display
+ * translated labels. It enables multi-selection via checkboxes (with a header checkbox for selecting all evaluators)
+ * and presents each evaluator's truncated name and description. Each row includes action links for viewing details
+ * and a contextual menu for editing or deleting the evaluator.
+ *
+ * The table layout is responsive, only visible on screen sizes "sm" and above.
+ */
 function ArtificialEvaluatorTable(): ReactElement {
   const [order] = useState<Order>('desc');
   const [selected, setSelected] = useState<readonly string[]>([]);

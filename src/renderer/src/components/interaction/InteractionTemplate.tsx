@@ -21,6 +21,16 @@ import {
   selectInteractionTemplateById,
 } from './InteractionTemplatesSlice';
 
+/**
+ * Renders the details of a specific interaction template.
+ *
+ * The component retrieves the template identifier from the URL parameters and dispatches an action to fetch its data.
+ * If the identifier is missing or the template cannot be found in the Redux store, an appropriate error message is displayed.
+ * The rendered view includes internationalized labels, a back navigation button, and sections for the template's name,
+ * description, model instructions, participant instructions, and a list of ordered exchange templates.
+ *
+ * @returns A React element displaying the interaction template details or an error message if the template is unavailable.
+ */
 export default function InteractionTemplate(): ReactElement {
   const { interactionTemplateId } = useParams();
   const dispatch = useDispatch<AppDispatch>();

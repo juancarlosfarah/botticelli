@@ -18,6 +18,14 @@ import { Order, getComparator, stableSort } from '../../utils/sort';
 import RowMenu from '../common/RowMenu';
 import { deleteTrigger, selectTriggers } from './TriggersSlice';
 
+/**
+ * Renders a table displaying a list of triggers with selectable rows.
+ *
+ * This functional component retrieves triggers from the Redux store and renders them in a table that supports row selection.
+ * Users can select all triggers via a header checkbox or individually via row checkboxes. The table displays trigger names,
+ * descriptions, evaluator information, and actions for viewing trigger details and managing additional row operations.
+ * Internationalization is supported using the translation hook.
+ */
 export default function TriggerTable(): ReactElement {
   const [order] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

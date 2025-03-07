@@ -25,6 +25,13 @@ import MenuItem from '@mui/joy/MenuItem';
 import Typography from '@mui/joy/Typography';
 import { ColorPaletteProp } from '@mui/joy/styles';
 
+/**
+ * Renders a dropdown menu for order operations.
+ *
+ * Displays localized options to edit, rename, move, and delete an order, with the delete option highlighted using a danger color.
+ *
+ * @returns A JSX element containing the order actions dropdown.
+ */
 function RowMenu() {
   return (
     <Dropdown>
@@ -46,6 +53,11 @@ function RowMenu() {
 }
 const listItems = [];
 
+/**
+ * Renders a mobile-friendly order list.
+ *
+ * This component displays a list of orders with customer details and order information. Each order item shows an avatar, customer name and email, order date, and order ID, along with actions such as downloading the order and accessing additional options via a row menu. A status chip with corresponding icons indicates whether an order is Paid, Refunded, or Cancelled. Pagination controls are provided at the bottom for navigating through the order pages on small screens.
+ */
 export default function OrderList(): ReactElement {
   return (
     <Box sx={{ display: { xs: 'block', sm: 'none' } }}>

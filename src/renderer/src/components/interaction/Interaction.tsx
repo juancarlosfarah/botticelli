@@ -18,6 +18,17 @@ import { AppDispatch } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchInteraction, selectInteractionById } from './InteractionsSlice';
 
+/**
+ * Renders the details for a specific interaction.
+ *
+ * This component extracts the interaction ID from the URL parameters and dispatches an action to fetch the corresponding
+ * interaction data. It displays a translated "Interaction Not Found" message if the ID is missing or if the interaction
+ * cannot be found. When the interaction data is available, the component presents its name, description, model and
+ * participant instructions, an associated experiment link (if provided), and an ordered list of exchanges. All displayed
+ * text is internationalized using the translation hook.
+ *
+ * @returns A React element representing the interaction details UI.
+ */
 export default function Interaction(): ReactElement {
   const { interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();

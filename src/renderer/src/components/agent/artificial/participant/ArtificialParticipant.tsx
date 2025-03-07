@@ -12,6 +12,16 @@ import CustomBreadcrumbs from '../../../layout/CustomBreadcrumbs';
 import { fetchAgent, selectAgentById } from '../../AgentsSlice';
 import { Button } from '@mui/joy';
 
+/**
+ * Renders an Artificial Participant component that displays agent details.
+ *
+ * The component retrieves the agent identifier from the URL, dispatches an action to fetch
+ * the associated agent information, and uses translation functions for localized text.
+ * It conditionally renders either a localized "Agent Not Found" message when no agent is available
+ * or a detailed view with breadcrumbs, a back button, and the agent's name and description.
+ *
+ * @returns The React element representing the agent details view.
+ */
 export default function ArtificialParticipant(): ReactElement {
   const { agentId } = useParams();
   const dispatch = useDispatch();

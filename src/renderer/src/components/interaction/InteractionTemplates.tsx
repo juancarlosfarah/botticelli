@@ -9,6 +9,13 @@ import InteractionTemplateList from './InteractionTemplateList.tsx';
 import InteractionTemplateTable from './InteractionTemplateTable.tsx';
 import { fetchInteractionTemplates } from './InteractionTemplatesSlice';
 
+/**
+ * Renders a component that fetches and displays interaction templates.
+ *
+ * On mount, the component dispatches an action to fetch interaction templates and uses translation for UI text.
+ * It renders a button that navigates to a form for creating a new interaction template,
+ * along with both a table and a list to display the fetched templates.
+ */
 export default function InteractionTemplates(): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();

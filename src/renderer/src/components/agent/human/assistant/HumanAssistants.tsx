@@ -8,6 +8,13 @@ import Button from '@mui/joy/Button';
 import { fetchAgents } from '../../AgentsSlice';
 import HumanAssistantTable from './HumanAssistantTable';
 
+/**
+ * Renders the Human Assistants page.
+ *
+ * This component dispatches an action to fetch agent data upon mounting and displays a button (with internationalized label) that navigates to the form for creating a new human assistant, as well as a table of existing assistants.
+ *
+ * @returns A React element representing the Human Assistants view.
+ */
 export default function HumanAssistants(): ReactElement {
   const dispatch = useDispatch();
   const { t } = useTranslation();

@@ -21,6 +21,19 @@ import { Order, getComparator, stableSort } from '../../utils/sort';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchSimulation, selectSimulationById } from './SimulationsSlice';
 
+/**
+ * Renders a simulation view with details, participants, and their interactions.
+ *
+ * This component fetches simulation data based on the simulation ID obtained from the URL parameters
+ * and displays the simulation's name, description, and participant interactions in a structured layout.
+ * It uses Redux to retrieve the simulation data and dispatches a fetch action on mount. If the simulation
+ * ID is missing or the simulation data is not found, it renders an appropriate error message.
+ *
+ * The component leverages internationalization via the translation hook to support multiple languages
+ * and provides navigation functionality through a "Back" button.
+ *
+ * @returns ReactElement containing the simulation details.
+ */
 export default function Simulation(): ReactElement {
   const { simulationId } = useParams();
   const dispatch = useDispatch<AppDispatch>();

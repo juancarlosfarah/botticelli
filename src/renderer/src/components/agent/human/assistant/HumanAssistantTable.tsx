@@ -16,6 +16,16 @@ import _ from 'lodash';
 import RowMenu from '../../../common/RowMenu';
 import { deleteAgent, selectHumanAssistants } from '../../AgentsSlice';
 
+/**
+ * Renders a table for viewing and managing human assistants.
+ *
+ * This component retrieves human assistant data from the Redux store and displays it in a sortable,
+ * selectable table. It supports bulk selection with a header checkbox and individual row selection, showing
+ * truncated versions of each assistant's name and description. A localized "View" link navigates to the detailed
+ * view for an assistant, and a row menu offers additional actions such as editing and deletion.
+ *
+ * @returns A React element representing the table of human assistants.
+ */
 function HumanAssistantTable(): ReactElement {
   const [order] = useState<Order>('desc');
   const [selected, setSelected] = useState<readonly string[]>([]);

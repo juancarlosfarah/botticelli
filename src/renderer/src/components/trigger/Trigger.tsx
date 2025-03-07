@@ -13,6 +13,14 @@ import { fetchMessages } from '../Messages/MessagesSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchTrigger, selectTriggerById } from './TriggersSlice';
 
+/**
+ * Displays trigger details based on the URL parameter.
+ *
+ * Retrieves the trigger identifier from the URL, dispatches actions to fetch trigger data and messages,
+ * and selects the corresponding trigger from the store. If the trigger data is missing, it renders a localized
+ * "Trigger Not Found" message; otherwise, it displays trigger details including its name, description, criteria,
+ * and evaluator information, along with a button to navigate back.
+ */
 export default function Trigger(): ReactElement {
   const { triggerId } = useParams();
   const dispatch = useDispatch();

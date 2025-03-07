@@ -16,6 +16,16 @@ import _ from 'lodash';
 import RowMenu from '../../../common/RowMenu';
 import { deleteAgent, selectArtificialParticipants } from '../../AgentsSlice';
 
+/**
+ * Renders a sortable and selectable table of artificial participants.
+ *
+ * This component retrieves participants from the Redux store and displays them in a table layout. It features
+ * checkboxes for selecting individual or all participants, supports internationalized header and link text via
+ * the useTranslation hook, and sorts rows by participant ID. Each row provides actions to view, edit, or delete
+ * the respective participant.
+ *
+ * @returns A React Element representing the artificial participants table.
+ */
 function ArtificialParticipantTable(): ReactElement {
   const [order] = useState<Order>('desc');
   const [selected, setSelected] = useState<readonly string[]>([]);

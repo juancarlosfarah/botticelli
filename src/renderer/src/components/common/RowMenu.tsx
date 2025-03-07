@@ -17,6 +17,19 @@ type Props = {
   deleteHandler: Function;
   editPath?: string;
 };
+/**
+ * Renders a dropdown menu with "Edit" and "Delete" options for a row.
+ *
+ * The component displays a menu button that, when clicked, opens a dropdown containing
+ * an "Edit" option and a "Delete" option. Selecting "Edit" navigates to the provided edit path,
+ * and selecting "Delete" triggers the deletion process for the row identified by rowId.
+ *
+ * @param rowId - The identifier of the row.
+ * @param deleteHandler - Function to call for deleting the row.
+ * @param editPath - Optional path to navigate to the edit view.
+ *
+ * @returns The dropdown menu as a React element.
+ */
 export default function RowMenu({
   rowId,
   deleteHandler,
