@@ -133,7 +133,7 @@ const NewInteractionTemplate = (): ReactElement => {
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Description</FormLabel>
+        <FormLabel>{t('Description')}</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
           {t('This is an internal description for this interaction template.')}
