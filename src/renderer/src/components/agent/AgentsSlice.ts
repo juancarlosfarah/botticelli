@@ -161,7 +161,7 @@ export const editArtificialAssistant = createAsyncThunk<
   Agent,
   PatchOneAgentParams
 >('agents/editArtificialAssistant', async ({ id, name, description }) => {
-  console.log(id, name, description);
+  log.debug('Editing artificial assistant:', { id, name, description });
   const response = await IpcService.send<Agent, PatchOneAgentParams>(
     PATCH_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
     {
@@ -170,7 +170,6 @@ export const editArtificialAssistant = createAsyncThunk<
   );
   return response;
 });
-
 export const editArtificialEvaluator = createAsyncThunk<
   Agent,
   PatchOneAgentParams
@@ -202,7 +201,7 @@ export const editArtificialParticipant = createAsyncThunk<
 export const editHumanAssistant = createAsyncThunk<Agent, PatchOneAgentParams>(
   'agents/editHumanAssistant',
   async ({ id, name, description }) => {
-    console.log(id, name, description);
+    log.debug('Editing human assistant:', { id, name, description });
     const response = await IpcService.send<Agent, PatchOneAgentParams>(
       PATCH_ONE_HUMAN_ASSISTANT_CHANNEL,
       {
@@ -217,7 +216,7 @@ export const editHumanParticipant = createAsyncThunk<
   Agent,
   PatchOneAgentParams
 >('agents/editHumanParticipant', async ({ id, name, description }) => {
-  console.log(id, name, description);
+  log.debug('Editing human participant:', { id, name, description });
   const response = await IpcService.send<Agent, PatchOneAgentParams>(
     PATCH_ONE_HUMAN_PARTICIPANT_CHANNEL,
     {

@@ -48,7 +48,7 @@ export default function ArtificialAssistant(): ReactElement {
         >
           {t('Back')}
         </Button>
-        <Typography level="h2">Agent</Typography>
+        <Typography level="h2">{t('Agent')}</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
         {t('Name')}
