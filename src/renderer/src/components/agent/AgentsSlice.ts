@@ -9,6 +9,10 @@ import {
   GET_AGENTS_CHANNEL,
   GET_AGENT_CHANNEL,
   PATCH_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
+  PATCH_ONE_ARTIFICIAL_EVALUATOR_CHANNEL,
+  PATCH_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL,
+  PATCH_ONE_HUMAN_ASSISTANT_CHANNEL,
+  PATCH_ONE_HUMAN_PARTICIPANT_CHANNEL,
   POST_AGENT_CHANNEL,
   POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
   POST_ONE_ARTIFICIAL_EVALUATOR_CHANNEL,
@@ -167,6 +171,62 @@ export const editArtificialAssistant = createAsyncThunk<
   return response;
 });
 
+export const editArtificialEvaluator = createAsyncThunk<
+  Agent,
+  PatchOneAgentParams
+>('agents/editArtificialEvaluator', async ({ id, name, description }) => {
+  console.log(id, name, description);
+  const response = await IpcService.send<Agent, PatchOneAgentParams>(
+    PATCH_ONE_ARTIFICIAL_EVALUATOR_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
+export const editArtificialParticipant = createAsyncThunk<
+  Agent,
+  PatchOneAgentParams
+>('agents/editArtificialParticipant', async ({ id, name, description }) => {
+  console.log(id, name, description);
+  const response = await IpcService.send<Agent, PatchOneAgentParams>(
+    PATCH_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
+export const editHumanAssistant = createAsyncThunk<Agent, PatchOneAgentParams>(
+  'agents/editHumanAssistant',
+  async ({ id, name, description }) => {
+    console.log(id, name, description);
+    const response = await IpcService.send<Agent, PatchOneAgentParams>(
+      PATCH_ONE_HUMAN_ASSISTANT_CHANNEL,
+      {
+        params: { id, name, description },
+      },
+    );
+    return response;
+  },
+);
+
+export const editHumanParticipant = createAsyncThunk<
+  Agent,
+  PatchOneAgentParams
+>('agents/editHumanParticipant', async ({ id, name, description }) => {
+  console.log(id, name, description);
+  const response = await IpcService.send<Agent, PatchOneAgentParams>(
+    PATCH_ONE_HUMAN_PARTICIPANT_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
 const agentsSlice = createSlice({
   name: 'agents',
   initialState,
@@ -183,6 +243,22 @@ const agentsSlice = createSlice({
         state.status = 'idle';
       })
       .addCase(editArtificialAssistant.fulfilled, (state, action) => {
+        const agent = action.payload;
+        agentsAdapter.setOne(state, agent);
+      })
+      .addCase(editArtificialEvaluator.fulfilled, (state, action) => {
+        const agent = action.payload;
+        agentsAdapter.setOne(state, agent);
+      })
+      .addCase(editArtificialParticipant.fulfilled, (state, action) => {
+        const agent = action.payload;
+        agentsAdapter.setOne(state, agent);
+      })
+      .addCase(editHumanAssistant.fulfilled, (state, action) => {
+        const agent = action.payload;
+        agentsAdapter.setOne(state, agent);
+      })
+      .addCase(editHumanParticipant.fulfilled, (state, action) => {
         const agent = action.payload;
         agentsAdapter.setOne(state, agent);
       })

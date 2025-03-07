@@ -1,4 +1,5 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,21 +14,29 @@ import {
 import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
 
+import { AppDispatch } from '@renderer/store';
 import log from 'electron-log/renderer';
 
-import { fetchAgent, selectAgentById } from '../../AgentsSlice';
+import {
+  editHumanParticipant,
+  fetchAgent,
+  selectAgentById,
+} from '../../AgentsSlice';
 
 const EditHumanParticipant = (): ReactElement => {
   const { agentId } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const agent = useSelector((state) => selectAgentById(state, agentId));
 
   const [name, setName] = useState(agent?.name);
   const [description, setDescription] = useState(agent?.description);
 
+  if (!agentId) {
+    <div>return {t('Invalid Agent ID')}</div>;
+  }
   useEffect(() => {
     const query = { id: agentId };
     log.debug(`fetching agent ${agentId}`);
@@ -47,8 +56,14 @@ const EditHumanParticipant = (): ReactElement => {
   };
 
   const handleEditAgent = async (): Promise<void> => {
-    // we do all the editing
-    // ...
+    const { payload, type } = await dispatch(
+      editHumanParticipant({
+        id: agentId,
+        description,
+        name,
+      }),
+    );
+    log.debug(type, payload);
 
     // navigate back to the view page
     navigate(`/agents/human/participants/${agentId}`);
