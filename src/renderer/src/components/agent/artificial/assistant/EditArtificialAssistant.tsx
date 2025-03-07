@@ -29,20 +29,28 @@ const EditArtificialAssistant = (): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
+  if (!agentId) {
+    return <div>{t('Invalid Agent ID')}</div>;
+  }
+
   const agent = useSelector((state) => selectAgentById(state, agentId));
 
   const [name, setName] = useState(agent?.name || '');
   const [description, setDescription] = useState(agent?.description || '');
-
-  if (!agentId) {
-    return <div>{t('Invalid Agent ID')}</div>;
-  }
 
   useEffect(() => {
     const query = { id: agentId };
     log.debug(`fetching agent ${agentId}`);
     dispatch(fetchAgent(query));
   }, [agentId]);
+
+  // update state when agent changes
+  useEffect(() => {
+    if (agent) {
+      setName(agent.name);
+      setDescription(agent.description);
+    }
+  }, [agent]);
 
   const handleChangeDescription = (
     event: ChangeEvent<HTMLTextAreaElement>,
@@ -62,7 +70,7 @@ const EditArtificialAssistant = (): ReactElement => {
       log.error('Name is required');
       return;
     }
-    
+
     try {
       const { payload, type } = await dispatch(
         editArtificialAssistant({

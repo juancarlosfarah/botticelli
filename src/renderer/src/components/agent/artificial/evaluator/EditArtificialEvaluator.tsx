@@ -29,26 +29,27 @@ const EditArtificialEvaluator = (): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const agent = useSelector((state) => selectAgentById(state, agentId));
-  const [name, setName] = useState(agent?.name);
-  const [description, setDescription] = useState(agent?.description);
-
-  useEffect(() => {
-    if (agent) {
-      setName(agent.name);
-      setDescription(agent.description);
-    }
-  }, [agent]);
-
   if (!agentId) {
     return <div>{t('Invalid Agent ID')}</div>;
   }
+
+  const agent = useSelector((state) => selectAgentById(state, agentId));
+  const [name, setName] = useState(agent?.name || '');
+  const [description, setDescription] = useState(agent?.description || '');
 
   useEffect(() => {
     const query = { id: agentId };
     log.debug(`fetching agent ${agentId}`);
     dispatch(fetchAgent(query));
   }, [agentId]);
+
+  // update state when agent changes
+  useEffect(() => {
+    if (agent) {
+      setName(agent.name);
+      setDescription(agent.description);
+    }
+  }, [agent]);
 
   const handleChangeDescription = (
     event: ChangeEvent<HTMLTextAreaElement>,
@@ -89,24 +90,24 @@ const EditArtificialEvaluator = (): ReactElement => {
         {t('Back')}
       </Button>
       <Typography level="h2">{t('Edit Artificial Evaluator')}</Typography>
-<FormControl>
-  <FormLabel>{t('ID')}</FormLabel>
-  <Input value={agentId} disabled />
-</FormControl>
-<FormControl>
-  <FormLabel>{t('Name')}</FormLabel>
-  <Input value={name} onChange={handleChangeName} />
-  <FormHelperText>{t("This is the agent's name.")}</FormHelperText>
-</FormControl>
-<FormControl>
-  <FormLabel>{t('Description')}</FormLabel>
-  <Textarea value={description} onChange={handleChangeDescription} />
-  <FormHelperText>
-    {t(
-      "This is this agent's description, which will be sent to the language model.",
-    )}
-  </FormHelperText>
-</FormControl>
+      <FormControl>
+        <FormLabel>{t('ID')}</FormLabel>
+        <Input value={agentId} disabled />
+      </FormControl>
+      <FormControl>
+        <FormLabel>{t('Name')}</FormLabel>
+        <Input value={name} onChange={handleChangeName} />
+        <FormHelperText>{t("This is the agent's name.")}</FormHelperText>
+      </FormControl>
+      <FormControl>
+        <FormLabel>{t('Description')}</FormLabel>
+        <Textarea value={description} onChange={handleChangeDescription} />
+        <FormHelperText>
+          {t(
+            "This is this agent's description, which will be sent to the language model.",
+          )}
+        </FormHelperText>
+      </FormControl>
       <Button onClick={handleEditAgent}>{t('Save')}</Button>
     </>
   );
