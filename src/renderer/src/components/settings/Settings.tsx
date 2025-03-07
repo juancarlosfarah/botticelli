@@ -51,7 +51,7 @@ const Settings = (): ReactElement => {
       <Typography sx={{ mt: 1 }} level="title-md">
         {t('Language')}
       </Typography>
-      <Typography>Current Language</Typography>
+      <Typography>{t('Current Language')}</Typography>
     </div>
   );
 };
