@@ -62,7 +62,7 @@ const NewArtificialEvaluator = (): ReactElement => {
       >
         {t('Back')}
       </Button>
-      <Typography level="h2">{t('New Artifical Evaluator')}</Typography>
+      <Typography level="h2">{t('New Artificial Evaluator')}</Typography>
       <FormControl>
         <FormControl>
           <FormLabel>{t('Name')}</FormLabel>
