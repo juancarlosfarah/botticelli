@@ -30,9 +30,15 @@ const EditArtificialEvaluator = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
 
   const agent = useSelector((state) => selectAgentById(state, agentId));
-
   const [name, setName] = useState(agent?.name);
   const [description, setDescription] = useState(agent?.description);
+
+  useEffect(() => {
+    if (agent) {
+      setName(agent.name);
+      setDescription(agent.description);
+    }
+  }, [agent]);
 
   if (!agentId) {
     return <div>{t('Invalid Agent ID')}</div>;
