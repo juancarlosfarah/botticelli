@@ -89,24 +89,24 @@ const EditArtificialEvaluator = (): ReactElement => {
         {t('Back')}
       </Button>
       <Typography level="h2">{t('Edit Artificial Evaluator')}</Typography>
-      <FormControl>
-        <FormControl>
-          <FormLabel>{t('ID')}</FormLabel>
-          <Input value={agentId} disabled />
-        </FormControl>
-        <FormControl>
-          <FormLabel>{t('Name')}</FormLabel>
-          <Input value={name} onChange={handleChangeName} />
-          <FormHelperText>{t("This is the agent's name.")}</FormHelperText>
-        </FormControl>
-        <FormLabel>{t('Description')}</FormLabel>
-        <Textarea value={description} onChange={handleChangeDescription} />
-        <FormHelperText>
-          {t(
-            "This is this agent's description, which will be sent to the language model.",
-          )}
-        </FormHelperText>
-      </FormControl>
+<FormControl>
+  <FormLabel>{t('ID')}</FormLabel>
+  <Input value={agentId} disabled />
+</FormControl>
+<FormControl>
+  <FormLabel>{t('Name')}</FormLabel>
+  <Input value={name} onChange={handleChangeName} />
+  <FormHelperText>{t("This is the agent's name.")}</FormHelperText>
+</FormControl>
+<FormControl>
+  <FormLabel>{t('Description')}</FormLabel>
+  <Textarea value={description} onChange={handleChangeDescription} />
+  <FormHelperText>
+    {t(
+      "This is this agent's description, which will be sent to the language model.",
+    )}
+  </FormHelperText>
+</FormControl>
       <Button onClick={handleEditAgent}>{t('Save')}</Button>
     </>
   );
