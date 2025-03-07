@@ -31,8 +31,8 @@ const EditArtificialAssistant = (): ReactElement => {
 
   const agent = useSelector((state) => selectAgentById(state, agentId));
 
-  const [name, setName] = useState(agent?.name);
-  const [description, setDescription] = useState(agent?.description);
+  const [name, setName] = useState(agent?.name || '');
+  const [description, setDescription] = useState(agent?.description || '');
 
   if (!agentId) {
     return <div>{t('Invalid Agent ID')}</div>;
