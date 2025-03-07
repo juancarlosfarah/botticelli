@@ -57,17 +57,28 @@ const EditArtificialAssistant = (): ReactElement => {
   };
 
   const handleEditAgent = async (): Promise<void> => {
-    const { payload, type } = await dispatch(
-      editArtificialAssistant({
-        id: agentId,
-        description,
-        name,
-      }),
-    );
-    log.debug(type, payload);
+    if (!name?.trim()) {
+      // You could use a state variable to show an error message in the UI
+      log.error('Name is required');
+      return;
+    }
+    
+    try {
+      const { payload, type } = await dispatch(
+        editArtificialAssistant({
+          id: agentId,
+          description,
+          name,
+        }),
+      );
+      log.debug(type, payload);
 
-    // navigate back to the view page
-    navigate(`/agents/artificial/assistants/${agentId}`);
+      // navigate back to the view page
+      navigate(`/agents/artificial/assistants/${agentId}`);
+    } catch (error) {
+      log.error(`Error editing artificial assistant: ${error}`);
+      // Handle the error in the UI
+    }
   };
 
   return (
