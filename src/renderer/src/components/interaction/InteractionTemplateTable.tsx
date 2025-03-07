@@ -21,6 +21,16 @@ import {
   selectInteractionTemplates,
 } from './InteractionTemplatesSlice';
 
+/**
+ * Renders a table displaying interaction templates with selection and action functionalities.
+ *
+ * This React component retrieves interaction templates from the Redux store and displays them in a sortable table.
+ * It provides checkboxes for selecting individual templates or all templates at once, truncates long names and descriptions,
+ * and integrates internationalization support for header and action texts. Each table row includes a link to view template details
+ * and a menu for additional row-specific actions.
+ *
+ * @returns A React element representing the interaction templates table.
+ */
 export default function InteractionTemplateTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

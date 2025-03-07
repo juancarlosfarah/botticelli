@@ -16,6 +16,13 @@ import _ from 'lodash';
 import RowMenu from '../../../common/RowMenu';
 import { deleteAgent, selectHumanParticipants } from '../../AgentsSlice';
 
+/**
+ * Renders a table of human participants with selection and internationalization support.
+ *
+ * This component retrieves a list of human participants from the Redux store and displays them in a responsive table. It features a "select all" checkbox in the header and individual selection checkboxes for each participant. The table displays truncated participant names and descriptions, and provides action links for viewing details as well as editing or deleting entries via a row menu. Text labels in the table are internationalized.
+ *
+ * @returns The React element representing the human participants table.
+ */
 function HumanParticipantTable(): ReactElement {
   const [order] = useState<Order>('desc');
   const [selected, setSelected] = useState<readonly string[]>([]);

@@ -8,6 +8,13 @@ import Button from '@mui/joy/Button';
 import { fetchAgents } from '../../AgentsSlice';
 import HumanParticipantTable from './HumanParticipantTable';
 
+/**
+ * Renders the human participants view.
+ *
+ * On mount, the component dispatches an action to fetch agent data. It displays a table of human participants and a button that, when clicked, navigates to the creation form for a new human participant. The button label is localized based on the current language setting.
+ *
+ * @returns A React element containing the user interface for managing human participants.
+ */
 export default function HumanParticipants(): ReactElement {
   const dispatch = useDispatch();
   const { t } = useTranslation();

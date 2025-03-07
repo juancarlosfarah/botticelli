@@ -18,6 +18,15 @@ import { Order, getComparator, stableSort } from '../../utils/sort';
 import RowMenu from '../common/RowMenu';
 import { deleteInteraction, selectInteractions } from './InteractionsSlice';
 
+/**
+ * Renders a table of interactions with multi-selection, detail view, and row actions.
+ *
+ * This component retrieves interaction data from the Redux store and displays it in a styled table.
+ * Users can select individual interactions or all interactions using checkboxes.
+ * The table supports internationalization via the `useTranslation` hook for dynamic header and link text.
+ *
+ * @returns A React element representing the interactions table.
+ */
 export default function InteractionTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

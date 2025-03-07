@@ -18,6 +18,16 @@ import { Order, getComparator, stableSort } from '../../utils/sort';
 import RowMenu from '../common/RowMenu';
 import { deleteExperiment, selectExperiments } from './ExperimentsSlice';
 
+/**
+ * Renders a table displaying a list of experiments with selectable and sortable rows.
+ *
+ * This component retrieves experiments from the Redux store and displays them in a table. Users can select all
+ * experiments or individual ones via checkboxes. Each row shows truncated experiment names and descriptions, and
+ * includes links and action menus for further interactions. Text elements such as table headers and action links 
+ * are internationalized using the translation hook.
+ *
+ * @returns The React element representing the experiments table.
+ */
 export default function ExperimentTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

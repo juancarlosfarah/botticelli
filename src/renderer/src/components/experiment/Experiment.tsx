@@ -22,6 +22,16 @@ import { setCurrentExchange } from '../interaction/InteractionsSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { fetchExperiment, selectExperimentById } from './ExperimentsSlice';
 
+/**
+ * Renders the experiment details page.
+ *
+ * This component retrieves the experiment ID from the URL, fetches the corresponding experiment data via Redux,
+ * and displays the experiment's name, description, participants, and their interactions. It supports internationalization,
+ * provides a back navigation button, and enables users to initiate or resume exchanges, updating the Redux state accordingly.
+ * If the experiment ID is missing or the experiment cannot be found, an error message is displayed.
+ *
+ * @returns A React element representing the experiment details view.
+ */
 export default function Experiment(): ReactElement {
   const { experimentId } = useParams();
   const dispatch = useDispatch<AppDispatch>();

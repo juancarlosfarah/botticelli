@@ -18,6 +18,14 @@ import { Order, getComparator, stableSort } from '../../utils/sort';
 import RowMenu from '../common/RowMenu';
 import { deleteSimulation, selectSimulations } from './SimulationsSlice';
 
+/**
+ * Renders a table of simulations with options for selection and management.
+ *
+ * The component retrieves a list of simulations from the Redux store and displays them in a table. Users can select simulations using checkboxes,
+ * view simulation details, and initiate deletion via a row-specific menu. Text elements, such as column headers and action links, are internationalized using react-i18next.
+ *
+ * @returns A React element representing the simulation table.
+ */
 export default function SimulationTable(): ReactElement {
   const [order] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

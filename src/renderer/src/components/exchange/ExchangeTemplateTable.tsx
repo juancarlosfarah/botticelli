@@ -21,6 +21,18 @@ import {
   selectAllExchangeTemplates,
 } from './ExchangeTemplatesSlice';
 
+/**
+ * Renders a table of exchange templates with selectable rows and sort functionality.
+ *
+ * This component retrieves exchange templates from the Redux store and displays them in a table that supports:
+ * - Toggling the sort order when clicking the 'Name' header.
+ * - Selecting individual templates or all templates at once via checkboxes.
+ * - Viewing and deleting individual templates using action links.
+ *
+ * Internationalization is enabled for key labels such as 'Name' and 'View'.
+ *
+ * @returns The React element representing the exchange templates table.
+ */
 export default function ExchangeTemplateTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('asc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

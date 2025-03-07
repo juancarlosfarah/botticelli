@@ -45,6 +45,15 @@ import { Order, getComparator, stableSort } from '../../utils/sort';
 import RowMenu from '../common/RowMenu';
 import { deleteOneExchange, selectAllExchanges } from './ExchangesSlice';
 
+/**
+ * Renders a responsive table of exchanges with selection and sorting features.
+ *
+ * This React component retrieves a list of exchanges from the Redux store and displays them within a styled table.
+ * It supports row selection via checkboxes, sorts entries by ID, and uses internationalization to render labels
+ * such as "Name" and "View". Future enhancements include pagination support.
+ *
+ * @returns A React element representing the exchanges table.
+ */
 export default function ExchangeTable(): ReactElement {
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

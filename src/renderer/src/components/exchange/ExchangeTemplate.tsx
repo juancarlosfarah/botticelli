@@ -20,6 +20,17 @@ import {
   selectExchangeTemplateById,
 } from './ExchangeTemplatesSlice';
 
+/**
+ * Renders a view displaying the details of an exchange template.
+ *
+ * This component retrieves the exchange template ID from the URL parameters, dispatches an action to fetch
+ * the corresponding exchange template from the Redux store, and displays detailed information such as the template's
+ * name, description, instructions, cue, input type (capitalized), assistant, soft and hard limits, participant instructions,
+ * and associated triggers. It also handles cases where the template ID is missing or the exchange template is not found,
+ * providing appropriate internationalized feedback.
+ *
+ * @returns The rendered ExchangeTemplate React element.
+ */
 export default function ExchangeTemplate(): ReactElement {
   const { exchangeTemplateId } = useParams();
   const dispatch = useDispatch<AppDispatch>();

@@ -32,6 +32,17 @@ import { closeSidebar } from '../utils';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import Toggler from './layout/Toggler';
 
+/**
+ * Renders a responsive sidebar navigation component for the application.
+ *
+ * The sidebar features a header with an app logo, title, and color scheme toggle, a search input
+ * with internationalized placeholder text, and a scrollable navigation list with expandable sections.
+ * Navigation items are highlighted based on the current route, and nested togglers reveal additional
+ * links for sections such as Interactions, Exchanges, and Agents. A footer displays user information
+ * and a logout button. On mobile devices, an overlay enables closing the sidebar.
+ *
+ * @returns A React element representing the sidebar.
+ */
 export default function Sidebar(): ReactElement {
   const { pathname } = useLocation();
 

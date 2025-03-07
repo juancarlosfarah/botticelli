@@ -16,6 +16,16 @@ import _ from 'lodash';
 import RowMenu from '../../../common/RowMenu';
 import { deleteAgent, selectArtificialAssistants } from '../../AgentsSlice';
 
+/**
+ * Renders a table of artificial assistants with selection, view, and edit options.
+ *
+ * This component retrieves a list of artificial assistants from the Redux store and displays them in a table.
+ * Each row features a checkbox, truncated assistant name and description, and action links for viewing and editing.
+ * The header includes a master checkbox to toggle the selection of all assistants, and text elements are internationalized
+ * using the useTranslation hook.
+ *
+ * @returns A ReactElement representing the artificial assistants table.
+ */
 function ArtificialAssistantTable(): ReactElement {
   const [order] = useState<Order>('desc');
   const [selected, setSelected] = useState<readonly string[]>([]);

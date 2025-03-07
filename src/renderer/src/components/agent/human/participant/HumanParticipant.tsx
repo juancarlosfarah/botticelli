@@ -12,6 +12,16 @@ import log from 'electron-log/renderer';
 import CustomBreadcrumbs from '../../../layout/CustomBreadcrumbs';
 import { fetchAgent, selectAgentById } from '../../AgentsSlice';
 
+/**
+ * Renders the human participant's details based on the agent ID from the URL parameters.
+ *
+ * The component extracts the agent ID from the URL, dispatches an action to fetch the corresponding agent data,
+ * and selects the agent from the Redux store. It utilizes internationalization to display localized text, showing
+ * a "not found" message if the agent data is unavailable. When the agent exists, it displays the agent's name and
+ * description along with navigational elements such as breadcrumbs and a back button.
+ *
+ * @returns The React element representing the participant's details view or a not-found message.
+ */
 export default function HumanParticipant(): ReactElement {
   const { agentId } = useParams();
   const dispatch = useDispatch();

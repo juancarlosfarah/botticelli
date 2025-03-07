@@ -12,6 +12,16 @@ import log from 'electron-log/renderer';
 import CustomBreadcrumbs from '../../../layout/CustomBreadcrumbs';
 import { fetchAgent, selectAgentById } from '../../AgentsSlice';
 
+/**
+ * Renders the HumanAssistant view.
+ *
+ * This component retrieves the agent ID from the URL parameters and dispatches an action to fetch the agent's data.
+ * It uses Redux to manage state and react-i18next for localizing user-facing text.
+ * If the agent is found, the component displays its name and description along with navigational breadcrumbs and a back button.
+ * Otherwise, it renders a localized "Agent Not Found" message.
+ *
+ * @returns A React element representing the agent details interface.
+ */
 export default function HumanAssistant(): ReactElement {
   const { agentId } = useParams();
   const dispatch = useDispatch();
