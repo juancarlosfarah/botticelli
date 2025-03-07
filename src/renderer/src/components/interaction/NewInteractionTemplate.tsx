@@ -173,7 +173,6 @@ const NewInteractionTemplate = (): ReactElement => {
           {t(
             'These are the instructions that are shown to the participant when the interaction has been marked as completed.',
           )}
-          '
         </FormHelperText>
       </FormControl>
       <FormControl>
