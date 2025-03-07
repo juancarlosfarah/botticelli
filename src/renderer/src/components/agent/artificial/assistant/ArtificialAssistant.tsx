@@ -36,13 +36,16 @@ export default function ArtificialAssistant(): ReactElement {
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'column', 
+          flexDirection: 'column',
           alignItems: 'flex-start',
           my: 1,
           gap: 1,
         }}
       >
-        <Button color="neutral" onClick={() => navigate(-1)}>
+        <Button
+          color="neutral"
+          onClick={() => navigate(`/agents/artificial/assistants`)}
+        >
           {t('Back')}
         </Button>
         <Typography level="h2">Agent</Typography>

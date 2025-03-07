@@ -42,7 +42,10 @@ export default function HumanParticipant(): ReactElement {
           gap: 1,
         }}
       >
-        <Button color="neutral" onClick={() => navigate(-1)}>
+        <Button
+          color="neutral"
+          onClick={() => navigate(`/agents/human/participants`)}
+        >
           {t('Back')}
         </Button>
         <Typography level="h2">Agent</Typography>

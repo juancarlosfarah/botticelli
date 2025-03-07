@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
 
@@ -10,7 +11,6 @@ import log from 'electron-log/renderer';
 
 import CustomBreadcrumbs from '../../../layout/CustomBreadcrumbs';
 import { fetchAgent, selectAgentById } from '../../AgentsSlice';
-import { Button } from '@mui/joy';
 
 export default function HumanAssistant(): ReactElement {
   const { agentId } = useParams();
@@ -42,7 +42,10 @@ export default function HumanAssistant(): ReactElement {
           gap: 1,
         }}
       >
-        <Button color="neutral" onClick={() => navigate(-1)}>
+        <Button
+          color="neutral"
+          onClick={() => navigate(`/agents/human/assistants`)}
+        >
           {t('Back')}
         </Button>
         <Typography level="h2">Agent</Typography>
