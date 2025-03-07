@@ -1,8 +1,10 @@
 import { ReactElement, useEffect } from 'react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Link from '@mui/joy/Link';
@@ -22,6 +24,8 @@ import { fetchSimulation, selectSimulationById } from './SimulationsSlice';
 export default function Simulation(): ReactElement {
   const { simulationId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [order] = React.useState<Order>('desc');
 
@@ -50,6 +54,16 @@ export default function Simulation(): ReactElement {
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+        }}
+      >
+        <Button color="neutral" onClick={() => navigate(-1)}>
+          {t('Back')}
+        </Button>
+      </Box>
       <CustomBreadcrumbs />
       <Box
         sx={{
@@ -66,7 +80,7 @@ export default function Simulation(): ReactElement {
       </Box>
 
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{simulation.name}</Typography>
 
@@ -106,7 +120,7 @@ export default function Simulation(): ReactElement {
         >
           <thead>
             <tr>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               {interactionTemplates.map((interactionTemplate) => {
                 return (
                   <th
@@ -187,7 +201,7 @@ export default function Simulation(): ReactElement {
                               sx={{ ml: 1 }}
                               to={`/interactions/${interaction.id}`}
                             >
-                              View
+                              {t('View')}
                             </Link>
                           </td>
                         </tr>

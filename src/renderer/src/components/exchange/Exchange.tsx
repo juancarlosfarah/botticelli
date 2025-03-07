@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
@@ -18,6 +19,7 @@ import { fetchExchange, selectExchangeById } from './ExchangesSlice';
 export default function Exchange(): ReactElement {
   const { exchangeId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
 
   if (!exchangeId) {
     return <div>Invalid Exchange ID</div>;
@@ -55,11 +57,11 @@ export default function Exchange(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">Exchange</Typography>
+        <Typography level="h2">{t('Exchange')}</Typography>
       </Box>
 
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{exchange.name}</Typography>
 
@@ -101,7 +103,7 @@ export default function Exchange(): ReactElement {
       </Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Order
+        {t('Order')}
       </Typography>
       <Typography>{exchange?.order ?? '—'}</Typography>
 
@@ -111,17 +113,17 @@ export default function Exchange(): ReactElement {
       <Typography>{capitalize(exchange.inputType)}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Trigger
+        {t('Trigger')}
       </Typography>
       <Typography>{trigger?.name || '—'}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Soft Limit
+        {t('Soft Limit')}
       </Typography>
       <Typography>{exchange?.softLimit || '—'}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Hard Limit
+        {t('Hard Limit')}
       </Typography>
       <Typography>{exchange?.hardLimit || '—'}</Typography>
 

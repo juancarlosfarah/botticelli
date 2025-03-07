@@ -2,9 +2,9 @@ import { ReactElement, useEffect } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
-import { Tooltip } from '@mui/joy';
+import { Button, Tooltip } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Link from '@mui/joy/Link';
@@ -25,7 +25,7 @@ import { fetchExperiment, selectExperimentById } from './ExperimentsSlice';
 export default function Experiment(): ReactElement {
   const { experimentId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const [order, setOrder] = React.useState<Order>('desc');
@@ -61,6 +61,17 @@ export default function Experiment(): ReactElement {
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+        }}
+      >
+        <Button color="neutral" onClick={() => navigate(-1)}>
+          {t('Back')}
+        </Button>
+      </Box>
+
       <CustomBreadcrumbs />
       <Box
         sx={{
@@ -73,10 +84,10 @@ export default function Experiment(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">Experiment</Typography>
+        <Typography level="h2">{t('Experiment')}</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{experiment.name}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">
@@ -114,7 +125,7 @@ export default function Experiment(): ReactElement {
         >
           <thead>
             <tr>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               {interactionTemplates.map((interactionTemplate) => {
                 return (
                   <th

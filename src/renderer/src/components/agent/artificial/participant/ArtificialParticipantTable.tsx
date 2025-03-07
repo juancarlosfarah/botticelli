@@ -1,4 +1,5 @@
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -20,6 +21,7 @@ function ArtificialParticipantTable(): ReactElement {
   const [selected, setSelected] = useState<readonly string[]>([]);
 
   const agents = useSelector(selectArtificialParticipants);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -74,7 +76,7 @@ function ArtificialParticipantTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 50, padding: '12px 6px' }}></th>
             </tr>
@@ -113,11 +115,15 @@ function ArtificialParticipantTable(): ReactElement {
                     <Link
                       level="body-xs"
                       component={RouterLink}
-                      to={`/agents/${row.id}`}
+                      to={`/agents/artificial/participants/${row.id}`}
                     >
-                      View
+                      {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteAgent} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteAgent}
+                      editPath={`/agents/artificial/participants/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

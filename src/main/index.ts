@@ -19,16 +19,21 @@ import { GetAgentsChannel } from './channels/agent/GetAgentsChannel';
 import { DeleteOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/DeleteOneArtificialAssistantChannel';
 import { GetManyArtificialAssistantChannel } from './channels/agent/artificial/assistant/GetManyArtificialAssistantChannel';
 import { GetOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/GetOneArtificialAssistantChannel';
+import { PatchOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/PatchOneArtificialAssistantChannel';
 import { PostOneArtificialAssistantChannel } from './channels/agent/artificial/assistant/PostOneArtificialAssistantChannel';
 import { DeleteOneArtificialEvaluatorChannel } from './channels/agent/artificial/evaluator/DeleteOneArtificialEvaluatorChannel';
 import { GetManyArtificialEvaluatorsChannel } from './channels/agent/artificial/evaluator/GetManyArtificialEvaluatorsChannel';
 import { GetOneArtificialEvaluatorChannel } from './channels/agent/artificial/evaluator/GetOneArtificialEvaluatorChannel';
+import { PatchOneArtificialEvaluatorChannel } from './channels/agent/artificial/evaluator/PatchOneArtificialEvaluatorChannel';
 import { PostOneArtificialEvaluatorChannel } from './channels/agent/artificial/evaluator/PostOneArtificialEvaluatorChannel';
 import { DeleteOneArtificialParticipantChannel } from './channels/agent/artificial/participant/DeleteOneArtificialParticipantChannel';
 import { GetManyArtificialParticipantsChannel } from './channels/agent/artificial/participant/GetManyArtificialParticipantsChannel';
 import { GetOneArtificialParticipantChannel } from './channels/agent/artificial/participant/GetOneArtificialParticipantChannel';
+import { PatchOneArtificialParticipantChannel } from './channels/agent/artificial/participant/PatchOneArtificialParticipantChannel';
 import { PostOneArtificialParticipantChannel } from './channels/agent/artificial/participant/PostOneArtificialParticipantChannel';
+import { PatchOneHumanAssistantChannel } from './channels/agent/human/assistant/PatchOneHumanAssistantChannel';
 import { PostOneHumanAssistantChannel } from './channels/agent/human/assistant/PostOneHumanAssistantChannel';
+import { PatchOneHumanParticipantChannel } from './channels/agent/human/participant/PatchOneHumanParticipantChannel';
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
 import { PostManyKeyPressEventsChannel } from './channels/event/PostManyKeyPressEventsChannel';
 import { PostOneKeyPressEventChannel } from './channels/event/PostOneKeyPressEventChannel';
@@ -231,21 +236,26 @@ new Main().init([
   new GetManyArtificialAssistantChannel(),
   new DeleteOneArtificialAssistantChannel(),
   new GetOneArtificialAssistantChannel(),
+  new PatchOneArtificialAssistantChannel(),
   //   |_ participant
   new PostOneArtificialParticipantChannel(),
   new GetOneArtificialParticipantChannel(),
   new GetManyArtificialParticipantsChannel(),
   new DeleteOneArtificialParticipantChannel(),
+  new PatchOneArtificialParticipantChannel(),
   //   |_ evaluator
   new PostOneArtificialEvaluatorChannel(),
   new GetOneArtificialEvaluatorChannel(),
   new GetManyArtificialEvaluatorsChannel(),
   new DeleteOneArtificialEvaluatorChannel(),
+  new PatchOneArtificialEvaluatorChannel(),
   // |_ human
   //   |_ assistant
   new PostOneHumanAssistantChannel(),
+  new PatchOneHumanAssistantChannel(),
   //   |_ participant
   new PostOneHumanParticipantChannel(),
+  new PatchOneHumanParticipantChannel(),
   // triggers
   new PostOneTriggerChannel(),
   new GetOneTriggerChannel(),

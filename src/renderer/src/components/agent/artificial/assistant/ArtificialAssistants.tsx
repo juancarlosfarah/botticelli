@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ import ArtificialAssistantTable from './ArtificialAssistantTable';
 
 export default function ArtificialAssistants(): ReactElement {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -20,7 +22,7 @@ export default function ArtificialAssistants(): ReactElement {
         to="/agents/artificial/assistants/new"
         component={RouterLink}
       >
-        New Artificial Assistant
+        {t('New Artificial Assistant')}
       </Button>
       <ArtificialAssistantTable />
     </div>

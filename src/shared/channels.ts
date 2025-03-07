@@ -27,6 +27,16 @@ export const GET_MANY_ARTIFICIAL_ASSISTANTS_CHANNEL =
   'agents:artificial:assistant:get:many';
 export const DELETE_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
   'agent:artificial:assistant:delete:one';
+export const PATCH_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
+  'agent:artificial:assistant:patch:one';
+export const PATCH_ONE_ARTIFICIAL_EVALUATOR_CHANNEL =
+  'agent:artificial:evaluator:patch:one';
+export const PATCH_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL =
+  'agent:artificial:participant:patch:one';
+export const PATCH_ONE_HUMAN_ASSISTANT_CHANNEL =
+  'agent:human:assistant:patch:one';
+export const PATCH_ONE_HUMAN_PARTICIPANT_CHANNEL =
+  'agent:human:participant:patch:one';
 
 export const GET_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL =
   'agent:artificial:participant:get:one';

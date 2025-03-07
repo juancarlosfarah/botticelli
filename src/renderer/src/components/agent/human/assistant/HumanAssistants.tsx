@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ import HumanAssistantTable from './HumanAssistantTable';
 
 export default function HumanAssistants(): ReactElement {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -20,7 +22,7 @@ export default function HumanAssistants(): ReactElement {
         to="/agents/human/assistants/new"
         component={RouterLink}
       >
-        New Human Assistant
+        {t('New Human Assistant')}
       </Button>
       <HumanAssistantTable />
     </div>
