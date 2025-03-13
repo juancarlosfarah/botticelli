@@ -13,6 +13,10 @@ export const DELETE_MESSAGE_CHANNEL = 'messages:delete';
 
 export const GENERATE_RESPONSE_CHANNEL = 'response:generate';
 
+export const GET_SETTING_CHANNEL = 'setting:get';
+export const PATCH_ONE_SETTING_CHANNEL = 'settings:patch:one';
+export const POST_SETTING_CHANNEL = 'setting:post';
+
 export const POST_AGENT_CHANNEL = 'agent:post';
 export const GET_AGENT_CHANNEL = 'agent:get';
 export const GET_AGENTS_CHANNEL = 'agents:get';
@@ -20,7 +24,6 @@ export const DELETE_AGENT_CHANNEL = 'agent:delete';
 
 export const GET_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
   'agent:artificial:assistant:get:one';
-
 export const POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
   'agent:artificial:assistant:post:one';
 export const GET_MANY_ARTIFICIAL_ASSISTANTS_CHANNEL =

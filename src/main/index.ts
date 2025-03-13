@@ -65,6 +65,7 @@ import { StartInteractionChannel } from './channels/interaction/StartInteraction
 import { GetMessagesChannel } from './channels/message/GetMessagesChannel';
 import { PostMessageChannel } from './channels/message/PostMessageChannel';
 import { GenerateResponseChannel } from './channels/response/GenerateResponseChannel';
+import { PatchOneSettingChannel } from './channels/settings/PatchOneSettingChannel';
 import { DeleteOneSimulationChannel } from './channels/simulation/DeleteOneSimulationChannel';
 import { GetManySimulationsChannel } from './channels/simulation/GetManySimulationsChannel';
 import { GetOneSimulationChannel } from './channels/simulation/GetOneSimulationChannel';
@@ -282,6 +283,8 @@ new Main().init([
   new GetOneSimulationChannel(),
   new GetManySimulationsChannel(),
   new DeleteOneSimulationChannel(),
+  //settings
+  new PatchOneSettingChannel(),
   // events
   new PostOneKeyPressEventChannel(),
   new PostManyKeyPressEventsChannel(),
