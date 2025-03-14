@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import { Autocomplete, FormControl, FormHelperText, FormLabel } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Input from '@mui/joy/Input';
@@ -46,6 +46,7 @@ const EditSettings = (): ReactElement => {
   );
 
   const [apiKey, setApiKey] = useState(settings?.apiKey || '');
+  const [apiKeyError, setApiKeyError] = useState(false);
   const [modelProvider, setModelProvider] = useState<ModelProvider>(
     settings?.modelProvider || ModelProvider.OpenAI,
   );
@@ -82,11 +83,21 @@ const EditSettings = (): ReactElement => {
     if (newValue) setModel(newValue);
   };
 
+  const getNativeLanguageName = (code: string): string => {
+    const nativeName = new Intl.DisplayNames([code], {
+      type: 'language',
+      localeMatcher: 'lookup',
+    }).of(code);
+    return capitalize(nativeName) || code;
+  };
+
   const handleChangeLanguage = (
     event: SyntheticEvent | null,
     newValue: string | null,
   ): void => {
-    if (newValue) setLanguage(newValue);
+    if (newValue) {
+      setLanguage(newValue);
+    }
   };
 
   const handleChangeApiKey = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -96,9 +107,12 @@ const EditSettings = (): ReactElement => {
 
   const handleEditSettings = async (): Promise<void> => {
     if (!apiKey?.trim()) {
+      setApiKeyError(true);
       console.error('API Key is required');
       return;
     }
+
+    setApiKeyError(false);
 
     try {
       const { payload, type } = await dispatch(
@@ -200,7 +214,16 @@ const EditSettings = (): ReactElement => {
 
       <FormControl>
         <FormLabel>{t('Model provider API Key')}</FormLabel>
-        <Input value={apiKey} onChange={handleChangeApiKey}></Input>
+        <Input
+          value={apiKey}
+          onChange={handleChangeApiKey}
+          error={apiKeyError}
+        ></Input>
+        {apiKeyError && (
+          <FormHelperText sx={{ color: 'red' }}>
+            {t('You must enter an API key.')}
+          </FormHelperText>
+        )}
         <FormHelperText>
           {t(
             `Your model API key is used to communicate with the AI provider's services.`,
@@ -209,14 +232,13 @@ const EditSettings = (): ReactElement => {
       </FormControl>
 
       <FormControl>
-        <FormLabel> {t('Language')}</FormLabel>
-        <Select value={language} onChange={handleChangeLanguage}>
-          {languages.map((language) => (
-            <Option value={language} key={language}>
-              {capitalize(language)}
-            </Option>
-          ))}
-        </Select>
+        <FormLabel>{t('Language')}</FormLabel>
+        <Autocomplete
+          options={languages}
+          getOptionLabel={(option) => getNativeLanguageName(option)}
+          value={language}
+          onChange={handleChangeLanguage}
+        />
         <FormHelperText>
           {t('This is the language of the Botticelli interface.')}
         </FormHelperText>
