@@ -93,6 +93,7 @@ const EditSettings = (): ReactElement => {
     const value = event.target.value;
     setApiKey(value);
   };
+
   const handleEditSettings = async (): Promise<void> => {
     if (!apiKey?.trim()) {
       console.error('API Key is required');
@@ -113,6 +114,26 @@ const EditSettings = (): ReactElement => {
       navigate('/settings');
     } catch (error) {
       log.error(`Error updating settings: ${error}`);
+    }
+  };
+
+  const handleResetToDefaults = async (): Promise<void> => {
+    const defaultSettings = {
+      apiKey: 'default key',
+      modelProvider: ModelProvider.OpenAI,
+      model: Model.GPT_4O,
+      language: Language.EN,
+    };
+
+    try {
+      await dispatch(editSetting(defaultSettings));
+      setApiKey(defaultSettings.apiKey);
+      setModelProvider(defaultSettings.modelProvider);
+      setModel(defaultSettings.model);
+      setLanguage(defaultSettings.language);
+      navigate('/settings');
+    } catch (error) {
+      console.error('Error resetting settings:', error);
     }
   };
 
@@ -201,7 +222,7 @@ const EditSettings = (): ReactElement => {
         </FormHelperText>
       </FormControl>
 
-      <Button color="danger" onClick={() => dispatch(fetchSettings())}>
+      <Button color="danger" onClick={handleResetToDefaults}>
         {t('Reset to Default Settings')}
       </Button>
     </>
