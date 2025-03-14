@@ -1,16 +1,20 @@
+import Language from '@shared/enums/Language';
 import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
-//import { Model } from 'openai/resources';
 import {
   AfterLoad,
   Column,
   CreateDateColumn,
   Entity,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class Settings {
+export class Setting {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column({ type: 'text', default: ModelProvider.OpenAI })
   modelProvider: ModelProvider = ModelProvider.OpenAI;
 
@@ -18,7 +22,13 @@ export class Settings {
   model: Model = Model.GPT_4O;
 
   @Column({ default: '' })
-  modelKey: string = '';
+  apiKey: string = '';
+
+  @Column({ default: '', unique: true })
+  username: string = '';
+
+  @Column({ type: 'text', default: Language.EN })
+  language: Language = Language.EN;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;

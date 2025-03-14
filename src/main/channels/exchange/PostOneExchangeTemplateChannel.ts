@@ -48,8 +48,6 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       hardLimit,
     } = request.params;
 
-    log.debug(`linking triggers: ${triggers}`);
-
     const exchangeTemplate = new ExchangeTemplate();
     exchangeTemplate.name = name;
     exchangeTemplate.description = description;

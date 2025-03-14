@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { FormControl, FormHelperText, FormLabel } from '@mui/joy';
 import Box from '@mui/joy/Box';
@@ -21,19 +21,18 @@ import { AppDispatch } from '@renderer/store';
 import Language from '@shared/enums/Language';
 import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
+import log from 'electron-log/renderer';
 import capitalize from 'lodash.capitalize';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import {
   editSetting,
   fetchSettings,
-  selectApiKey,
-  selectLanguage,
-  selectModel,
-  selectModelProvider,
+  selectSettingByName,
 } from './SettingsSlice';
 
 const EditSettings = (): ReactElement => {
+  const { settingName } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -42,61 +41,79 @@ const EditSettings = (): ReactElement => {
   const modelProviders = Object.values(ModelProvider);
   const models = Object.values(Model);
 
-  const apiKey = useSelector(selectApiKey);
-  const modelProvider = useSelector(selectModelProvider);
-  const model = useSelector(selectModel);
-  const language = useSelector(selectLanguage);
+  const settings = useSelector((state) =>
+    selectSettingByName(state, settingName),
+  );
 
-  const [localApiKey, setApiKey] = useState(apiKey);
-  const [localModelProvider, setModelProvider] = useState(modelProvider);
-  const [localModel, setModel] = useState(model);
-  const [localLanguage, setLanguage] = useState(language);
+  const [apiKey, setApiKey] = useState(settings?.apiKey || '');
+  const [modelProvider, setModelProvider] = useState<ModelProvider>(
+    settings?.modelProvider || ModelProvider.OpenAI,
+  );
+  const [model, setModel] = useState<Model>(settings?.model || Model.GPT_4O);
+  const [language, setLanguage] = useState<Language>(
+    settings?.language || Language.EN,
+  );
 
   useEffect(() => {
-    dispatch(fetchSettings());
-  }, [dispatch]);
+    const query = { name: settingName };
+    dispatch(fetchSettings(query));
+  }, [settingName]);
 
   useEffect(() => {
-    setApiKey(apiKey);
-    setModelProvider(modelProvider);
-    setModel(model);
-    setLanguage(language);
-  }, [apiKey, modelProvider, model, language]);
+    if (settings) {
+      setApiKey(settings.apiKey);
+      setModelProvider(settings.modelProvider);
+      setModel(settings.model);
+      setLanguage(settings.language);
+    }
+  }, [settings]);
 
   const handleChangeModelProvider = (
-    _event: SyntheticEvent | null,
+    event: SyntheticEvent | null,
     newValue: string | null,
   ): void => {
     if (newValue) setModelProvider(newValue);
   };
 
   const handleChangeModel = (
-    _event: SyntheticEvent | null,
+    event: SyntheticEvent | null,
     newValue: string | null,
   ): void => {
     if (newValue) setModel(newValue);
   };
 
   const handleChangeLanguage = (
-    _event: SyntheticEvent | null,
+    event: SyntheticEvent | null,
     newValue: string | null,
   ): void => {
     if (newValue) setLanguage(newValue);
   };
 
   const handleChangeApiKey = (event: ChangeEvent<HTMLInputElement>): void => {
-    setApiKey(event.target.value);
+    const value = event.target.value;
+    setApiKey(value);
   };
-
   const handleEditSettings = async (): Promise<void> => {
-    await dispatch(editSetting({ name: 'apiKey', value: localApiKey }));
-    await dispatch(
-      editSetting({ name: 'modelProvider', value: localModelProvider }),
-    );
-    await dispatch(editSetting({ name: 'model', value: localModel }));
-    await dispatch(editSetting({ name: 'language', value: localLanguage }));
+    if (!apiKey?.trim()) {
+      console.error('API Key is required');
+      return;
+    }
 
-    navigate('/settings');
+    try {
+      const { payload, type } = await dispatch(
+        editSetting({
+          apiKey,
+          modelProvider,
+          model,
+          language,
+        }),
+      );
+      console.debug(type, payload);
+
+      navigate('/settings');
+    } catch (error) {
+      log.error(`Error updating settings: ${error}`);
+    }
   };
 
   return (
@@ -136,7 +153,7 @@ const EditSettings = (): ReactElement => {
       </Box>
       <FormControl>
         <FormLabel>{t('Select an AI provider.')}</FormLabel>
-        <Select value={localModelProvider} onChange={handleChangeModelProvider}>
+        <Select value={modelProvider} onChange={handleChangeModelProvider}>
           {modelProviders.map((provider) => (
             <Option value={provider} key={provider}>
               {provider}
@@ -148,7 +165,7 @@ const EditSettings = (): ReactElement => {
         <FormLabel>
           {t('Select a model to process and generate responses.')}
         </FormLabel>
-        <Select value={localModel} onChange={handleChangeModel}>
+        <Select value={model} onChange={handleChangeModel}>
           {models.map((localModel) => (
             <Option value={localModel} key={localModel}>
               {localModel}
@@ -162,7 +179,7 @@ const EditSettings = (): ReactElement => {
 
       <FormControl>
         <FormLabel>{t('Model provider API Key')}</FormLabel>
-        <Input value={localApiKey} onChange={handleChangeApiKey}></Input>
+        <Input value={apiKey} onChange={handleChangeApiKey}></Input>
         <FormHelperText>
           {t(
             `Your model API key is used to communicate with the AI provider's services.`,
@@ -172,7 +189,7 @@ const EditSettings = (): ReactElement => {
 
       <FormControl>
         <FormLabel> {t('Language')}</FormLabel>
-        <Select value={localLanguage} onChange={handleChangeLanguage}>
+        <Select value={language} onChange={handleChangeLanguage}>
           {languages.map((language) => (
             <Option value={language} key={language}>
               {capitalize(language)}

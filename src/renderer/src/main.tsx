@@ -43,7 +43,7 @@ import NewInteraction from './components/interaction/NewInteraction';
 import NewInteractionTemplate from './components/interaction/NewInteractionTemplate';
 import ParticipantInteraction from './components/interaction/ParticipantInteraction';
 import EditSettings from './components/settings/EditSettings';
-import Settings from './components/settings/Settings';
+import Setting from './components/settings/Setting.tsx';
 import NewSimulation from './components/simulation/NewSimulation';
 import Simulation from './components/simulation/Simulation';
 import Simulations from './components/simulation/Simulations';
@@ -228,7 +228,7 @@ const router = createBrowserRouter([
       // setting
       {
         path: 'settings',
-        element: <Settings />,
+        element: <Setting />,
       },
       {
         path: 'settings/edit',

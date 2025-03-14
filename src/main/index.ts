@@ -283,7 +283,7 @@ new Main().init([
   new GetOneSimulationChannel(),
   new GetManySimulationsChannel(),
   new DeleteOneSimulationChannel(),
-  //settings
+  // settings
   new PatchOneSettingChannel(),
   // events
   new PostOneKeyPressEventChannel(),

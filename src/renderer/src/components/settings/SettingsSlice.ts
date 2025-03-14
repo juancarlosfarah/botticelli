@@ -9,7 +9,7 @@ import {
   GET_SETTING_CHANNEL,
   PATCH_ONE_SETTING_CHANNEL,
 } from '@shared/channels';
-import Setting, { PatchOneSettingParams } from '@shared/interfaces/Settings';
+import Setting, { PatchOneSettingParams } from '@shared/interfaces/Setting';
 
 import { IpcService } from '../../services/IpcService';
 
@@ -24,22 +24,25 @@ const initialState = settingsAdapter.getInitialState({
 // thunk functions
 export const fetchSettings = createAsyncThunk(
   'settings/fetchSettings',
-  async () => {
-    const response = await IpcService.send<{ settings: Setting }>(
+  async (query) => {
+    const response = await IpcService.send<{ settings: any }>(
       GET_SETTING_CHANNEL,
+      { params: { query } },
     );
     return [response.settings];
   },
 );
 
-export const editSetting = createAsyncThunk(
+export const editSetting = createAsyncThunk<Setting, PatchOneSettingParams>(
   'settings/editSetting',
-  async ({ name, value }: { name: string; value: any }) => {
-    await IpcService.send(PATCH_ONE_SETTING_CHANNEL, {
-      params: { name, value },
-    });
-
-    return { name, value };
+  async ({ modelProvider, model, apiKey, language }) => {
+    const response = await IpcService.send<Setting, PatchOneSettingParams>(
+      PATCH_ONE_SETTING_CHANNEL,
+      {
+        params: { modelProvider, model, apiKey, language },
+      },
+    );
+    return response;
   },
 );
 
@@ -57,11 +60,8 @@ const settingsSlice = createSlice({
         state.status = 'idle';
       })
       .addCase(editSetting.fulfilled, (state, action) => {
-        const { name, value } = action.payload;
-        settingsAdapter.updateOne(state, {
-          id: name,
-          changes: { value },
-        });
+        const setting = action.payload;
+        settingsAdapter.setOne(state, setting);
       });
   },
 });

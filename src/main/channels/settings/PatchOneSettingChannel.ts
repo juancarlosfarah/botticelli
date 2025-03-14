@@ -1,10 +1,11 @@
 import { AppDataSource } from '@main/data-source';
-import { Settings } from '@main/entity/Settings';
+import { Setting } from '@main/entity/Setting';
 import { PATCH_ONE_SETTING_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
-import { PatchOneSettingParams } from '@shared/interfaces/Settings';
+import { PatchOneSettingParams } from '@shared/interfaces/Setting';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
+import log from 'electron-log/main';
 
 import { PatchOneChannel } from '../common/PatchOneChannel';
 
@@ -12,7 +13,7 @@ export class PatchOneSettingChannel extends PatchOneChannel {
   constructor() {
     super({
       name: PATCH_ONE_SETTING_CHANNEL,
-      entity: Settings,
+      entity: Setting,
     });
   }
 
@@ -30,18 +31,31 @@ export class PatchOneSettingChannel extends PatchOneChannel {
       return;
     }
 
-    const { name } = request.params;
+    const { modelProvider, model, apiKey, language } = request.params;
+
+    // todo: allow multiple users
+    const username = 'lnco@epfl.ch';
+
+    log.debug(`patching one setting: ${request.params}`);
 
     // update the setting
-    await AppDataSource.manager.update(Settings, name, {
-      name,
-    });
-
-    // get the updated agent
     const repository = AppDataSource.getRepository(this.entity);
-    const setting = await repository.findOneBy({ name });
+    await repository.upsert(
+      {
+        username,
+        modelProvider,
+        model,
+        apiKey,
+        language,
+      },
+      ['username'],
+    );
 
-    // return the updated agent to the frontend
+    // get the updated setting
+
+    const setting = await repository.findOneBy({ username });
+
+    // return the updated setting to the frontend
     event.sender.send(request.responseChannel, instanceToPlain(setting));
   }
 }
