@@ -8,24 +8,25 @@ import Button from '@mui/joy/Button';
 import Typography from '@mui/joy/Typography';
 
 import { AppDispatch } from '@renderer/store';
+import capitalize from 'lodash.capitalize';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import {
-  fetchSettings,
-  selectApiKey,
-  selectLanguage,
-  selectModel,
-  selectModelProvider,
-} from './SettingsSlice';
+import { fetchSettings, selectSettingByUsername } from './SettingsSlice';
 
 const Settings = (): ReactElement => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
 
-  const apiKey = useSelector(selectApiKey);
-  const modelProvider = useSelector(selectModelProvider);
-  const model = useSelector(selectModel);
-  const language = useSelector(selectLanguage);
+  const username = 'lnco@epfl.ch';
+  const setting = useSelector(selectSettingByUsername(username));
+
+  const getNativeLanguageName = (code: string): string => {
+    const nativeName = new Intl.DisplayNames([code], {
+      type: 'language',
+      localeMatcher: 'lookup',
+    }).of(code);
+    return capitalize(nativeName) || code;
+  };
 
   useEffect(() => {
     dispatch(fetchSettings());
@@ -66,25 +67,24 @@ const Settings = (): ReactElement => {
       <Typography sx={{}} level="title-md">
         {t('OpenAI API Key')}
       </Typography>
-      <Typography>{apiKey}</Typography>
+      <Typography>{setting?.apiKey}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         {t('Language')}
       </Typography>
       <Typography>
-        {language}
-        {t('Current Language')}
+        {setting?.language ? getNativeLanguageName(setting.language) : '-'}
       </Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         {t('Model Provider')}
       </Typography>
-      <Typography>{modelProvider}</Typography>
+      <Typography>{setting?.modelProvider}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         {t('Model')}
       </Typography>
-      <Typography>{model}</Typography>
+      <Typography>{setting?.model}</Typography>
     </div>
   );
 };

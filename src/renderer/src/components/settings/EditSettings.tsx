@@ -45,6 +45,7 @@ const EditSettings = (): ReactElement => {
     selectSettingByName(state, settingName),
   );
 
+  const username = 'lnco@epfl.ch';
   const [apiKey, setApiKey] = useState(settings?.apiKey || '');
   const [apiKeyError, setApiKeyError] = useState(false);
   const [modelProvider, setModelProvider] = useState<ModelProvider>(
@@ -117,6 +118,7 @@ const EditSettings = (): ReactElement => {
     try {
       const { payload, type } = await dispatch(
         editSetting({
+          username,
           apiKey,
           modelProvider,
           model,
@@ -133,6 +135,7 @@ const EditSettings = (): ReactElement => {
 
   const handleResetToDefaults = async (): Promise<void> => {
     const defaultSettings = {
+      username: 'lnco@epfl.ch',
       apiKey: 'default key',
       modelProvider: ModelProvider.OpenAI,
       model: Model.GPT_4O,

@@ -14,7 +14,7 @@ import Setting, { PatchOneSettingParams } from '@shared/interfaces/Setting';
 import { IpcService } from '../../services/IpcService';
 
 const settingsAdapter = createEntityAdapter<Setting>({
-  selectId: (setting) => setting.name,
+  selectId: (setting) => setting.username,
 });
 
 const initialState = settingsAdapter.getInitialState({
@@ -29,17 +29,17 @@ export const fetchSettings = createAsyncThunk(
       GET_SETTING_CHANNEL,
       { params: { query } },
     );
-    return [response.settings];
+    return response.settings;
   },
 );
 
 export const editSetting = createAsyncThunk<Setting, PatchOneSettingParams>(
   'settings/editSetting',
-  async ({ modelProvider, model, apiKey, language }) => {
+  async ({ username, modelProvider, model, apiKey, language }) => {
     const response = await IpcService.send<Setting, PatchOneSettingParams>(
       PATCH_ONE_SETTING_CHANNEL,
       {
-        params: { modelProvider, model, apiKey, language },
+        params: { username, modelProvider, model, apiKey, language },
       },
     );
     return response;
@@ -56,12 +56,13 @@ const settingsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchSettings.fulfilled, (state, action) => {
-        settingsAdapter.setAll(state, action.payload);
+        settingsAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
+
       .addCase(editSetting.fulfilled, (state, action) => {
-        const setting = action.payload;
-        settingsAdapter.setOne(state, setting);
+        settingsAdapter.upsertOne(state, action.payload);
+        state.status = 'idle';
       });
   },
 });
@@ -92,3 +93,7 @@ export const selectLanguage = createSelector(
   selectAllSettings,
   (settings) => settings.find((s) => s.name === 'language')?.value || '',
 );
+
+export const selectSettingByUsername = (username: string) =>
+  (state: RootState) => state.settings.entities[username];
+
