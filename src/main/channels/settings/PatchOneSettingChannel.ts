@@ -34,8 +34,6 @@ export class PatchOneSettingChannel extends PatchOneChannel {
     const { modelProvider, model, apiKey, language, username } = request.params;
 
 
-    log.debug(`patching one setting: ${request.params}`);
-
     // update the setting
     const repository = AppDataSource.getRepository(this.entity);
     await repository.upsert(

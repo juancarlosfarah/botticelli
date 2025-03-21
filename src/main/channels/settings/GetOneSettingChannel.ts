@@ -1,4 +1,3 @@
-// src/main/ipc/settings/GetOneSettingChannel.ts
 import { Setting } from '@main/entity/Setting';
 import { GET_SETTING_CHANNEL } from '@shared/channels';
 

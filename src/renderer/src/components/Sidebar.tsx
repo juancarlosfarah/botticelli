@@ -419,8 +419,12 @@ export default function Sidebar(): ReactElement {
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
         <Avatar variant="outlined" size="sm" />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">{currentUser?.split('@')[0]}</Typography>
-          <Typography level="body-xs">{currentUser}</Typography>
+          <Typography level="title-sm">
+            {currentUser ? currentUser.split('@')[0] : 'Guest'}
+          </Typography>
+          <Typography level="body-xs">
+            {currentUser || 'Not signed in'}
+          </Typography>
         </Box>
         <IconButton size="sm" variant="plain" color="neutral">
           <LogoutRoundedIcon />

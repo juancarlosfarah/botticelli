@@ -81,28 +81,34 @@ export const { selectAll: selectAllSettings, selectById: selectSettingByName } =
     (state: RootState) => state.settings || initialState,
   );
 
+export const selectCurrentUserSetting = createSelector(
+  (state: RootState) => state.settings.entities[state.settings.currentUser],
+  (setting) => setting,
+);
+
 export const selectApiKey = createSelector(
-  selectAllSettings,
-  (settings) => settings.find((s) => s.name === 'apiKey')?.value || '',
+  selectCurrentUserSetting,
+  (setting) => setting?.apiKey ?? '',
 );
 
 export const selectModelProvider = createSelector(
-  selectAllSettings,
-  (settings) => settings.find((s) => s.name === 'modelProvider')?.value || '',
+  selectCurrentUserSetting,
+  (setting) => setting?.modelProvider ?? '',
 );
 
 export const selectModel = createSelector(
-  selectAllSettings,
-  (settings) => settings.find((s) => s.name === 'model')?.value || '',
+  selectCurrentUserSetting,
+  (setting) => setting?.model ?? '',
 );
 
 export const selectLanguage = createSelector(
-  selectAllSettings,
-  (settings) => settings.find((s) => s.name === 'language')?.value || '',
+  selectCurrentUserSetting,
+  (setting) => setting?.language ?? '',
 );
 
 export const selectSettingByUsername =
-  (username: string) => (state: RootState) =>
+  (username: string): ((state: RootState) => Setting | undefined) =>
+  (state: RootState) =>
     state.settings.entities[username];
 
 export const { setCurrentUser } = settingsSlice.actions;

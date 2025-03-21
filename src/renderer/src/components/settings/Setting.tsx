@@ -31,7 +31,7 @@ const Settings = (): ReactElement => {
   };
 
   useEffect(() => {
-    dispatch(fetchSettings());
+    dispatch(fetchSettings({ username: currentUser }));
   }, [dispatch]);
 
   return (
@@ -74,7 +74,9 @@ const Settings = (): ReactElement => {
       <Typography sx={{}} level="title-md">
         {t('OpenAI API Key')}
       </Typography>
-      <Typography>{setting?.apiKey}</Typography>
+      <Typography>
+        {setting?.apiKey ? '••••••••' + setting.apiKey.slice(-4) : ''}
+      </Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         {t('Language')}

@@ -60,8 +60,7 @@ const EditSettings = (): ReactElement => {
   );
 
   useEffect(() => {
-    const query = { name: settingName };
-    dispatch(fetchSettings(query));
+    dispatch(fetchSettings({ username: currentUser }));
   }, [settingName]);
 
   useEffect(() => {
