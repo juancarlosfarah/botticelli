@@ -1,6 +1,7 @@
 import Language from '@shared/enums/Language';
 import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
+import User from '@shared/enums/User';
 import {
   AfterLoad,
   Column,
@@ -24,8 +25,8 @@ export class Setting {
   @Column({ default: '' })
   apiKey: string = '';
 
-  @Column({ default: '', unique: true })
-  username: string = '';
+  @Column({ type: 'text', default: User.LNCO })
+  username: User = User.LNCO;
 
   @Column({ type: 'text', default: Language.EN })
   language: Language = Language.EN;

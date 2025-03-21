@@ -31,10 +31,8 @@ export class PatchOneSettingChannel extends PatchOneChannel {
       return;
     }
 
-    const { modelProvider, model, apiKey, language } = request.params;
+    const { modelProvider, model, apiKey, language, username } = request.params;
 
-    // todo: allow multiple users
-    const username = 'lnco@epfl.ch';
 
     log.debug(`patching one setting: ${request.params}`);
 

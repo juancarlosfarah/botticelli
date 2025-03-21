@@ -1,4 +1,5 @@
 import {
+  PayloadAction,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
@@ -9,6 +10,7 @@ import {
   GET_SETTING_CHANNEL,
   PATCH_ONE_SETTING_CHANNEL,
 } from '@shared/channels';
+import User from '@shared/enums/User';
 import Setting, { PatchOneSettingParams } from '@shared/interfaces/Setting';
 
 import { IpcService } from '../../services/IpcService';
@@ -19,15 +21,16 @@ const settingsAdapter = createEntityAdapter<Setting>({
 
 const initialState = settingsAdapter.getInitialState({
   status: 'idle',
+  currentUser: User.LNCO,
 });
 
 // thunk functions
 export const fetchSettings = createAsyncThunk(
   'settings/fetchSettings',
-  async (query) => {
-    const response = await IpcService.send<{ settings: any }>(
+  async ({ username }: { username: User }) => {
+    const response = await IpcService.send<{ settings: Setting }>(
       GET_SETTING_CHANNEL,
-      { params: { query } },
+      { params: { query: { username } } },
     );
     return response.settings;
   },
@@ -49,7 +52,11 @@ export const editSetting = createAsyncThunk<Setting, PatchOneSettingParams>(
 const settingsSlice = createSlice({
   name: 'settings',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentUser(state, action: PayloadAction<User>) {
+      state.currentUser = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchSettings.pending, (state) => {
@@ -94,6 +101,8 @@ export const selectLanguage = createSelector(
   (settings) => settings.find((s) => s.name === 'language')?.value || '',
 );
 
-export const selectSettingByUsername = (username: string) =>
-  (state: RootState) => state.settings.entities[username];
+export const selectSettingByUsername =
+  (username: string) => (state: RootState) =>
+    state.settings.entities[username];
 
+export const { setCurrentUser } = settingsSlice.actions;

@@ -17,7 +17,7 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Typography from '@mui/joy/Typography';
 
-import { AppDispatch } from '@renderer/store';
+import { AppDispatch, RootState } from '@renderer/store';
 import Language from '@shared/enums/Language';
 import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
@@ -29,7 +29,8 @@ import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import {
   editSetting,
   fetchSettings,
-  selectSettingByName,
+  selectSettingByUsername,
+  setCurrentUser,
 } from './SettingsSlice';
 
 const EditSettings = (): ReactElement => {
@@ -43,13 +44,11 @@ const EditSettings = (): ReactElement => {
   const modelProviders = Object.values(ModelProvider);
   const models = Object.values(Model);
 
-  const settings = useSelector((state) =>
-    selectSettingByName(state, settingName),
+  const currentUser = useSelector(
+    (state: RootState) => state.settings.currentUser,
   );
+  const settings = useSelector(selectSettingByUsername(currentUser));
 
-  const [username, setUsername] = useState<User>(
-    settings?.username || User.LNCO,
-  );
   const [apiKey, setApiKey] = useState(settings?.apiKey || '');
   const [apiKeyError, setApiKeyError] = useState(false);
   const [modelProvider, setModelProvider] = useState<ModelProvider>(
@@ -73,6 +72,13 @@ const EditSettings = (): ReactElement => {
       setLanguage(settings.language);
     }
   }, [settings]);
+
+  //avoid empty values when app starts
+  useEffect(() => {
+    if (!settings && currentUser) {
+      dispatch(fetchSettings({ username: currentUser }));
+    }
+  }, [dispatch, currentUser]);
 
   const handleChangeModelProvider = (
     event: SyntheticEvent | null,
@@ -122,7 +128,7 @@ const EditSettings = (): ReactElement => {
     try {
       const { payload, type } = await dispatch(
         editSetting({
-          username,
+          username: currentUser,
           apiKey,
           modelProvider,
           model,
@@ -142,7 +148,7 @@ const EditSettings = (): ReactElement => {
     newValue: string | null,
   ): void => {
     if (newValue) {
-      setUsername(newValue);
+      dispatch(setCurrentUser(newValue as User));
     }
   };
 
@@ -157,7 +163,7 @@ const EditSettings = (): ReactElement => {
 
     try {
       await dispatch(editSetting(defaultSettings));
-      setUsername(defaultSettings.username);
+      dispatch(setCurrentUser(defaultSettings.username));
       setApiKey(defaultSettings.apiKey);
       setModelProvider(defaultSettings.modelProvider);
       setModel(defaultSettings.model);
@@ -206,7 +212,7 @@ const EditSettings = (): ReactElement => {
 
       <FormControl>
         <FormLabel>{t('Select a user.')}</FormLabel>
-        <Select value={username} onChange={handleChangeUsername}>
+        <Select value={currentUser} onChange={handleChangeUsername}>
           {users.map((user) => (
             <Option value={user} key={user}>
               {user}

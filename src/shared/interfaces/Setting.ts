@@ -1,9 +1,10 @@
 import Language from '@shared/enums/Language';
 import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
+import User from '@shared/enums/User';
 
 type Setting = {
-  username: string;
+  username: User;
   modelProvider: ModelProvider;
   model: Model;
   apiKey: string;
@@ -11,7 +12,7 @@ type Setting = {
 };
 
 export type PatchOneSettingParams = {
-  username: string;
+  username: User;
   modelProvider: ModelProvider;
   model: Model;
   apiKey: string;

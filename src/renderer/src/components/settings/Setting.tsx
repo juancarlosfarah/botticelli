@@ -7,7 +7,7 @@ import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Typography from '@mui/joy/Typography';
 
-import { AppDispatch } from '@renderer/store';
+import { AppDispatch, RootState } from '@renderer/store';
 import capitalize from 'lodash.capitalize';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
@@ -17,8 +17,10 @@ const Settings = (): ReactElement => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
 
-  const username = 'lnco@epfl.ch';
-  const setting = useSelector(selectSettingByUsername(username));
+  const currentUser = useSelector(
+    (state: RootState) => state.settings.currentUser,
+  );
+  const setting = useSelector(selectSettingByUsername(currentUser));
 
   const getNativeLanguageName = (code: string): string => {
     const nativeName = new Intl.DisplayNames([code], {
