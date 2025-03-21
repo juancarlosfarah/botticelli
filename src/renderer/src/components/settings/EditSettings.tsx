@@ -21,6 +21,7 @@ import { AppDispatch } from '@renderer/store';
 import Language from '@shared/enums/Language';
 import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
+import User from '@shared/enums/User';
 import log from 'electron-log/renderer';
 import capitalize from 'lodash.capitalize';
 
@@ -37,6 +38,7 @@ const EditSettings = (): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
+  const users = Object.values(User);
   const languages = Object.values(Language);
   const modelProviders = Object.values(ModelProvider);
   const models = Object.values(Model);
@@ -45,7 +47,9 @@ const EditSettings = (): ReactElement => {
     selectSettingByName(state, settingName),
   );
 
-  const username = 'lnco@epfl.ch';
+  const [username, setUsername] = useState<User>(
+    settings?.username || User.LNCO,
+  );
   const [apiKey, setApiKey] = useState(settings?.apiKey || '');
   const [apiKeyError, setApiKeyError] = useState(false);
   const [modelProvider, setModelProvider] = useState<ModelProvider>(
@@ -133,9 +137,18 @@ const EditSettings = (): ReactElement => {
     }
   };
 
+  const handleChangeUsername = (
+    event: SyntheticEvent | null,
+    newValue: string | null,
+  ): void => {
+    if (newValue) {
+      setUsername(newValue);
+    }
+  };
+
   const handleResetToDefaults = async (): Promise<void> => {
     const defaultSettings = {
-      username: 'lnco@epfl.ch',
+      username: User.LNCO,
       apiKey: 'default key',
       modelProvider: ModelProvider.OpenAI,
       model: Model.GPT_4O,
@@ -144,6 +157,7 @@ const EditSettings = (): ReactElement => {
 
     try {
       await dispatch(editSetting(defaultSettings));
+      setUsername(defaultSettings.username);
       setApiKey(defaultSettings.apiKey);
       setModelProvider(defaultSettings.modelProvider);
       setModel(defaultSettings.model);
@@ -189,6 +203,18 @@ const EditSettings = (): ReactElement => {
       >
         <Typography level="h2">{t('Edit Settings')}</Typography>
       </Box>
+
+      <FormControl>
+        <FormLabel>{t('Select a user.')}</FormLabel>
+        <Select value={username} onChange={handleChangeUsername}>
+          {users.map((user) => (
+            <Option value={user} key={user}>
+              {user}
+            </Option>
+          ))}
+        </Select>
+      </FormControl>
+
       <FormControl>
         <FormLabel>{t('Select an AI provider.')}</FormLabel>
         <Select value={modelProvider} onChange={handleChangeModelProvider}>

@@ -65,6 +65,11 @@ const Settings = (): ReactElement => {
       </Box>
 
       <Typography sx={{}} level="title-md">
+        {t('User')}
+      </Typography>
+      <Typography>{setting?.username}</Typography>
+
+      <Typography sx={{}} level="title-md">
         {t('OpenAI API Key')}
       </Typography>
       <Typography>{setting?.apiKey}</Typography>
