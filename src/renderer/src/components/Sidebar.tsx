@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -28,6 +29,8 @@ import ListItemContent from '@mui/joy/ListItemContent';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 
+import { RootState } from '@renderer/store';
+
 import { closeSidebar } from '../utils';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import Toggler from './layout/Toggler';
@@ -36,6 +39,9 @@ export default function Sidebar(): ReactElement {
   const { pathname } = useLocation();
 
   const { t } = useTranslation();
+  const currentUser = useSelector(
+    (state: RootState) => state.settings.currentUser,
+  );
 
   return (
     <Sheet
@@ -413,8 +419,8 @@ export default function Sidebar(): ReactElement {
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
         <Avatar variant="outlined" size="sm" />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">LNCO</Typography>
-          <Typography level="body-xs">lnco@epfl.ch</Typography>
+          <Typography level="title-sm">{currentUser?.split('@')[0]}</Typography>
+          <Typography level="body-xs">{currentUser}</Typography>
         </Box>
         <IconButton size="sm" variant="plain" color="neutral">
           <LogoutRoundedIcon />
