@@ -11,3 +11,5 @@ export class GetManyTriggersChannel extends GetManyChannel {
     });
   }
 }
+
+///// do something to filter the triggers with respect to the user

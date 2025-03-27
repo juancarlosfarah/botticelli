@@ -16,6 +16,9 @@ export class Trigger {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text' })
+  userEmail: string;
+
   @Column({ default: '' })
   name: string = '';
 

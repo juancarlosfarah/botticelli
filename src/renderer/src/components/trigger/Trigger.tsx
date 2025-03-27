@@ -7,10 +7,9 @@ import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
 
-import log from 'electron-log/renderer';
-
 import { fetchMessages } from '../Messages/MessagesSlice';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
+import { selectCurrentUser } from '../user/UsersSlice';
 import { fetchTrigger, selectTriggerById } from './TriggersSlice';
 
 export default function Trigger(): ReactElement {
@@ -18,14 +17,15 @@ export default function Trigger(): ReactElement {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const userEmail = useSelector(selectCurrentUser);
 
   useEffect(() => {
-    const query = { id: triggerId };
-    log.debug(`fetching trigger ${triggerId}`);
-    dispatch(fetchTrigger(query));
-    dispatch(fetchMessages({ triggerId }));
-  }, [triggerId]);
-
+    if (triggerId && userEmail) {
+      const query = { id: triggerId, userEmail };
+      dispatch(fetchTrigger(query));
+      dispatch(fetchMessages(query));
+    }
+  }, [triggerId, userEmail]);
   const trigger = useSelector((state) => selectTriggerById(state, triggerId));
 
   if (!trigger) {

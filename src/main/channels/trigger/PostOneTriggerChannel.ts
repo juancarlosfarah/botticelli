@@ -24,12 +24,14 @@ export class PostOneTriggerChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, criteria, name, evaluator } = request.params;
+    const { description, criteria, name, evaluator, userEmail } =
+      request.params;
 
     const trigger = new Trigger();
     trigger.name = name;
     trigger.description = description;
     trigger.criteria = criteria;
+    trigger.userEmail = userEmail;
 
     const agentRepository = AppDataSource.getRepository(Agent);
     const savedEvaluator = await agentRepository.findOneBy({ id: evaluator });

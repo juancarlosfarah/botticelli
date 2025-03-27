@@ -24,12 +24,14 @@ import Textarea from '@mui/joy/Textarea';
 import log from 'electron-log/renderer';
 
 import { fetchAgents, selectEvaluators } from '../agent/AgentsSlice';
+import { selectCurrentUser } from '../user/UsersSlice';
 import { saveNewTrigger } from './TriggersSlice';
 
 const NewTrigger = (): ReactElement => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const userEmail = useSelector(selectCurrentUser);
 
   const evaluators = useSelector(selectEvaluators);
 
@@ -49,6 +51,7 @@ const NewTrigger = (): ReactElement => {
         description,
         criteria,
         evaluator,
+        userEmail,
       }),
     );
     log.debug(`saveNewTrigger response.payload:`, payload);

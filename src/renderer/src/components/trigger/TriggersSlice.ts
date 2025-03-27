@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux';
+
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -15,6 +17,7 @@ import {
 } from '../../../../shared/channels';
 import Agent from '../../../../shared/interfaces/Agent';
 import { IpcService } from '../../services/IpcService';
+import { selectCurrentUser } from '../user/UsersSlice';
 
 const triggersAdapter = createEntityAdapter<Trigger>();
 
@@ -25,11 +28,11 @@ const initialState = triggersAdapter.getInitialState({
 // thunk functions
 export const fetchTrigger = createAsyncThunk(
   'triggers/fetchTrigger',
-  async (query) => {
+  async ({ userEmail }: { userEmail: string }) => {
     const response = await IpcService.send<{ trigger: any }>(
       GET_ONE_TRIGGER_CHANNEL,
       {
-        params: { query },
+        params: { query: { userEmail } },
       },
     );
 
@@ -42,8 +45,14 @@ export const fetchTrigger = createAsyncThunk(
 
 export const fetchTriggers = createAsyncThunk(
   'triggers/fetchTriggers',
-  async () => {
-    return await IpcService.send<{ triggers: any }>(GET_MANY_TRIGGERS_CHANNEL);
+  async ({ userEmail }: { userEmail: string }) => {
+    const response = await IpcService.send<{ triggers: any }>(
+      GET_MANY_TRIGGERS_CHANNEL,
+      {
+        params: { query: { userEmail } },
+      },
+    );
+    return response;
   },
 );
 
@@ -54,10 +63,11 @@ export const saveNewTrigger = createAsyncThunk<
     description: string;
     criteria: string;
     evaluator: Agent;
+    userEmail: string;
   }
 >(
   'triggers/saveNewTrigger',
-  async ({ description, criteria, name, evaluator }) => {
+  async ({ description, criteria, name, evaluator, userEmail }) => {
     const response = await IpcService.send<{ trigger: any }>(
       POST_ONE_TRIGGER_CHANNEL,
       {
@@ -66,6 +76,7 @@ export const saveNewTrigger = createAsyncThunk<
           description,
           criteria,
           evaluator,
+          userEmail,
         },
       },
     );
