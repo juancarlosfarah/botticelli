@@ -11,6 +11,7 @@ import { AppDispatch, RootState } from '@renderer/store';
 import capitalize from 'lodash.capitalize';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
+import { getNativeLanguageName } from './EditSettings';
 import { fetchSettings, selectSettingByUsername } from './SettingsSlice';
 
 const Settings = (): ReactElement => {
@@ -21,14 +22,6 @@ const Settings = (): ReactElement => {
     (state: RootState) => state.settings.currentUser,
   );
   const setting = useSelector(selectSettingByUsername(currentUser));
-
-  const getNativeLanguageName = (code: string): string => {
-    const nativeName = new Intl.DisplayNames([code], {
-      type: 'language',
-      localeMatcher: 'lookup',
-    }).of(code);
-    return capitalize(nativeName) || code;
-  };
 
   useEffect(() => {
     dispatch(fetchSettings({ username: currentUser }));

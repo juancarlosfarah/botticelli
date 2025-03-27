@@ -1,5 +1,4 @@
 import {
-  PayloadAction,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
@@ -14,6 +13,7 @@ import User from '@shared/enums/User';
 import Setting, { PatchOneSettingParams } from '@shared/interfaces/Setting';
 
 import { IpcService } from '../../services/IpcService';
+import { selectCurrentUser } from '../user/UsersSlice';
 
 const settingsAdapter = createEntityAdapter<Setting>({
   selectId: (setting) => setting.username,
@@ -21,7 +21,6 @@ const settingsAdapter = createEntityAdapter<Setting>({
 
 const initialState = settingsAdapter.getInitialState({
   status: 'idle',
-  currentUser: User.LNCO,
 });
 
 // thunk functions
@@ -52,11 +51,7 @@ export const editSetting = createAsyncThunk<Setting, PatchOneSettingParams>(
 const settingsSlice = createSlice({
   name: 'settings',
   initialState,
-  reducers: {
-    setCurrentUser(state, action: PayloadAction<User>) {
-      state.currentUser = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchSettings.pending, (state) => {
@@ -110,5 +105,3 @@ export const selectSettingByUsername =
   (username: string): ((state: RootState) => Setting | undefined) =>
   (state: RootState) =>
     state.settings.entities[username];
-
-export const { setCurrentUser } = settingsSlice.actions;

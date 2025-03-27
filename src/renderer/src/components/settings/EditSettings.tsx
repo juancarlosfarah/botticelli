@@ -33,6 +33,14 @@ import {
   setCurrentUser,
 } from './SettingsSlice';
 
+export const getNativeLanguageName = (code: string): string => {
+  const nativeName = new Intl.DisplayNames([code], {
+    type: 'language',
+    localeMatcher: 'lookup',
+  }).of(code);
+  return capitalize(nativeName) || code;
+};
+
 const EditSettings = (): ReactElement => {
   const { settingName } = useParams();
   const { t } = useTranslation();
@@ -162,11 +170,11 @@ const EditSettings = (): ReactElement => {
 
     try {
       await dispatch(editSetting(defaultSettings));
-      dispatch(setCurrentUser(defaultSettings.username));
-      setApiKey(defaultSettings.apiKey);
-      setModelProvider(defaultSettings.modelProvider);
-      setModel(defaultSettings.model);
-      setLanguage(defaultSettings.language);
+      // dispatch(setCurrentUser(defaultSettings.username));
+      // setApiKey(defaultSettings.apiKey);
+      // setModelProvider(defaultSettings.modelProvider);
+      // setModel(defaultSettings.model);
+      // setLanguage(defaultSettings.language);
       navigate('/settings');
     } catch (error) {
       console.error('Error resetting settings:', error);
