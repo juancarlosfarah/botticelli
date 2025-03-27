@@ -50,11 +50,16 @@ import Simulations from './components/simulation/Simulations';
 import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
+import Login from './components/user/Login.tsx';
 import i18n from './config/i18nResources';
 import './index.css';
 import store from './store';
 
 const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <Login />,
+  },
   {
     path: '/',
     element: <App />,

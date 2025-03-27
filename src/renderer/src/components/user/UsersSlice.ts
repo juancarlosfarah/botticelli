@@ -27,3 +27,5 @@ export const { setCurrentUser, logoutUser } = userSlice.actions;
 export const selectCurrentUser = (state: RootState) => state.user.currentUser;
 
 export default userSlice.reducer;
+
+export type { UserState };

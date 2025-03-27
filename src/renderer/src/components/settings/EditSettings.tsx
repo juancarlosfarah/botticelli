@@ -17,20 +17,19 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Typography from '@mui/joy/Typography';
 
-import { AppDispatch, RootState } from '@renderer/store';
+import { AppDispatch } from '@renderer/store';
 import Language from '@shared/enums/Language';
 import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
-import User from '@shared/enums/User';
 import log from 'electron-log/renderer';
 import capitalize from 'lodash.capitalize';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
+import { selectCurrentUser } from '../user/UsersSlice';
 import {
   editSetting,
   fetchSettings,
-  selectSettingByUsername,
-  setCurrentUser,
+  selectSettingByUserEmail,
 } from './SettingsSlice';
 
 export const getNativeLanguageName = (code: string): string => {
@@ -40,22 +39,21 @@ export const getNativeLanguageName = (code: string): string => {
   }).of(code);
   return capitalize(nativeName) || code;
 };
-
 const EditSettings = (): ReactElement => {
   const { settingName } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const users = Object.values(User);
   const languages = Object.values(Language);
   const modelProviders = Object.values(ModelProvider);
   const models = Object.values(Model);
 
-  const currentUser = useSelector(
-    (state: RootState) => state.settings.currentUser,
+  const currentUser = useSelector(selectCurrentUser);
+  if (!currentUser) return <div>Please log in !.</div>;
+  const settings = useSelector((state) =>
+    selectSettingByUserEmail(state, currentUser),
   );
-  const settings = useSelector(selectSettingByUsername(currentUser));
 
   const [apiKey, setApiKey] = useState(settings?.apiKey || '');
   const [apiKeyError, setApiKeyError] = useState(false);
@@ -68,7 +66,7 @@ const EditSettings = (): ReactElement => {
   );
 
   useEffect(() => {
-    dispatch(fetchSettings({ username: currentUser }));
+    dispatch(fetchSettings({ userEmail: currentUser }));
   }, [settingName]);
 
   useEffect(() => {
@@ -82,8 +80,8 @@ const EditSettings = (): ReactElement => {
 
   //avoid empty values when app starts
   useEffect(() => {
-    if (!settings && currentUser) {
-      dispatch(fetchSettings({ username: currentUser }));
+    if (currentUser) {
+      dispatch(fetchSettings({ userEmail: currentUser }));
     }
   }, [dispatch, currentUser]);
 
@@ -135,7 +133,7 @@ const EditSettings = (): ReactElement => {
     try {
       const { payload, type } = await dispatch(
         editSetting({
-          username: currentUser,
+          userEmail: currentUser,
           apiKey,
           modelProvider,
           model,
@@ -150,18 +148,9 @@ const EditSettings = (): ReactElement => {
     }
   };
 
-  const handleChangeUsername = (
-    event: SyntheticEvent | null,
-    newValue: string | null,
-  ): void => {
-    if (newValue) {
-      dispatch(setCurrentUser(newValue as User));
-    }
-  };
-
   const handleResetToDefaults = async (): Promise<void> => {
     const defaultSettings = {
-      username: User.LNCO,
+      userEmail: 'lnco@epfl.ch',
       apiKey: 'default key',
       modelProvider: ModelProvider.OpenAI,
       model: Model.GPT_4O,
@@ -170,11 +159,6 @@ const EditSettings = (): ReactElement => {
 
     try {
       await dispatch(editSetting(defaultSettings));
-      // dispatch(setCurrentUser(defaultSettings.username));
-      // setApiKey(defaultSettings.apiKey);
-      // setModelProvider(defaultSettings.modelProvider);
-      // setModel(defaultSettings.model);
-      // setLanguage(defaultSettings.language);
       navigate('/settings');
     } catch (error) {
       console.error('Error resetting settings:', error);
@@ -216,17 +200,6 @@ const EditSettings = (): ReactElement => {
       >
         <Typography level="h2">{t('Edit Settings')}</Typography>
       </Box>
-
-      <FormControl>
-        <FormLabel>{t('Select a user.')}</FormLabel>
-        <Select value={currentUser} onChange={handleChangeUsername}>
-          {users.map((user) => (
-            <Option value={user} key={user}>
-              {user}
-            </Option>
-          ))}
-        </Select>
-      </FormControl>
 
       <FormControl>
         <FormLabel>{t('Select an AI provider.')}</FormLabel>

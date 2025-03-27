@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
@@ -29,19 +30,16 @@ import ListItemContent from '@mui/joy/ListItemContent';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 
-import { RootState } from '@renderer/store';
-
 import { closeSidebar } from '../utils';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import Toggler from './layout/Toggler';
+import { selectCurrentUser } from './user/UsersSlice';
 
 export default function Sidebar(): ReactElement {
   const { pathname } = useLocation();
+  const currentUser = useSelector(selectCurrentUser);
 
   const { t } = useTranslation();
-  const currentUser = useSelector(
-    (state: RootState) => state.settings.currentUser,
-  );
 
   return (
     <Sheet
@@ -422,8 +420,13 @@ export default function Sidebar(): ReactElement {
           <Typography level="title-sm">
             {currentUser ? currentUser.split('@')[0] : 'Guest'}
           </Typography>
-          <Typography level="body-xs">
-            {currentUser || 'Not signed in'}
+          <Typography
+            level="body-xs"
+            component={Link}
+            to="/login"
+            sx={{ textDecoration: 'underline', cursor: 'pointer' }}
+          >
+            {currentUser || 'Click to sign in'}
           </Typography>
         </Box>
         <IconButton size="sm" variant="plain" color="neutral">

@@ -8,24 +8,27 @@ import Button from '@mui/joy/Button';
 import Typography from '@mui/joy/Typography';
 
 import { AppDispatch, RootState } from '@renderer/store';
-import capitalize from 'lodash.capitalize';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
+import { selectCurrentUser } from '../user/UsersSlice';
 import { getNativeLanguageName } from './EditSettings';
-import { fetchSettings, selectSettingByUsername } from './SettingsSlice';
+import { fetchSettings, selectSettingByUserEmail } from './SettingsSlice';
 
 const Settings = (): ReactElement => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
 
-  const currentUser = useSelector(
-    (state: RootState) => state.settings.currentUser,
+  const currentUser = useSelector(selectCurrentUser);
+
+  const setting = useSelector((state) =>
+    selectSettingByUserEmail(state, currentUser),
   );
-  const setting = useSelector(selectSettingByUsername(currentUser));
 
   useEffect(() => {
-    dispatch(fetchSettings({ username: currentUser }));
-  }, [dispatch]);
+    if (currentUser) {
+      dispatch(fetchSettings({ userEmail: currentUser }));
+    }
+  }, [dispatch, currentUser]);
 
   return (
     <div>
@@ -62,7 +65,7 @@ const Settings = (): ReactElement => {
       <Typography sx={{}} level="title-md">
         {t('User')}
       </Typography>
-      <Typography>{setting?.username}</Typography>
+      <Typography>{setting?.userEmail}</Typography>
 
       <Typography sx={{}} level="title-md">
         {t('OpenAI API Key')}
