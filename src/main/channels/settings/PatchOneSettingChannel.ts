@@ -5,7 +5,6 @@ import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { PatchOneSettingParams } from '@shared/interfaces/Setting';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
-import log from 'electron-log/main';
 
 import { PatchOneChannel } from '../common/PatchOneChannel';
 
@@ -31,25 +30,25 @@ export class PatchOneSettingChannel extends PatchOneChannel {
       return;
     }
 
-    const { modelProvider, model, apiKey, language, username } = request.params;
-
+    const { modelProvider, model, apiKey, language, userEmail } =
+      request.params;
 
     // update the setting
     const repository = AppDataSource.getRepository(this.entity);
     await repository.upsert(
       {
-        username,
+        userEmail,
         modelProvider,
         model,
         apiKey,
         language,
       },
-      ['username'],
+      ['userEmail'],
     );
 
     // get the updated setting
 
-    const setting = await repository.findOneBy({ username });
+    const setting = await repository.findOneBy({ userEmail });
 
     // return the updated setting to the frontend
     event.sender.send(request.responseChannel, instanceToPlain(setting));

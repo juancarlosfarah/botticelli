@@ -50,7 +50,7 @@ const EditSettings = (): ReactElement => {
   const models = Object.values(Model);
 
   const currentUser = useSelector(selectCurrentUser);
-  if (!currentUser) return <div>Please log in !.</div>;
+  if (!currentUser) return <div>Please log in !</div>;
   const settings = useSelector((state) =>
     selectSettingByUserEmail(state, currentUser),
   );
@@ -122,6 +122,11 @@ const EditSettings = (): ReactElement => {
   };
 
   const handleEditSettings = async (): Promise<void> => {
+    if (!currentUser) {
+      console.error('No current user!');
+      return;
+    }
+
     if (!apiKey?.trim()) {
       setApiKeyError(true);
       console.error('API Key is required');
@@ -140,6 +145,7 @@ const EditSettings = (): ReactElement => {
           language,
         }),
       );
+
       console.debug(type, payload);
 
       navigate('/settings');

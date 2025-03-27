@@ -9,7 +9,6 @@ import { setCurrentUser } from './UsersSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,8 +16,8 @@ const Login = () => {
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
 
-    if (!email.trim() || !password.trim()) {
-      setError('Please enter both email and password.');
+    if (!email.trim()) {
+      setError('Please enter your email');
       return;
     }
 
@@ -37,7 +36,6 @@ const Login = () => {
     >
       <CustomBreadcrumbs />
 
-      {/* Back Button */}
       <Box
         sx={{
           display: 'flex',
@@ -54,7 +52,6 @@ const Login = () => {
         </Button>
       </Box>
 
-      {/* Login Form Centered */}
       <Box
         sx={{
           display: 'flex',
@@ -74,14 +71,6 @@ const Login = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          sx={{ minWidth: 300 }}
-        />
-
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
           sx={{ minWidth: 300 }}
         />
 

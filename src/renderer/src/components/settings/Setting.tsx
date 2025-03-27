@@ -7,7 +7,7 @@ import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Typography from '@mui/joy/Typography';
 
-import { AppDispatch, RootState } from '@renderer/store';
+import { AppDispatch } from '@renderer/store';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { selectCurrentUser } from '../user/UsersSlice';
