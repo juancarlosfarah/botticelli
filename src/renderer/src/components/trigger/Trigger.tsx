@@ -17,15 +17,15 @@ export default function Trigger(): ReactElement {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const userEmail = useSelector(selectCurrentUser);
+  const email = useSelector(selectCurrentUser);
 
   useEffect(() => {
-    if (triggerId && userEmail) {
-      const query = { id: triggerId, userEmail };
+    if (triggerId && email) {
+      const query = { id: triggerId, email };
       dispatch(fetchTrigger(query));
       dispatch(fetchMessages(query));
     }
-  }, [triggerId, userEmail]);
+  }, [triggerId, email]);
   const trigger = useSelector((state) => selectTriggerById(state, triggerId));
 
   if (!trigger) {

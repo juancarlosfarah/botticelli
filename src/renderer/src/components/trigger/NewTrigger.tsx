@@ -31,7 +31,7 @@ const NewTrigger = (): ReactElement => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const userEmail = useSelector(selectCurrentUser);
+  const email = useSelector(selectCurrentUser);
 
   const evaluators = useSelector(selectEvaluators);
 
@@ -51,7 +51,7 @@ const NewTrigger = (): ReactElement => {
         description,
         criteria,
         evaluator,
-        userEmail,
+        email,
       }),
     );
     log.debug(`saveNewTrigger response.payload:`, payload);
