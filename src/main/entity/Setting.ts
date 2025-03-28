@@ -25,7 +25,7 @@ export class Setting {
   apiKey: string = '';
 
   @Column({ type: 'text', default: '' })
-  userEmail: string = '';
+  email: string = '';
 
   @Column({ type: 'text', default: Language.EN })
   language: Language = Language.EN;

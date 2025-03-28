@@ -29,7 +29,7 @@ import { selectCurrentUser } from '../user/UsersSlice';
 import {
   editSetting,
   fetchSettings,
-  selectSettingByUserEmail,
+  selectSettingByEmail,
 } from './SettingsSlice';
 
 export const getNativeLanguageName = (code: string): string => {
@@ -40,7 +40,6 @@ export const getNativeLanguageName = (code: string): string => {
   return capitalize(nativeName) || code;
 };
 const EditSettings = (): ReactElement => {
-  const { settingName } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -52,7 +51,7 @@ const EditSettings = (): ReactElement => {
   const currentUser = useSelector(selectCurrentUser);
   if (!currentUser) return <div>Please log in !</div>;
   const settings = useSelector((state) =>
-    selectSettingByUserEmail(state, currentUser),
+    selectSettingByEmail(state, currentUser),
   );
 
   const [apiKey, setApiKey] = useState(settings?.apiKey || '');
@@ -65,9 +64,12 @@ const EditSettings = (): ReactElement => {
     settings?.language || Language.EN,
   );
 
+  //avoid empty values when app starts
   useEffect(() => {
-    dispatch(fetchSettings({ userEmail: currentUser }));
-  }, [settingName]);
+    if (currentUser) {
+      dispatch(fetchSettings());
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     if (settings) {
@@ -77,13 +79,6 @@ const EditSettings = (): ReactElement => {
       setLanguage(settings.language);
     }
   }, [settings]);
-
-  //avoid empty values when app starts
-  useEffect(() => {
-    if (currentUser) {
-      dispatch(fetchSettings({ userEmail: currentUser }));
-    }
-  }, [dispatch, currentUser]);
 
   const handleChangeModelProvider = (
     event: SyntheticEvent | null,
@@ -138,7 +133,7 @@ const EditSettings = (): ReactElement => {
     try {
       const { payload, type } = await dispatch(
         editSetting({
-          userEmail: currentUser,
+          email: currentUser,
           apiKey,
           modelProvider,
           model,
@@ -156,7 +151,7 @@ const EditSettings = (): ReactElement => {
 
   const handleResetToDefaults = async (): Promise<void> => {
     const defaultSettings = {
-      userEmail: 'lnco@epfl.ch',
+      email: 'lnco@epfl.ch',
       apiKey: 'default key',
       modelProvider: ModelProvider.OpenAI,
       model: Model.GPT_4O,

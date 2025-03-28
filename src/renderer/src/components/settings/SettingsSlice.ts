@@ -6,7 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '@renderer/store';
 import {
-  GET_SETTING_CHANNEL,
+  GET_MANY_SETTINGS_CHANNEL,
   PATCH_ONE_SETTING_CHANNEL,
 } from '@shared/channels';
 import Setting, { PatchOneSettingParams } from '@shared/interfaces/Setting';
@@ -15,7 +15,7 @@ import { IpcService } from '../../services/IpcService';
 import { selectCurrentUser } from '../user/UsersSlice';
 
 const settingsAdapter = createEntityAdapter<Setting>({
-  selectId: (setting) => setting.userEmail,
+  selectId: (setting) => setting.email,
 });
 
 const initialState = settingsAdapter.getInitialState({
@@ -23,23 +23,25 @@ const initialState = settingsAdapter.getInitialState({
 });
 
 // thunk functions
-export const fetchSettings = createAsyncThunk(
-  'settings/fetchSettings',
-  async ({ userEmail }: { userEmail: string }) => {
-    const response = await IpcService.send<{ settings: Setting }>(
-      GET_SETTING_CHANNEL,
-      { params: { query: { userEmail } } },
-    );
-    return response.settings;
-  },
-);
+export const fetchSettings = createAsyncThunk<
+  { settings: Setting[] },
+  { email: string }
+>('settings/fetchSettings', async ({ email }) => {
+  const response = await IpcService.send<{ settings: Setting[] }>(
+    GET_MANY_SETTINGS_CHANNEL,
+    {},
+  );
+
+  return response;
+});
+
 export const editSetting = createAsyncThunk<Setting, PatchOneSettingParams>(
   'settings/editSetting',
-  async ({ userEmail, modelProvider, model, apiKey, language }) => {
+  async ({ email, modelProvider, model, apiKey, language }) => {
     const response = await IpcService.send<Setting, PatchOneSettingParams>(
       PATCH_ONE_SETTING_CHANNEL,
       {
-        params: { userEmail, modelProvider, model, apiKey, language },
+        params: { email, modelProvider, model, apiKey, language },
       },
     );
     return response;
@@ -57,12 +59,21 @@ const settingsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchSettings.fulfilled, (state, action) => {
-        settingsAdapter.setOne(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.settings.filter(
+          (s) => s.email === email,
+        );
+        settingsAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(editSetting.fulfilled, (state, action) => {
         settingsAdapter.upsertOne(state, action.payload);
         state.status = 'idle';
+      })
+      .addCase(fetchSettings.rejected, (state, action) => {
+        state.status = 'failed';
+        console.error('Failed to fetch settings:', action.error);
       });
   },
 });
@@ -74,12 +85,12 @@ const selectors = settingsAdapter.getSelectors<RootState>(
 );
 
 export const selectAllSettings = selectors.selectAll;
-export const selectSettingByUserEmail = (state: RootState, userEmail: string) =>
-  selectors.selectById(state, userEmail);
+export const selectSettingByEmail = (state: RootState, email: string) =>
+  selectors.selectById(state, email);
 
 export const selectCurrentUserSetting = createSelector(
   [selectAllSettings, selectCurrentUser],
-  (settings, email) => settings.find((s) => s.userEmail === email),
+  (settings, email) => settings.find((s) => s.email === email),
 );
 
 export const selectApiKey = createSelector(

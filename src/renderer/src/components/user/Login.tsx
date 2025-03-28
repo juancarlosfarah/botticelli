@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, startTransition, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,17 +13,29 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
 
     if (!email.trim()) {
-      setError('Please enter your email');
+      setError('Please enter your email address');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError('Enter a valid email address');
       return;
     }
 
     setError('');
     dispatch(setCurrentUser(email));
-    navigate('/');
+    startTransition(() => {
+      navigate('/');
+    });
   };
 
   return (
@@ -47,7 +59,10 @@ const Login = () => {
           justifyContent: 'space-between',
         }}
       >
-        <Button color="neutral" onClick={() => navigate('/')}>
+        <Button
+          color="neutral"
+          onClick={() => startTransition(() => navigate('/'))}
+        >
           Back
         </Button>
       </Box>

@@ -13,7 +13,9 @@ export const DELETE_MESSAGE_CHANNEL = 'messages:delete';
 
 export const GENERATE_RESPONSE_CHANNEL = 'response:generate';
 
-export const GET_SETTING_CHANNEL = 'setting:get';
+export const GET_ONE_SETTING_CHANNEL = 'setting:get:one';
+export const GET_MANY_SETTINGS_CHANNEL = 'setting:get:many';
+
 export const PATCH_ONE_SETTING_CHANNEL = 'setting:patch:one';
 export const POST_SETTING_CHANNEL = 'setting:post';
 

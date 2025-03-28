@@ -12,7 +12,7 @@ import { AppDispatch } from '@renderer/store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { selectCurrentUser } from '../user/UsersSlice';
 import { getNativeLanguageName } from './EditSettings';
-import { fetchSettings, selectSettingByUserEmail } from './SettingsSlice';
+import { fetchSettings, selectSettingByEmail } from './SettingsSlice';
 
 const Settings = (): ReactElement => {
   const { t } = useTranslation();
@@ -21,12 +21,12 @@ const Settings = (): ReactElement => {
   const currentUser = useSelector(selectCurrentUser);
 
   const setting = useSelector((state) =>
-    selectSettingByUserEmail(state, currentUser),
+    selectSettingByEmail(state, currentUser),
   );
 
   useEffect(() => {
     if (currentUser) {
-      dispatch(fetchSettings({ userEmail: currentUser }));
+      dispatch(fetchSettings({ email: currentUser }));
     }
   }, [dispatch, currentUser]);
 
@@ -65,7 +65,7 @@ const Settings = (): ReactElement => {
       <Typography sx={{}} level="title-md">
         {t('User')}
       </Typography>
-      <Typography>{setting?.userEmail}</Typography>
+      <Typography>{setting?.email}</Typography>
 
       <Typography sx={{}} level="title-md">
         {t('OpenAI API Key')}

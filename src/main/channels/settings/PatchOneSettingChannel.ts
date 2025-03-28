@@ -30,25 +30,24 @@ export class PatchOneSettingChannel extends PatchOneChannel {
       return;
     }
 
-    const { modelProvider, model, apiKey, language, userEmail } =
-      request.params;
+    const { modelProvider, model, apiKey, language, email } = request.params;
 
     // update the setting
     const repository = AppDataSource.getRepository(this.entity);
     await repository.upsert(
       {
-        userEmail,
+        email,
         modelProvider,
         model,
         apiKey,
         language,
       },
-      ['userEmail'],
+      ['email'],
     );
 
     // get the updated setting
 
-    const setting = await repository.findOneBy({ userEmail });
+    const setting = await repository.findOneBy({ email });
 
     // return the updated setting to the frontend
     event.sender.send(request.responseChannel, instanceToPlain(setting));

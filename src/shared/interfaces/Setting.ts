@@ -3,7 +3,7 @@ import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
 
 type Setting = {
-  userEmail: string;
+  email: string;
   modelProvider: ModelProvider;
   model: Model;
   apiKey: string;
@@ -11,7 +11,7 @@ type Setting = {
 };
 
 export type PatchOneSettingParams = {
-  userEmail: string;
+  email: string;
   modelProvider: ModelProvider;
   model: Model;
   apiKey: string;
