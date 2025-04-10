@@ -4,13 +4,15 @@ import { useNavigate } from 'react-router-dom';
 
 import { Box, Button, Input, Typography } from '@mui/joy';
 
+import { onLoginSuccess } from '@renderer/services/LoginService';
+import { AppDispatch } from '@renderer/store';
+
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import { setCurrentUser } from './UsersSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const isValidEmail = (email: string): boolean => {
@@ -18,7 +20,7 @@ const Login = () => {
     return emailRegex.test(email);
   };
 
-  const handleLogin = (e: FormEvent) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!email.trim()) {
@@ -32,7 +34,7 @@ const Login = () => {
     }
 
     setError('');
-    dispatch(setCurrentUser(email));
+    await onLoginSuccess(dispatch, email);
     startTransition(() => {
       navigate('/');
     });
