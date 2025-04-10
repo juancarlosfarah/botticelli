@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
@@ -33,13 +33,19 @@ import Typography from '@mui/joy/Typography';
 import { closeSidebar } from '../utils';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import Toggler from './layout/Toggler';
-import { selectCurrentUser } from './user/UsersSlice';
+import { logoutUser, selectCurrentUser } from './user/UsersSlice';
 
 export default function Sidebar(): ReactElement {
   const { pathname } = useLocation();
   const currentUser = useSelector(selectCurrentUser);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const handleLogout = (): void => {
+    dispatch(logoutUser());
+    navigate('/home');
+  };
 
   return (
     <Sheet
@@ -108,6 +114,7 @@ export default function Sidebar(): ReactElement {
         startDecorator={<SearchRoundedIcon />}
         placeholder={t('Search')}
       />
+
       <Box
         sx={{
           minHeight: 0,
@@ -130,10 +137,10 @@ export default function Sidebar(): ReactElement {
         >
           <ListItem>
             <ListItemButton
-              selected={pathname === '/'}
+              selected={pathname === '/home'}
               role="menuitem"
               component={Link}
-              to="/"
+              to="/home"
             >
               <HomeRoundedIcon />
               <ListItemContent>
@@ -395,11 +402,19 @@ export default function Sidebar(): ReactElement {
           }}
         >
           <ListItem>
-            <ListItemButton>
+            <ListItemButton
+              selected={pathname === '/support'}
+              role="menuitem"
+              component={Link}
+              to="/support"
+            >
               <SupportRoundedIcon />
-              Support
+              <ListItemContent>
+                <Typography level="title-sm">Support</Typography>
+              </ListItemContent>
             </ListItemButton>
           </ListItem>
+
           <ListItem>
             <ListItemButton
               selected={pathname === '/settings'}
@@ -429,7 +444,12 @@ export default function Sidebar(): ReactElement {
             {currentUser || 'Click to sign in'}
           </Typography>
         </Box>
-        <IconButton size="sm" variant="plain" color="neutral">
+        <IconButton
+          size="sm"
+          variant="plain"
+          color="neutral"
+          onClick={handleLogout}
+        >
           <LogoutRoundedIcon />
         </IconButton>
       </Box>

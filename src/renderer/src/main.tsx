@@ -7,6 +7,9 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { StyledEngineProvider } from '@mui/joy/styles';
 
 import App from './App.tsx';
+import Home from './components/Home';
+import RequireAuth from './components/RequireAuth';
+import Support from './components/Support';
 import ArtificialAssistant from './components/agent/artificial/assistant/ArtificialAssistant';
 import ArtificialAssistants from './components/agent/artificial/assistant/ArtificialAssistants';
 import EditArtificialAssistant from './components/agent/artificial/assistant/EditArtificialAssistant';
@@ -64,9 +67,16 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
+      { path: 'home', element: <Home /> },
+      { path: 'support', element: <Support /> },
+
       {
         path: 'experiments',
-        element: <Experiments />,
+        element: (
+          <RequireAuth>
+            <Experiments />
+          </RequireAuth>
+        ),
       },
       {
         path: 'experiments/new',
@@ -86,8 +96,13 @@ const router = createBrowserRouter([
       },
       {
         path: 'exchanges/templates',
-        element: <ExchangeTemplates />,
+        element: (
+          <RequireAuth>
+            <ExchangeTemplates />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'exchanges/templates/new',
         element: <NewExchangeTemplate />,
@@ -110,8 +125,13 @@ const router = createBrowserRouter([
       },
       {
         path: 'interactions/templates',
-        element: <InteractionTemplates />,
+        element: (
+          <RequireAuth>
+            <InteractionTemplates />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'interactions/templates/new',
         element: <NewInteractionTemplate />,
@@ -122,8 +142,13 @@ const router = createBrowserRouter([
       },
       {
         path: 'triggers',
-        element: <Triggers />,
+        element: (
+          <RequireAuth>
+            <Triggers />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'triggers/new',
         element: <NewTrigger />,
@@ -135,8 +160,13 @@ const router = createBrowserRouter([
       // artificial assistants
       {
         path: 'agents/artificial/assistants',
-        element: <ArtificialAssistants />,
+        element: (
+          <RequireAuth>
+            <ArtificialAssistants />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'agents/artificial/assistants/new',
         element: <NewArtificialAssistant />,
@@ -152,8 +182,13 @@ const router = createBrowserRouter([
       // artificial participants
       {
         path: 'agents/artificial/participants',
-        element: <ArtificialParticipants />,
+        element: (
+          <RequireAuth>
+            <ArtificialParticipants />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'agents/artificial/participants/new',
         element: <NewArtificialParticipant />,
@@ -169,8 +204,13 @@ const router = createBrowserRouter([
       // artificial evaluators
       {
         path: 'agents/artificial/evaluators',
-        element: <ArtificialEvaluators />,
+        element: (
+          <RequireAuth>
+            <ArtificialEvaluators />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'agents/artificial/evaluators/new',
         element: <NewArtificialEvaluator />,
@@ -186,8 +226,13 @@ const router = createBrowserRouter([
       // human assistants
       {
         path: 'agents/human/assistants',
-        element: <HumanAssistants />,
+        element: (
+          <RequireAuth>
+            <HumanAssistants />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'agents/human/assistants/new',
         element: <NewHumanAssistant />,
@@ -204,8 +249,13 @@ const router = createBrowserRouter([
       // human participants
       {
         path: 'agents/human/participants',
-        element: <HumanParticipants />,
+        element: (
+          <RequireAuth>
+            <HumanParticipants />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'agents/human/participants/new',
         element: <NewHumanParticipant />,
@@ -220,8 +270,13 @@ const router = createBrowserRouter([
       },
       {
         path: 'simulations',
-        element: <Simulations />,
+        element: (
+          <RequireAuth>
+            <Simulations />
+          </RequireAuth>
+        ),
       },
+
       {
         path: 'simulations/new',
         element: <NewSimulation />,

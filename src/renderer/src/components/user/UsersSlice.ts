@@ -22,7 +22,7 @@ const userSlice = createSlice({
   },
 });
 
-export const { setCurrentUser } = userSlice.actions;
+export const { setCurrentUser, logoutUser } = userSlice.actions;
 
 export const selectCurrentUser = (state: RootState) => state.user.currentUser;
 
