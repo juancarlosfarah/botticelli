@@ -1,4 +1,9 @@
 import {
+  agentsCleared,
+  fetchAgents,
+} from '@renderer/components/agent/AgentsSlice';
+
+import {
   fetchTriggers,
   triggersCleared,
 } from '../components/trigger/TriggersSlice';
@@ -13,7 +18,9 @@ export async function onLoginSuccess(
 
   // previous user data
   dispatch(triggersCleared());
+  dispatch(agentsCleared());
 
   // fetch new user data
   await dispatch(fetchTriggers({ email }));
+  await dispatch(fetchAgents({ email }));
 }

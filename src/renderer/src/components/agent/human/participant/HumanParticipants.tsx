@@ -1,20 +1,26 @@
 import { ReactElement, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
 import Button from '@mui/joy/Button';
+
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 
 import { fetchAgents } from '../../AgentsSlice';
 import HumanParticipantTable from './HumanParticipantTable';
 
 export default function HumanParticipants(): ReactElement {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
 
   useEffect(() => {
-    dispatch(fetchAgents());
-  }, []);
+    if (currentUser) {
+      dispatch(fetchAgents({ email: currentUser }));
+    }
+  }, [dispatch, currentUser]);
   return (
     <div>
       <Button

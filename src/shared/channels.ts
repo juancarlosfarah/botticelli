@@ -63,6 +63,17 @@ export const GET_MANY_ARTIFICIAL_EVALUATORS_CHANNEL =
 export const DELETE_ONE_ARTIFICIAL_EVALUATOR_CHANNEL =
   'agent:artificial:evaluator:delete:one';
 
+export const GET_ONE_HUMAN_ASSISTANT_CHANNEL = 'agent:human:assistant:get:one';
+
+export const GET_ONE_HUMAN_PARTICIPANT_CHANNEL =
+  'agent:human:participant:get:one';
+
+export const GET_MANY_HUMAN_ASSISTANTS_CHANNEL =
+  'agents:human:assistant:get:many';
+
+export const GET_MANY_HUMAN_PARTICIPANTS_CHANNEL =
+  'agents:human:participant:get:many';
+
 export const POST_ONE_HUMAN_PARTICIPANT_CHANNEL =
   'agent:human:participant:post:one';
 

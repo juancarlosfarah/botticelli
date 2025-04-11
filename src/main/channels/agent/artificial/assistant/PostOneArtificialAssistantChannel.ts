@@ -20,9 +20,10 @@ export class PostOneArtificialAssistantChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, name } = request.params;
+    const { description, name, email } = request.params;
 
     const agent = new ArtificialAssistant();
+    agent.email = email;
     agent.name = name;
     agent.description = description;
 

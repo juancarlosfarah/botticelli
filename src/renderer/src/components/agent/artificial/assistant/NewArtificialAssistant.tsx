@@ -1,6 +1,6 @@
 import { ChangeEvent, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -13,15 +13,17 @@ import {
 import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
 
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 import log from 'electron-log/renderer';
 
 import { saveNewArtificialAssistant } from '../../AgentsSlice';
 
 const NewArtificialAssistant = (): ReactElement => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
   const navigate = useNavigate();
-
+  const currentUser = useSelector(selectCurrentUser);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
@@ -30,6 +32,7 @@ const NewArtificialAssistant = (): ReactElement => {
       saveNewArtificialAssistant({
         description,
         name,
+        email: currentUser,
       }),
     );
     log.debug(`saveNewAgent response.payload:`, payload);

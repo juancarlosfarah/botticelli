@@ -1,17 +1,17 @@
 import { AppDataSource } from '@main/data-source';
-import { GET_MANY_ARTIFICIAL_PARTICIPANTS_CHANNEL } from '@shared/channels';
+import { ArtificialAssistant } from '@main/entity/ArtificialAssistant';
+import { GET_MANY_ARTIFICIAL_ASSISTANTS_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 
-import { ArtificialParticipant } from '../../../../entity/ArtificialParticipant';
 import { GetManyChannel } from '../../../common/GetManyChannel';
 
-export class GetManyArtificialParticipantsChannel extends GetManyChannel {
+export class GetManyArtificialAssistantsChannel extends GetManyChannel {
   constructor() {
     super({
-      name: GET_MANY_ARTIFICIAL_PARTICIPANTS_CHANNEL,
-      entity: ArtificialParticipant,
+      name: GET_MANY_ARTIFICIAL_ASSISTANTS_CHANNEL,
+      entity: ArtificialAssistant,
     });
   }
 
@@ -27,7 +27,7 @@ export class GetManyArtificialParticipantsChannel extends GetManyChannel {
       return;
     }
 
-    const agentRepository = AppDataSource.getRepository(ArtificialParticipant);
+    const agentRepository = AppDataSource.getRepository(ArtificialAssistant);
 
     const agents = await agentRepository.find({
       where: { email },
