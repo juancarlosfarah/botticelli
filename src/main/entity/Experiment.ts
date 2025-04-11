@@ -17,6 +17,9 @@ export class Experiment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', default: '' })
+  email: string = '';
+
   @Column({ default: '' })
   name: string = '';
 

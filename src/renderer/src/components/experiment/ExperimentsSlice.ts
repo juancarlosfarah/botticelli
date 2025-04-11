@@ -36,10 +36,14 @@ export const fetchExperiment = createAsyncThunk(
 
 export const fetchExperiments = createAsyncThunk(
   'experiments/fetchExperiments',
-  async () => {
-    return await IpcService.send<{ experiments: Experiment[] }>(
+  async ({ email }: { email: string }) => {
+    const response = await IpcService.send<{ experiments: Experiment[] }>(
       GET_MANY_EXPERIMENTS_CHANNEL,
+      {
+        params: { email },
+      },
     );
+    return response;
   },
 );
 
@@ -53,7 +57,7 @@ export const saveNewExperiment = createAsyncThunk<
   }
 >(
   'experiments/saveNewExperiment',
-  async ({ description, interactionTemplates, name, participants }) => {
+  async ({ description, interactionTemplates, name, participants, email }) => {
     const response = await IpcService.send<{ experiment: any }>(
       POST_ONE_EXPERIMENT_CHANNEL,
       {
@@ -62,6 +66,7 @@ export const saveNewExperiment = createAsyncThunk<
           description,
           interactionTemplates,
           participants,
+          email,
         },
       },
     );
@@ -84,6 +89,7 @@ const experimentsSlice = createSlice({
   initialState,
   reducers: {
     experimentDeleted: experimentsAdapter.removeOne,
+    experimentsCleared: experimentsAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -91,9 +97,14 @@ const experimentsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchExperiments.fulfilled, (state, action) => {
-        experimentsAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.experiments.filter(
+          (experiment) => experiment.email === email,
+        );
+        experimentsAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(fetchExperiment.pending, (state) => {
         state.status = 'loading';
       })
@@ -109,7 +120,8 @@ const experimentsSlice = createSlice({
   },
 });
 
-export const { experimentDeleted } = experimentsSlice.actions;
+export const { experimentDeleted, experimentsCleared } =
+  experimentsSlice.actions;
 
 export default experimentsSlice.reducer;
 

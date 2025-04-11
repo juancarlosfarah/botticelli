@@ -53,12 +53,13 @@ export class PostOneExperimentChannel extends PostOneChannel {
       ExperimentInteractionTemplate,
     );
 
-    const { description, interactionTemplates, name, participants } =
+    const { description, interactionTemplates, name, participants, email } =
       request.params;
 
     const experiment = new Experiment();
     experiment.name = name;
     experiment.description = description;
+    experiment.email = email;
 
     // participants
     log.debug(`linking ${participants?.length} participants`);

@@ -2,6 +2,10 @@ import {
   agentsCleared,
   fetchAgents,
 } from '@renderer/components/agent/AgentsSlice';
+import {
+  experimentsCleared,
+  fetchExperiments,
+} from '@renderer/components/experiment/ExperimentsSlice';
 
 import {
   fetchTriggers,
@@ -19,8 +23,10 @@ export async function onLoginSuccess(
   // previous user data
   dispatch(triggersCleared());
   dispatch(agentsCleared());
+  dispatch(experimentsCleared());
 
   // fetch new user data
   await dispatch(fetchTriggers({ email }));
   await dispatch(fetchAgents({ email }));
+  await dispatch(fetchExperiments({ email }));
 }

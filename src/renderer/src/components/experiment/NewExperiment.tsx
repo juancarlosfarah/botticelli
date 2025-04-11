@@ -25,6 +25,8 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 import log from 'electron-log/renderer';
 
 import { fetchAgents, selectParticipants } from '../agent/AgentsSlice';
@@ -35,9 +37,10 @@ import {
 import { saveNewExperiment } from './ExperimentsSlice';
 
 const NewExperiment = (): ReactElement => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const currentUser = useSelector(selectCurrentUser);
 
   const availableInteractionTemplates = useSelector(selectInteractionTemplates);
   const availableParticipants = useSelector(selectParticipants);
@@ -61,6 +64,7 @@ const NewExperiment = (): ReactElement => {
         description,
         interactionTemplates,
         participants,
+        email: currentUser,
       }),
     );
     log.debug(`saveNewExperiment response.payload:`, payload);
