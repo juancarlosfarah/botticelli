@@ -58,6 +58,9 @@ const NewExperiment = (): ReactElement => {
   }, []);
 
   const handleNewExperiment = async (): Promise<void> => {
+    if (!currentUser) {
+      throw new Error('No user logged in');
+    }
     const { payload } = await dispatch(
       saveNewExperiment({
         name,

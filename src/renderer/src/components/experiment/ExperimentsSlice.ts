@@ -11,6 +11,7 @@ import {
   POST_ONE_EXPERIMENT_CHANNEL,
 } from '@shared/channels';
 import Experiment from '@shared/interfaces/Experiment';
+import { PostOneExperimentParams } from '@shared/interfaces/Experiment';
 
 import { IpcService } from '../../services/IpcService';
 
@@ -48,27 +49,14 @@ export const fetchExperiments = createAsyncThunk(
 );
 
 export const saveNewExperiment = createAsyncThunk<
-  Experiment,
-  {
-    name: string;
-    description: string;
-    instructions: string;
-    conversations: string[];
-  }
+  { experiment: Experiment },
+  PostOneExperimentParams
 >(
   'experiments/saveNewExperiment',
-  async ({ description, interactionTemplates, name, participants, email }) => {
-    const response = await IpcService.send<{ experiment: any }>(
+  async ({ email, description, interactionTemplates, participants }) => {
+    const response = await IpcService.send<{ experiment: Experiment }>(
       POST_ONE_EXPERIMENT_CHANNEL,
-      {
-        params: {
-          name,
-          description,
-          interactionTemplates,
-          participants,
-          email,
-        },
-      },
+      { params: { email, description, interactionTemplates, participants } },
     );
     return response;
   },
@@ -109,13 +97,14 @@ const experimentsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchExperiment.fulfilled, (state, action) => {
-        experimentsAdapter.setOne(state, action.payload);
+        experimentsAdapter.setOne(state, action.payload.experiment);
         state.status = 'idle';
       })
       .addCase(saveNewExperiment.fulfilled, (state, action) => {
-        const experiment = action.payload;
+        const experiment = action.payload.experiment;
         experimentsAdapter.addOne(state, experiment);
       })
+
       .addCase(deleteExperiment.fulfilled, experimentsAdapter.removeOne);
   },
 });

@@ -53,12 +53,13 @@ export class PostOneSimulationChannel extends PostOneChannel {
       SimulationInteractionTemplate,
     );
 
-    const { description, interactionTemplates, name, participants } =
+    const { description, interactionTemplates, name, participants, email } =
       request.params;
 
     const simulation = new Simulation();
     simulation.name = name;
     simulation.description = description;
+    simulation.email = email;
 
     // participants
     log.debug(`linking ${participants?.length} participants`);
