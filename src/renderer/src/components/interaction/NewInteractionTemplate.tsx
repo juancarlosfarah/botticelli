@@ -25,7 +25,9 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
-import { AppDispatch } from '../../store';
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
+
 import {
   fetchExchangeTemplates,
   selectAllExchangeTemplates,
@@ -36,6 +38,7 @@ const NewInteractionTemplate = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
 
   const availableExchangeTemplates = useSelector(selectAllExchangeTemplates);
 
@@ -62,6 +65,7 @@ const NewInteractionTemplate = (): ReactElement => {
         participantInstructions,
         participantInstructionsOnComplete,
         exchangeTemplates,
+        email: currentUser,
       }),
     );
 

@@ -7,6 +7,15 @@ import {
   fetchExperiments,
 } from '@renderer/components/experiment/ExperimentsSlice';
 import {
+  fetchInteractionTemplate,
+  fetchInteractionTemplates,
+  interactionsTemplateCleared,
+} from '@renderer/components/interaction/InteractionTemplatesSlice';
+import {
+  fetchInteractions,
+  interactionsCleared,
+} from '@renderer/components/interaction/InteractionsSlice';
+import {
   fetchSimulations,
   simulationsCleared,
 } from '@renderer/components/simulation/SimulationsSlice';
@@ -29,10 +38,14 @@ export async function onLoginSuccess(
   dispatch(agentsCleared());
   dispatch(experimentsCleared());
   dispatch(simulationsCleared());
+  dispatch(interactionsCleared());
+  dispatch(interactionsTemplateCleared());
 
   // fetch new user data
   await dispatch(fetchTriggers({ email }));
   await dispatch(fetchAgents({ email }));
   await dispatch(fetchExperiments({ email }));
   await dispatch(fetchSimulations({ email }));
+  await dispatch(fetchInteractions({ email }));
+  await dispatch(fetchInteractionTemplates({ email }));
 }

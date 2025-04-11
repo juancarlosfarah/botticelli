@@ -44,15 +44,15 @@ export const fetchInteractionTemplate = createAsyncThunk<
   return response;
 });
 
-export const fetchInteractionTemplates =
-  createAsyncThunk<GetManyInteractionTemplatesResponse>(
-    'interactionTemplates/fetchInteractionTemplates',
-    async () => {
-      return await IpcService.send<GetManyInteractionTemplatesResponse>(
-        GET_MANY_INTERACTION_TEMPLATES_CHANNEL,
-      );
-    },
+export const fetchInteractionTemplates = createAsyncThunk<
+  GetManyInteractionTemplatesResponse,
+  { email: string }
+>('interactionTemplates/fetchInteractionTemplates', async ({ email }) => {
+  return await IpcService.send<GetManyInteractionTemplatesResponse>(
+    GET_MANY_INTERACTION_TEMPLATES_CHANNEL,
+    { params: { email } },
   );
+});
 
 export const saveNewInteractionTemplate = createAsyncThunk<
   PostOneInteractionTemplateResponse,
@@ -66,6 +66,7 @@ export const saveNewInteractionTemplate = createAsyncThunk<
     participantInstructionsOnComplete,
     name,
     exchangeTemplates,
+    email,
   }) => {
     return await IpcService.send<
       PostOneInteractionTemplateResponse,
@@ -78,6 +79,7 @@ export const saveNewInteractionTemplate = createAsyncThunk<
         participantInstructions,
         participantInstructionsOnComplete,
         exchangeTemplates,
+        email,
       },
     });
   },
@@ -101,6 +103,7 @@ const interactionTemplatesSlice = createSlice({
   initialState,
   reducers: {
     interactionTemplateDeleted: interactionTemplatesAdapter.removeOne,
+    interactionsTemplateCleared: interactionTemplatesAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -108,9 +111,14 @@ const interactionTemplatesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchInteractionTemplates.fulfilled, (state, action) => {
-        interactionTemplatesAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.filter(
+          (template) => template.email === email,
+        );
+        interactionTemplatesAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(fetchInteractionTemplate.pending, (state) => {
         state.status = 'loading';
       })
@@ -129,7 +137,8 @@ const interactionTemplatesSlice = createSlice({
   },
 });
 
-export const { interactionTemplateDeleted } = interactionTemplatesSlice.actions;
+export const { interactionTemplateDeleted, interactionsTemplateCleared } =
+  interactionTemplatesSlice.actions;
 
 export default interactionTemplatesSlice.reducer;
 

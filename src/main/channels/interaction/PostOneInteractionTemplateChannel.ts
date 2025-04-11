@@ -42,6 +42,7 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
       name,
       exchangeTemplates,
       participantInstructionsOnComplete,
+      email,
     } = request.params;
 
     const interactionTemplate = new InteractionTemplate();
@@ -51,6 +52,7 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
     interactionTemplate.participantInstructions = participantInstructions;
     interactionTemplate.participantInstructionsOnComplete =
       participantInstructionsOnComplete;
+    interactionTemplate.email = email;
 
     const interactionTemplateRepository =
       AppDataSource.getRepository(InteractionTemplate);
