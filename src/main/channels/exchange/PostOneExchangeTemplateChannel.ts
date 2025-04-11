@@ -46,6 +46,7 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       triggers,
       softLimit,
       hardLimit,
+      email,
     } = request.params;
 
     const exchangeTemplate = new ExchangeTemplate();
@@ -56,6 +57,7 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       participantInstructionsOnComplete;
     exchangeTemplate.cue = cue;
     exchangeTemplate.inputType = inputType;
+    exchangeTemplate.email = email;
 
     // limits
     if (softLimit) {

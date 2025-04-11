@@ -3,11 +3,18 @@ import {
   fetchAgents,
 } from '@renderer/components/agent/AgentsSlice';
 import {
+  exchangeTemplatesCleared,
+  fetchExchangeTemplates,
+} from '@renderer/components/exchange/ExchangeTemplatesSlice';
+import {
+  exchangesCleared,
+  fetchExchanges,
+} from '@renderer/components/exchange/ExchangesSlice';
+import {
   experimentsCleared,
   fetchExperiments,
 } from '@renderer/components/experiment/ExperimentsSlice';
 import {
-  fetchInteractionTemplate,
   fetchInteractionTemplates,
   interactionsTemplateCleared,
 } from '@renderer/components/interaction/InteractionTemplatesSlice';
@@ -40,6 +47,8 @@ export async function onLoginSuccess(
   dispatch(simulationsCleared());
   dispatch(interactionsCleared());
   dispatch(interactionsTemplateCleared());
+  dispatch(exchangesCleared());
+  dispatch(exchangeTemplatesCleared());
 
   // fetch new user data
   await dispatch(fetchTriggers({ email }));
@@ -48,4 +57,6 @@ export async function onLoginSuccess(
   await dispatch(fetchSimulations({ email }));
   await dispatch(fetchInteractions({ email }));
   await dispatch(fetchInteractionTemplates({ email }));
+  await dispatch(fetchExchanges({ email }));
+  await dispatch(fetchExchangeTemplates({ email }));
 }

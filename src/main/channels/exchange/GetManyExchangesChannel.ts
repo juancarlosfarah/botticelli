@@ -1,6 +1,5 @@
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
-import log from 'electron-log/main';
 
 import { GET_MANY_EXCHANGES_CHANNEL } from '../../../shared/channels';
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
@@ -17,17 +16,25 @@ export class GetManyExchangesChannel extends GetManyChannel {
   }
 
   async handle(event: IpcMainEvent, request: IpcRequest): Promise<void> {
-    log.debug(`handling ${this.name}...`);
-
     if (!request.responseChannel) {
-      request.responseChannel = `${this.name}:response`;
+      request.responseChannel = `${this.getName()}:response`;
     }
 
-    const repository = AppDataSource.getRepository(this.entity);
-    const instances = await repository.find({
-      relations: { interaction: true },
+    const { email } = request.params;
+
+    if (!email) {
+      event.sender.send(request.responseChannel, { agents: [] });
+      return;
+    }
+
+    const exchangeRepository = AppDataSource.getRepository(Exchange);
+
+    const exchanges = await exchangeRepository.find({
+      where: { email },
     });
 
-    event.sender.send(request.responseChannel, instanceToPlain(instances));
+    event.sender.send(request.responseChannel, {
+      exchanges: instanceToPlain(exchanges),
+    });
   }
 }

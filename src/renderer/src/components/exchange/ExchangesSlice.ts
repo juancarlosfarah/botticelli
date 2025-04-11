@@ -42,12 +42,14 @@ export const fetchExchange = createAsyncThunk<ExchangeResponse, ExchangeQuery>(
   },
 );
 
-export const fetchExchanges = createAsyncThunk<ExchangesResponse>(
-  'exchanges/fetchExchanges',
-  async () => {
-    return await IpcService.send<Exchange[]>(GET_MANY_EXCHANGES_CHANNEL);
-  },
-);
+export const fetchExchanges = createAsyncThunk<
+  ExchangesResponse,
+  { email: string }
+>('exchanges/fetchExchanges', async ({ email }) => {
+  return await IpcService.send<Exchange[]>(GET_MANY_EXCHANGES_CHANNEL, {
+    params: { email },
+  });
+});
 
 export const saveNewExchange = createAsyncThunk<
   ExchangeResponse,
@@ -59,6 +61,7 @@ export const saveNewExchange = createAsyncThunk<
     assistant: Agent;
     participant: Agent;
     triggers: number;
+    email: string;
   }
 >(
   'exchanges/saveNewExchange',
@@ -70,6 +73,7 @@ export const saveNewExchange = createAsyncThunk<
     participant,
     triggers,
     cue,
+    email,
   }) => {
     const response = await IpcService.send<{ exchange: Exchange }>(
       POST_ONE_EXCHANGE_CHANNEL,
@@ -82,6 +86,7 @@ export const saveNewExchange = createAsyncThunk<
           participant,
           triggers,
           cue,
+          email,
         },
       },
     );
@@ -146,6 +151,7 @@ const exchangesSlice = createSlice({
   initialState,
   reducers: {
     exchangeDeleted: exchangesAdapter.removeOne,
+    exchangesCleared: exchangesAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -153,7 +159,11 @@ const exchangesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchExchanges.fulfilled, (state, action) => {
-        exchangesAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.filter(
+          (exchange) => exchange.email === email,
+        );
+        exchangesAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
       .addCase(fetchExchange.pending, (state) => {
@@ -190,6 +200,7 @@ const exchangesSlice = createSlice({
       .addCase(deleteOneExchange.fulfilled, exchangesAdapter.removeOne);
   },
 });
+export const { exchangeDeleted, exchangesCleared } = exchangesSlice.actions;
 
 export default exchangesSlice.reducer;
 

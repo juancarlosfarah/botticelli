@@ -30,6 +30,7 @@ export class PostOneExchangeChannel extends PostOneChannel {
       participant,
       triggers,
       cue,
+      email,
     } = request.params;
 
     log.debug(`linking triggers: ${triggers}`);
@@ -39,6 +40,7 @@ export class PostOneExchangeChannel extends PostOneChannel {
     exchange.description = description;
     exchange.instructions = instructions;
     exchange.cue = cue;
+    exchange.email = email;
 
     const agentRepository = AppDataSource.getRepository(Agent);
     const savedAssistant = await agentRepository.findOneBy({ id: assistant });
