@@ -51,12 +51,12 @@ export const fetchInteraction = createAsyncThunk<
 export const fetchInteractions = createAsyncThunk(
   'interactions/fetchInteractions',
   async ({ email }: { email: string }) => {
-    const response = await IpcService.send<{ interactions: Interaction[] }>(
-      GET_MANY_INTERACTIONS_CHANNEL,
-      {
-        params: { email },
-      },
-    );
+    const response = await IpcService.send<
+      { interactions: Interaction[] },
+      { email: string }
+    >(GET_MANY_INTERACTIONS_CHANNEL, {
+      params: { email },
+    });
     return response;
   },
 );
@@ -76,17 +76,17 @@ export const saveNewInteraction = createAsyncThunk<
     exchanges,
     email,
   }) => {
-    const response = await IpcService.send<{ interaction: Interaction }>(
-      POST_ONE_INTERACTION_CHANNEL,
-      {
-        params: {
-          name,
-          description,
-          exchanges,
-          email,
-        },
+    const response = await IpcService.send<
+      { interaction: Interaction },
+      { email: string }
+    >(POST_ONE_INTERACTION_CHANNEL, {
+      params: {
+        name,
+        description,
+        exchanges,
+        email,
       },
-    );
+    });
     return response;
   },
 );

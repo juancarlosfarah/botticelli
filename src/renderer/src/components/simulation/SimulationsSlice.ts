@@ -14,7 +14,6 @@ import Simulation from '@shared/interfaces/Simulation';
 import {
   DeleteOneSimulationParams,
   DeleteOneSimulationResponse,
-  GetManySimulationsResponse,
   GetOneSimulationParams,
   GetOneSimulationResponse,
   PostOneSimulationParams,
@@ -47,7 +46,10 @@ export const fetchSimulation = createAsyncThunk<
 export const fetchSimulations = createAsyncThunk(
   'simulations/fetchSimulations',
   async ({ email }: { email: string }) => {
-    const response = await IpcService.send<{ simulations: Simulation[] }>(
+    const response = await IpcService.send<
+      { simulations: Simulation[] },
+      { email: string }
+    >(
       GET_MANY_SIMULATIONS_CHANNEL,
 
       {

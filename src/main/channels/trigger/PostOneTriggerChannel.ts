@@ -26,6 +26,13 @@ export class PostOneTriggerChannel extends PostOneChannel {
 
     const { description, criteria, name, evaluator, email } = request.params;
 
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
     const trigger = new Trigger();
     trigger.name = name;
     trigger.description = description;

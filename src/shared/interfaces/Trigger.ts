@@ -6,6 +6,7 @@ type Trigger = {
   criteria: string;
   name: string;
   evaluator: Agent;
+  email: string;
 };
 
 export default Trigger;

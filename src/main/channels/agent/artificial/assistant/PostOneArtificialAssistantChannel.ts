@@ -21,6 +21,13 @@ export class PostOneArtificialAssistantChannel extends PostOneChannel {
     }
 
     const { description, name, email } = request.params;
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
 
     const agent = new ArtificialAssistant();
     agent.email = email;

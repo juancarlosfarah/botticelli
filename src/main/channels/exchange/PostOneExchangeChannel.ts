@@ -33,6 +33,14 @@ export class PostOneExchangeChannel extends PostOneChannel {
       email,
     } = request.params;
 
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
+
     log.debug(`linking triggers: ${triggers}`);
 
     const exchange = new Exchange();

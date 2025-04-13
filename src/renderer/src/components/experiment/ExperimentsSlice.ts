@@ -38,12 +38,12 @@ export const fetchExperiment = createAsyncThunk(
 export const fetchExperiments = createAsyncThunk(
   'experiments/fetchExperiments',
   async ({ email }: { email: string }) => {
-    const response = await IpcService.send<{ experiments: Experiment[] }>(
-      GET_MANY_EXPERIMENTS_CHANNEL,
-      {
-        params: { email },
-      },
-    );
+    const response = await IpcService.send<
+      { experiments: Experiment[] },
+      { email: string }
+    >(GET_MANY_EXPERIMENTS_CHANNEL, {
+      params: { email },
+    });
     return response;
   },
 );
@@ -54,10 +54,12 @@ export const saveNewExperiment = createAsyncThunk<
 >(
   'experiments/saveNewExperiment',
   async ({ email, description, interactionTemplates, participants }) => {
-    const response = await IpcService.send<{ experiment: Experiment }>(
-      POST_ONE_EXPERIMENT_CHANNEL,
-      { params: { email, description, interactionTemplates, participants } },
-    );
+    const response = await IpcService.send<
+      { experiment: Experiment },
+      { email: string }
+    >(POST_ONE_EXPERIMENT_CHANNEL, {
+      params: { email, description, interactionTemplates, participants },
+    });
     return response;
   },
 );

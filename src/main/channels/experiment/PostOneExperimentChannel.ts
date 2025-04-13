@@ -56,6 +56,14 @@ export class PostOneExperimentChannel extends PostOneChannel {
     const { description, interactionTemplates, name, participants, email } =
       request.params;
 
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
+
     const experiment = new Experiment();
     experiment.name = name;
     experiment.description = description;

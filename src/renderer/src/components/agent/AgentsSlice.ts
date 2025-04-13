@@ -35,9 +35,12 @@ const initialState = agentsAdapter.getInitialState({
 export const fetchAgent = createAsyncThunk(
   'agents/fetchAgent',
   async (query) => {
-    const response = await IpcService.send<{ agent: any }>(GET_AGENT_CHANNEL, {
-      params: { query },
-    });
+    const response = await IpcService.send<{ agent: Agent }>(
+      GET_AGENT_CHANNEL,
+      {
+        params: { query },
+      },
+    );
 
     // debugging
     log.debug(response);
@@ -61,9 +64,9 @@ export const fetchAgents = createAsyncThunk(
 
 export const saveNewAgent = createAsyncThunk<
   Agent,
-  { description: string; instructions: string }
+  { description: string; instructions: string; name: string; email: string }
 >('agents/saveNewAgent', async ({ description, name, email }) => {
-  const response = await IpcService.send<{ agent: any }>(POST_AGENT_CHANNEL, {
+  const response = await IpcService.send<Agent>(POST_AGENT_CHANNEL, {
     params: {
       description,
       name,
@@ -79,7 +82,7 @@ export const saveNewArtificialAssistant = createAsyncThunk<
 >(
   'agents/artificial/assistants/saveNew',
   async ({ description, name, email }) => {
-    const response = await IpcService.send<{ agent: any }>(
+    const response = await IpcService.send<{ agent: Agent }>(
       POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL,
       {
         params: {
@@ -99,7 +102,7 @@ export const saveNewArtificialParticipant = createAsyncThunk<
 >(
   'agents/artificial/participant/saveNew',
   async ({ description, name, email }) => {
-    const response = await IpcService.send<{ agent: any }>(
+    const response = await IpcService.send<{ agent: Agent }>(
       POST_ONE_ARTIFICIAL_PARTICIPANT_CHANNEL,
       {
         params: {
@@ -119,7 +122,7 @@ export const saveNewArtificialEvaluator = createAsyncThunk<
 >(
   'agents/artificial/evaluator/saveNew',
   async ({ description, name, email }) => {
-    const response = await IpcService.send<{ agent: any }>(
+    const response = await IpcService.send<{ agent: Agent }>(
       POST_ONE_ARTIFICIAL_EVALUATOR_CHANNEL,
       {
         params: {
@@ -137,7 +140,7 @@ export const saveNewHumanAssistant = createAsyncThunk<
   Agent,
   { description: string; instructions: string }
 >('agents/human/assistants/saveNew', async ({ description, name, email }) => {
-  const response = await IpcService.send<{ agent: any }>(
+  const response = await IpcService.send<{ agent: Agent }>(
     POST_ONE_HUMAN_ASSISTANT_CHANNEL,
     {
       params: {
@@ -154,7 +157,7 @@ export const saveNewHumanParticipant = createAsyncThunk<
   Agent,
   { description: string; instructions: string }
 >('agents/human/participant/saveNew', async ({ description, name, email }) => {
-  const response = await IpcService.send<{ agent: any }>(
+  const response = await IpcService.send<{ agent: Agent }>(
     POST_ONE_HUMAN_PARTICIPANT_CHANNEL,
     {
       params: {
@@ -170,7 +173,7 @@ export const saveNewHumanParticipant = createAsyncThunk<
 export const deleteAgent = createAsyncThunk<string | number, string | number>(
   'agents/deleteAgent',
   async (id) => {
-    const response = await IpcService.send<{ agent: any }>(
+    const response = await IpcService.send<{ agent: Agent }>(
       DELETE_AGENT_CHANNEL,
       {
         params: { id },

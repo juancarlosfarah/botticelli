@@ -56,6 +56,14 @@ export class PostOneSimulationChannel extends PostOneChannel {
     const { description, interactionTemplates, name, participants, email } =
       request.params;
 
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
+
     const simulation = new Simulation();
     simulation.name = name;
     simulation.description = description;

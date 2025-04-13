@@ -49,6 +49,14 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       email,
     } = request.params;
 
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
+
     const exchangeTemplate = new ExchangeTemplate();
     exchangeTemplate.name = name;
     exchangeTemplate.description = description;

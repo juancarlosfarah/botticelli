@@ -26,9 +26,9 @@ const initialState = triggersAdapter.getInitialState({
 export const fetchTrigger = createAsyncThunk(
   'triggers/fetchTrigger',
   async ({ email }: { email: string }) => {
-    const response = await IpcService.send<{ trigger: any }>(
+    const response = await IpcService.send<{ trigger: Trigger }>(
       GET_ONE_TRIGGER_CHANNEL,
-      {},
+      { params: { email } },
     );
 
     // debugging
@@ -41,7 +41,7 @@ export const fetchTrigger = createAsyncThunk(
 export const fetchTriggers = createAsyncThunk(
   'triggers/fetchTriggers',
   async ({ email }: { email: string }) => {
-    const response = await IpcService.send<{ triggers: any }>(
+    const response = await IpcService.send<{ triggers: Trigger[] }>(
       GET_MANY_TRIGGERS_CHANNEL,
       { params: { email } },
     );
@@ -61,7 +61,7 @@ export const saveNewTrigger = createAsyncThunk<
 >(
   'triggers/saveNewTrigger',
   async ({ description, criteria, name, evaluator, email }) => {
-    const response = await IpcService.send<{ trigger: any }>(
+    const response = await IpcService.send<{ trigger: Trigger }>(
       POST_ONE_TRIGGER_CHANNEL,
       {
         params: {
@@ -80,7 +80,7 @@ export const saveNewTrigger = createAsyncThunk<
 export const deleteTrigger = createAsyncThunk<string | number, string | number>(
   'triggers/deleteTrigger',
   async (id) => {
-    const response = await IpcService.send<{ trigger: any }>(
+    const response = await IpcService.send<{ trigger: Trigger }>(
       DELETE_ONE_TRIGGER_CHANNEL,
       {
         params: { id },

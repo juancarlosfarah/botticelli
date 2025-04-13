@@ -6,6 +6,7 @@ type InteractionTemplateExchangeTemplate = {
   order: number;
   exchangeTemplate: ExchangeTemplate;
   interactionTemplate: InteractionTemplate;
+  email?: string;
 };
 
 export default InteractionTemplateExchangeTemplate;

@@ -45,6 +45,14 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
       email,
     } = request.params;
 
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
+
     const interactionTemplate = new InteractionTemplate();
     interactionTemplate.name = name;
     interactionTemplate.description = description;
