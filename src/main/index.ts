@@ -56,6 +56,7 @@ import { StartExchangeChannel } from './channels/exchange/StartExchangeChannel';
 import { DeleteOneExperimentChannel } from './channels/experiment/DeleteOneExperimentChannel';
 import { GetManyExperimentsChannel } from './channels/experiment/GetManyExperimentsChannel';
 import { GetOneExperimentChannel } from './channels/experiment/GetOneExperimentChannel';
+import { PatchOneExperimentChannel } from './channels/experiment/PatchOneExperimentChannel';
 import { PostOneExperimentChannel } from './channels/experiment/PostOneExperimentChannel';
 import { DeleteOneInteractionChannel } from './channels/interaction/DeleteOneInteractionChannel';
 import { DeleteOneInteractionTemplateChannel } from './channels/interaction/DeleteOneInteractionTemplateChannel';
@@ -295,6 +296,7 @@ new Main().init([
   new GetOneExperimentChannel(),
   new GetManyExperimentsChannel(),
   new DeleteOneExperimentChannel(),
+  new PatchOneExperimentChannel(),
   // simulations
   new PostOneSimulationChannel(),
   new GetOneSimulationChannel(),

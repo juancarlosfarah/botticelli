@@ -27,4 +27,10 @@ export type GetOneExperimentQuery = {
   };
 };
 
+export type PatchOneExperimentParams = {
+  id: string;
+  name?: string;
+  description?: string;
+};
+
 export default Experiment;
