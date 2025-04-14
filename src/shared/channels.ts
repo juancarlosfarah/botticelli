@@ -108,6 +108,7 @@ export const POST_ONE_EXPERIMENT_CHANNEL = 'experiment:post:one';
 export const GET_MANY_EXPERIMENTS_CHANNEL = 'experiment:get:many';
 export const DELETE_ONE_EXPERIMENT_CHANNEL = 'experiment:delete:one';
 export const GET_ONE_EXPERIMENT_CHANNEL = 'experiment:get:one';
+export const PATCH_ONE_EXPERIMENT_CHANNEL = 'experiment:patch:one';
 
 export const POST_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:post:one';
 export const GET_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:get:one';

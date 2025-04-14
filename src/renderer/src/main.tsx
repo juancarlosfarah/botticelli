@@ -35,6 +35,7 @@ import ExchangeTemplate from './components/exchange/ExchangeTemplate';
 import ExchangeTemplates from './components/exchange/ExchangeTemplates';
 import Exchanges from './components/exchange/Exchanges.tsx';
 import NewExchangeTemplate from './components/exchange/NewExchangeTemplate';
+import EditExperiment from './components/experiment/EditExperiment.tsx';
 import Experiment from './components/experiment/Experiment';
 import Experiments from './components/experiment/Experiments';
 import NewExperiment from './components/experiment/NewExperiment';
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
       {
         path: 'experiments/:experimentId',
         element: <Experiment />,
+      },
+      {
+        path: 'experiments/:experimentId/edit',
+        element: <EditExperiment />,
       },
       {
         path: 'exchanges',
