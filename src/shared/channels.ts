@@ -92,6 +92,8 @@ export const POST_ONE_INTERACTION_CHANNEL = 'interaction:post:one';
 export const GET_MANY_INTERACTIONS_CHANNEL = 'interaction:get:many';
 export const DELETE_ONE_INTERACTION_CHANNEL = 'interaction:delete:one';
 export const GET_ONE_INTERACTION_CHANNEL = 'interaction:get:one';
+export const PATCH_ONE_INTERACTION_CHANNEL = 'interaction:patch:one';
+
 export const POST_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:post:one';
 export const GET_MANY_INTERACTION_TEMPLATES_CHANNEL =
@@ -100,6 +102,8 @@ export const DELETE_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:delete:one';
 export const GET_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:get:one';
+export const PATCH_ONE_INTERACTION_TEMPLATE_CHANNEL =
+  'interaction:template:patch:one';
 export const START_INTERACTION_CHANNEL = 'interaction:start';
 export const SET_CURRENT_EXCHANGE_CHANNEL = 'interaction:set:current_exchange';
 

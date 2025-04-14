@@ -39,6 +39,8 @@ import NewExchangeTemplate from './components/exchange/NewExchangeTemplate';
 import Experiment from './components/experiment/Experiment';
 import Experiments from './components/experiment/Experiments';
 import NewExperiment from './components/experiment/NewExperiment';
+import EditInteraction from './components/interaction/EditInteraction.tsx';
+import EditInteractionTemplate from './components/interaction/EditInteractionTemplate.tsx';
 import Interaction from './components/interaction/Interaction';
 import InteractionTemplate from './components/interaction/InteractionTemplate';
 import InteractionTemplates from './components/interaction/InteractionTemplates';
@@ -128,6 +130,12 @@ const router = createBrowserRouter([
         path: 'interactions/:interactionId',
         element: <Interaction />,
       },
+
+      {
+        path: 'interactions/:interactionTemplateId/edit',
+        element: <EditInteraction />,
+      },
+
       {
         path: 'interactions/templates',
         element: (
@@ -145,6 +153,11 @@ const router = createBrowserRouter([
         path: 'interactions/templates/:interactionTemplateId',
         element: <InteractionTemplate />,
       },
+      {
+        path: 'interactions/templates/:interactionTemplateId/edit',
+        element: <EditInteractionTemplate />,
+      },
+
       {
         path: 'triggers',
         element: (

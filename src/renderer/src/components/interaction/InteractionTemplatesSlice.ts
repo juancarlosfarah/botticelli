@@ -17,7 +17,6 @@ import {
   GetManyInteractionTemplatesResponse,
   GetOneInteractionTemplateParams,
   GetOneInteractionTemplateResponse,
-  PatchOneInteractionTemplateParams,
   PostOneInteractionTemplateParams,
   PostOneInteractionTemplateResponse,
 } from '@shared/interfaces/InteractionTemplate';
@@ -102,7 +101,7 @@ export const deleteInteractionTemplate = createAsyncThunk<
 
 export const editInteractionTemplate = createAsyncThunk<
   InteractionTemplate,
-  PatchOneInteractionTemplateParams
+  { id: string; name?: string; description?: string }
 >(
   'interactionTemplates/editInteractionTemplate',
   async ({ id, name, description }) => {
