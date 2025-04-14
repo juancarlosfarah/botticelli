@@ -78,6 +78,7 @@ import { PatchOneSettingChannel } from './channels/settings/PatchOneSettingChann
 import { DeleteOneSimulationChannel } from './channels/simulation/DeleteOneSimulationChannel';
 import { GetManySimulationsChannel } from './channels/simulation/GetManySimulationsChannel';
 import { GetOneSimulationChannel } from './channels/simulation/GetOneSimulationChannel';
+import { PatchOneSimulationChannel } from './channels/simulation/PatchOneSimulationChannel';
 import { PostOneSimulationChannel } from './channels/simulation/PostOneSimulationChannel';
 import { DeleteOneTriggerChannel } from './channels/trigger/DeleteOneTriggerChannel';
 import { GetManyTriggersChannel } from './channels/trigger/GetManyTriggersChannel';
@@ -299,6 +300,7 @@ new Main().init([
   new GetOneSimulationChannel(),
   new GetManySimulationsChannel(),
   new DeleteOneSimulationChannel(),
+  new PatchOneSimulationChannel(),
   // settings
   new PatchOneSettingChannel(),
   new GetOneSettingChannel(),
