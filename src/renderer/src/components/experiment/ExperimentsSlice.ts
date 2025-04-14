@@ -12,7 +12,10 @@ import {
   POST_ONE_EXPERIMENT_CHANNEL,
 } from '@shared/channels';
 import Experiment from '@shared/interfaces/Experiment';
-import { PostOneExperimentParams } from '@shared/interfaces/Experiment';
+import {
+  PatchOneExperimentParams,
+  PostOneExperimentParams,
+} from '@shared/interfaces/Experiment';
 
 import { IpcService } from '../../services/IpcService';
 
@@ -77,7 +80,7 @@ export const deleteExperiment = createAsyncThunk<
 
 export const editExperiment = createAsyncThunk<
   Experiment,
-  { id: string; name?: string; description?: string }
+  PatchOneExperimentParams
 >('experiments/editExperiment', async ({ id, name, description }) => {
   const response = await IpcService.send<Experiment>(
     PATCH_ONE_EXPERIMENT_CHANNEL,
