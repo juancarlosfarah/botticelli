@@ -63,6 +63,8 @@ import { GetManyInteractionTemplatesChannel } from './channels/interaction/GetMa
 import { GetManyInteractionsChannel } from './channels/interaction/GetManyInteractionsChannel';
 import { GetOneInteractionChannel } from './channels/interaction/GetOneInteractionChannel';
 import { GetOneInteractionTemplateChannel } from './channels/interaction/GetOneInteractionTemplateChannel';
+import { PatchOneInteractionChannel } from './channels/interaction/PatchOneInteractionChannel';
+import { PatchOneInteractionTemplateChannel } from './channels/interaction/PatchOneInteractionTemplateChannel';
 import { PostOneInteractionChannel } from './channels/interaction/PostOneInteractionChannel';
 import { PostOneInteractionTemplateChannel } from './channels/interaction/PostOneInteractionTemplateChannel';
 import { SetCurrentExchangeChannel } from './channels/interaction/SetCurrentExchangeChannel';
@@ -283,6 +285,8 @@ new Main().init([
   new DeleteOneInteractionChannel(),
   new StartInteractionChannel(),
   new PostOneInteractionTemplateChannel(),
+  new PatchOneInteractionTemplateChannel(),
+  new PatchOneInteractionChannel(),
   new GetOneInteractionTemplateChannel(),
   new GetManyInteractionTemplatesChannel(),
   new DeleteOneInteractionTemplateChannel(),

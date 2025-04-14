@@ -8,6 +8,7 @@ import {
   DELETE_ONE_INTERACTION_TEMPLATE_CHANNEL,
   GET_MANY_INTERACTION_TEMPLATES_CHANNEL,
   GET_ONE_INTERACTION_TEMPLATE_CHANNEL,
+  PATCH_ONE_INTERACTION_TEMPLATE_CHANNEL,
   POST_ONE_INTERACTION_TEMPLATE_CHANNEL,
 } from '@shared/channels';
 import InteractionTemplate from '@shared/interfaces/InteractionTemplate';
@@ -98,6 +99,22 @@ export const deleteInteractionTemplate = createAsyncThunk<
   return id;
 });
 
+export const editInteractionTemplate = createAsyncThunk<
+  InteractionTemplate,
+  { id: string; name?: string; description?: string }
+>(
+  'interactionTemplates/editInteractionTemplate',
+  async ({ id, name, description }) => {
+    const response = await IpcService.send<InteractionTemplate>(
+      PATCH_ONE_INTERACTION_TEMPLATE_CHANNEL,
+      {
+        params: { id, name, description },
+      },
+    );
+    return response;
+  },
+);
+
 const interactionTemplatesSlice = createSlice({
   name: 'interactionTemplates',
   initialState,
@@ -133,7 +150,11 @@ const interactionTemplatesSlice = createSlice({
       .addCase(
         deleteInteractionTemplate.fulfilled,
         interactionTemplatesAdapter.removeOne,
-      );
+      )
+      .addCase(editInteractionTemplate.fulfilled, (state, action) => {
+        const interactionTemplate = action.payload;
+        interactionTemplatesAdapter.setOne(state, interactionTemplate);
+      });
   },
 });
 
