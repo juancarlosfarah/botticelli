@@ -15,6 +15,7 @@ import { START_INTERACTION_CHANNEL } from '@shared/channels';
 import { SET_CURRENT_EXCHANGE_CHANNEL } from '@shared/channels';
 import Interaction from '@shared/interfaces/Interaction';
 import { NewInteractionParams } from '@shared/interfaces/Interaction';
+import { PatchOneInteractionParams } from '@shared/interfaces/Interaction';
 import { GetOneInteractionParams } from '@shared/interfaces/Interaction';
 import { SetCurrentExchangeParams } from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
@@ -139,14 +140,14 @@ export const deleteInteraction = createAsyncThunk<
 
 export const editInteraction = createAsyncThunk<
   Interaction,
-  { id: string; name?: string; description?: string }
+  PatchOneInteractionParams
 >('interactions/editInteraction', async ({ id, name, description }) => {
-  const response = await IpcService.send<Interaction>(
-    PATCH_ONE_INTERACTION_CHANNEL,
-    {
-      params: { id, name, description },
-    },
-  );
+  const response = await IpcService.send<
+    Interaction,
+    PatchOneInteractionParams
+  >(PATCH_ONE_INTERACTION_CHANNEL, {
+    params: { id, name, description },
+  });
   return response;
 });
 
