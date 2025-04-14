@@ -55,6 +55,7 @@ import EditSimulation from './components/simulation/EditSimulation.tsx';
 import NewSimulation from './components/simulation/NewSimulation';
 import Simulation from './components/simulation/Simulation';
 import Simulations from './components/simulation/Simulations';
+import EditTrigger from './components/trigger/EditTrigger.tsx';
 import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
@@ -181,6 +182,12 @@ const router = createBrowserRouter([
         path: 'triggers/:triggerId',
         element: <Trigger />,
       },
+
+      {
+        path: 'triggers/:triggerId/edit',
+        element: <EditTrigger />,
+      },
+
       // artificial assistants
       {
         path: 'agents/artificial/assistants',

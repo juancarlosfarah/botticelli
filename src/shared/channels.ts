@@ -86,6 +86,7 @@ export const POST_ONE_TRIGGER_CHANNEL = 'trigger:post:one';
 export const GET_MANY_TRIGGERS_CHANNEL = 'trigger:get:many';
 export const DELETE_ONE_TRIGGER_CHANNEL = 'trigger:delete:one';
 export const GET_ONE_TRIGGER_CHANNEL = 'trigger:get:one';
+export const PATCH_ONE_TRIGGER_CHANNEL = 'trigger:patch:one';
 
 // interactions
 export const POST_ONE_INTERACTION_CHANNEL = 'interaction:post:one';
