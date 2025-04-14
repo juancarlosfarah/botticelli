@@ -79,6 +79,7 @@ import { PostOneSimulationChannel } from './channels/simulation/PostOneSimulatio
 import { DeleteOneTriggerChannel } from './channels/trigger/DeleteOneTriggerChannel';
 import { GetManyTriggersChannel } from './channels/trigger/GetManyTriggersChannel';
 import { GetOneTriggerChannel } from './channels/trigger/GetOneTriggerChannel';
+import { PatchOneTriggerChannel } from './channels/trigger/PatchOneTriggerChannel';
 import { PostOneTriggerChannel } from './channels/trigger/PostOneTriggerChannel';
 import { AppDataSource } from './data-source';
 import { IpcChannel } from './interfaces/IpcChannel';
@@ -272,6 +273,7 @@ new Main().init([
   new GetOneTriggerChannel(),
   new GetManyTriggersChannel(),
   new DeleteOneTriggerChannel(),
+  new PatchOneTriggerChannel(),
   // interactions
   new PostOneInteractionChannel(),
   new GetOneInteractionChannel(),
