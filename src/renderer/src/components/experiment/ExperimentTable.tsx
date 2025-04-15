@@ -129,6 +129,7 @@ export default function ExperimentTable(): ReactElement {
                       <RowMenu
                         rowId={row.id}
                         deleteHandler={deleteExperiment}
+                        editPath={`/experiments/${row.id}/edit`}
                       />
                     </Box>
                   </td>

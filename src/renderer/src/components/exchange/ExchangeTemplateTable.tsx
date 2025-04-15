@@ -144,6 +144,7 @@ export default function ExchangeTemplateTable(): ReactElement {
                       <RowMenu
                         rowId={row.id}
                         deleteHandler={deleteOneExchangeTemplate}
+                        editPath={`/exchanges/templates/${row.id}/edit`}
                       />
                     </Box>
                   </td>

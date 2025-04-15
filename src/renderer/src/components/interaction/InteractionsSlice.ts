@@ -8,12 +8,14 @@ import {
   DELETE_ONE_INTERACTION_CHANNEL,
   GET_MANY_INTERACTIONS_CHANNEL,
   GET_ONE_INTERACTION_CHANNEL,
+  PATCH_ONE_INTERACTION_CHANNEL,
   POST_ONE_INTERACTION_CHANNEL,
 } from '@shared/channels';
 import { START_INTERACTION_CHANNEL } from '@shared/channels';
 import { SET_CURRENT_EXCHANGE_CHANNEL } from '@shared/channels';
 import Interaction from '@shared/interfaces/Interaction';
 import { NewInteractionParams } from '@shared/interfaces/Interaction';
+import { PatchOneInteractionParams } from '@shared/interfaces/Interaction';
 import { GetOneInteractionParams } from '@shared/interfaces/Interaction';
 import { SetCurrentExchangeParams } from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
@@ -136,6 +138,19 @@ export const deleteInteraction = createAsyncThunk<
   return id;
 });
 
+export const editInteraction = createAsyncThunk<
+  Interaction,
+  PatchOneInteractionParams
+>('interactions/editInteraction', async ({ id, name, description }) => {
+  const response = await IpcService.send<
+    Interaction,
+    PatchOneInteractionParams
+  >(PATCH_ONE_INTERACTION_CHANNEL, {
+    params: { id, name, description },
+  });
+  return response;
+});
+
 const interactionsSlice = createSlice({
   name: 'interactions',
   initialState,
@@ -182,7 +197,11 @@ const interactionsSlice = createSlice({
         interactionsAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
-      .addCase(deleteInteraction.fulfilled, interactionsAdapter.removeOne);
+      .addCase(deleteInteraction.fulfilled, interactionsAdapter.removeOne)
+      .addCase(editInteraction.fulfilled, (state, action) => {
+        const interaction = action.payload;
+        interactionsAdapter.setOne(state, interaction);
+      });
   },
 });
 

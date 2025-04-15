@@ -5,12 +5,14 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import Trigger from '@shared/interfaces/Trigger';
+import { PatchOneTriggerParams } from '@shared/interfaces/Trigger';
 import log from 'electron-log/renderer';
 
 import {
   DELETE_ONE_TRIGGER_CHANNEL,
   GET_MANY_TRIGGERS_CHANNEL,
   GET_ONE_TRIGGER_CHANNEL,
+  PATCH_ONE_TRIGGER_CHANNEL,
   POST_ONE_TRIGGER_CHANNEL,
 } from '../../../../shared/channels';
 import Agent from '../../../../shared/interfaces/Agent';
@@ -25,10 +27,10 @@ const initialState = triggersAdapter.getInitialState({
 // thunk functions
 export const fetchTrigger = createAsyncThunk(
   'triggers/fetchTrigger',
-  async ({ email }: { email: string }) => {
+  async ({ id }: { id: string }) => {
     const response = await IpcService.send<{ trigger: Trigger }>(
       GET_ONE_TRIGGER_CHANNEL,
-      { params: { email } },
+      { params: { id } },
     );
 
     // debugging
@@ -91,6 +93,19 @@ export const deleteTrigger = createAsyncThunk<string | number, string | number>(
   },
 );
 
+export const editTrigger = createAsyncThunk<Trigger, PatchOneTriggerParams>(
+  'triggers/editTrigger',
+  async ({ id, name, description }) => {
+    const response = await IpcService.send<Trigger, PatchOneTriggerParams>(
+      PATCH_ONE_TRIGGER_CHANNEL,
+      {
+        params: { id, name, description },
+      },
+    );
+    return response;
+  },
+);
+
 const triggersSlice = createSlice({
   name: 'triggers',
   initialState,
@@ -115,7 +130,11 @@ const triggersSlice = createSlice({
         const trigger = action.payload;
         triggersAdapter.upsertOne(state, trigger);
       })
-      .addCase(deleteTrigger.fulfilled, triggersAdapter.removeOne);
+      .addCase(deleteTrigger.fulfilled, triggersAdapter.removeOne)
+      .addCase(editTrigger.fulfilled, (state, action) => {
+        const trigger = action.payload;
+        triggersAdapter.setOne(state, trigger);
+      });
   },
 });
 

@@ -131,7 +131,11 @@ export default function TriggerTable(): ReactElement {
                     >
                       {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteTrigger} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteTrigger}
+                      editPath={`/triggers/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

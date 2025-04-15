@@ -34,10 +34,13 @@ const Login = () => {
     }
 
     setError('');
-    await onLoginSuccess(dispatch, email);
-    startTransition(() => {
-      navigate('/');
-    });
+
+    try {
+      await onLoginSuccess(dispatch, email);
+      navigate('/home');
+    } catch (err) {
+      console.error('[Login] Login failed:', err);
+    }
   };
 
   return (
@@ -61,10 +64,7 @@ const Login = () => {
           justifyContent: 'space-between',
         }}
       >
-        <Button
-          color="neutral"
-          onClick={() => startTransition(() => navigate('/'))}
-        >
+        <Button color="neutral" onClick={() => navigate('/home')}>
           Back
         </Button>
       </Box>
