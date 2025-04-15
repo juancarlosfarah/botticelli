@@ -1,10 +1,12 @@
-import { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
+import Option from '@mui/joy/Option';
+import Select from '@mui/joy/Select';
 import Typography from '@mui/joy/Typography';
 
 import { AppDispatch } from '@renderer/store';
@@ -15,7 +17,8 @@ import { getNativeLanguageName } from './EditSettings';
 import { fetchSettings, selectSettingByEmail } from './SettingsSlice';
 
 const Settings = (): ReactElement => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const currentUser = useSelector(selectCurrentUser);
@@ -24,15 +27,24 @@ const Settings = (): ReactElement => {
     selectSettingByEmail(state, currentUser),
   );
 
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchSettings({ email: currentUser }));
     }
   }, [dispatch, currentUser]);
 
+  const handleLanguageChange = (_: any, value: string | null) => {
+    if (!value) return;
+    i18n.changeLanguage(value);
+    setSelectedLanguage(value);
+  };
+
   return (
     <div>
       <CustomBreadcrumbs />
+
       <Box
         sx={{
           display: 'flex',
@@ -44,10 +56,13 @@ const Settings = (): ReactElement => {
           justifyContent: 'end',
         }}
       >
-        <Button color="primary" to="/settings/edit" component={RouterLink}>
-          {t('Edit')}
-        </Button>
+        {currentUser && (
+          <Button color="primary" to="/settings/edit" component={RouterLink}>
+            {t('Edit')}
+          </Button>
+        )}
       </Box>
+
       <Box
         sx={{
           display: 'flex',
@@ -62,34 +77,59 @@ const Settings = (): ReactElement => {
         <Typography level="h2">{t('Settings')}</Typography>
       </Box>
 
-      <Typography sx={{}} level="title-md">
-        {t('User')}
-      </Typography>
-      <Typography>{setting?.email}</Typography>
+      <Typography level="title-md">{t('User')}</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+        }}
+      >
+        <Typography>{currentUser ?? t('Not Logged In')}</Typography>
+        {!currentUser && (
+          <Button size="sm" onClick={() => navigate('/login')}>
+            {t('Login')}
+          </Button>
+        )}
+      </Box>
 
-      <Typography sx={{}} level="title-md">
-        {t('OpenAI API Key')}
-      </Typography>
-      <Typography>
-        {setting?.apiKey ? '••••••••' + setting.apiKey.slice(-4) : ''}
-      </Typography>
-
-      <Typography sx={{ mt: 1 }} level="title-md">
+      <Typography level="title-md" sx={{ mt: 2 }}>
         {t('Language')}
       </Typography>
-      <Typography>
-        {setting?.language ? getNativeLanguageName(setting.language) : '-'}
-      </Typography>
+      <Select
+        size="sm"
+        value={selectedLanguage}
+        onChange={handleLanguageChange}
+        sx={{ mt: 1, maxWidth: 200 }}
+      >
+        {['en', 'fr'].map((lang) => (
+          <Option key={lang} value={lang}>
+            {getNativeLanguageName(lang)}
+          </Option>
+        ))}
+      </Select>
 
-      <Typography sx={{ mt: 1 }} level="title-md">
-        {t('Model Provider')}
-      </Typography>
-      <Typography>{setting?.modelProvider}</Typography>
+      {/* The rest only when logged in */}
+      {currentUser && (
+        <>
+          <Typography level="title-md" sx={{ mt: 2 }}>
+            {t('OpenAI API Key')}
+          </Typography>
+          <Typography>
+            {setting?.apiKey ? '••••••••' + setting.apiKey.slice(-4) : ''}
+          </Typography>
 
-      <Typography sx={{ mt: 1 }} level="title-md">
-        {t('Model')}
-      </Typography>
-      <Typography>{setting?.model}</Typography>
+          <Typography level="title-md" sx={{ mt: 2 }}>
+            {t('Model Provider')}
+          </Typography>
+          <Typography>{setting?.modelProvider ?? '-'}</Typography>
+
+          <Typography level="title-md" sx={{ mt: 2 }}>
+            {t('Model')}
+          </Typography>
+          <Typography>{setting?.model ?? '-'}</Typography>
+        </>
+      )}
     </div>
   );
 };
