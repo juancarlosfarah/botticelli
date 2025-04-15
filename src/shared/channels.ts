@@ -1,4 +1,5 @@
 export const POST_ONE_EXCHANGE_CHANNEL = 'exchange:post:one';
+
 export const GET_ONE_EXCHANGE_CHANNEL = 'exchange:get:one';
 export const GET_MANY_EXCHANGES_CHANNEL = 'exchanges:get:many';
 export const DELETE_ONE_EXCHANGE_CHANNEL = 'exchange:delete:one';
@@ -115,6 +116,8 @@ export const GET_ONE_EXPERIMENT_CHANNEL = 'experiment:get:one';
 export const PATCH_ONE_EXPERIMENT_CHANNEL = 'experiment:patch:one';
 
 export const POST_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:post:one';
+export const PATCH_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:post:one';
+
 export const GET_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:get:one';
 export const GET_MANY_EXCHANGE_TEMPLATES_CHANNEL = 'exchange:template:get:many';
 export const DELETE_ONE_EXCHANGE_TEMPLATE_CHANNEL =

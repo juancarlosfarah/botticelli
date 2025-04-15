@@ -49,6 +49,7 @@ import { GetManyExchangeTemplatesChannel } from './channels/exchange/GetManyExch
 import { GetManyExchangesChannel } from './channels/exchange/GetManyExchangesChannel';
 import { GetOneExchangeChannel } from './channels/exchange/GetOneExchangeChannel';
 import { GetOneExchangeTemplateChannel } from './channels/exchange/GetOneExchangeTemplateChannel';
+import { PatchOneExchangeTemplateChannel } from './channels/exchange/PatchOneExchangeTemplateChannel';
 import { PostOneExchangeChannel } from './channels/exchange/PostOneExchangeChannel';
 import { PostOneExchangeTemplateChannel } from './channels/exchange/PostOneExchangeTemplateChannel';
 import { StartExchangeChannel } from './channels/exchange/StartExchangeChannel';
@@ -234,6 +235,7 @@ new Main().init([
   new StartExchangeChannel(),
   new DismissExchangeChannel(),
   new CompleteExchangeChannel(),
+  new PatchOneExchangeTemplateChannel(),
   // messages
   new PostMessageChannel(),
   new GetMessagesChannel(),
