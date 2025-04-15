@@ -30,6 +30,7 @@ import EditHumanParticipant from './components/agent/human/participant/EditHuman
 import HumanParticipant from './components/agent/human/participant/HumanParticipant';
 import HumanParticipants from './components/agent/human/participant/HumanParticipants';
 import NewHumanParticipant from './components/agent/human/participant/NewHumanParticipant';
+import EditExchangeTemplate from './components/exchange/EditExchangeTemplate.tsx';
 import Exchange from './components/exchange/Exchange.tsx';
 import ExchangeTemplate from './components/exchange/ExchangeTemplate';
 import ExchangeTemplates from './components/exchange/ExchangeTemplates';
@@ -110,6 +111,10 @@ const router = createBrowserRouter([
       {
         path: 'exchanges/templates/:exchangeTemplateId',
         element: <ExchangeTemplate />,
+      },
+      {
+        path: 'exchanges/templates/:exchangeTemplateId/edit',
+        element: <EditExchangeTemplate />,
       },
       {
         path: 'interactions',
