@@ -8,10 +8,13 @@ import {
   DELETE_ONE_EXPERIMENT_CHANNEL,
   GET_MANY_EXPERIMENTS_CHANNEL,
   GET_ONE_EXPERIMENT_CHANNEL,
+  PATCH_ONE_EXPERIMENT_CHANNEL,
   POST_ONE_EXPERIMENT_CHANNEL,
 } from '@shared/channels';
 import Experiment from '@shared/interfaces/Experiment';
-import { PostOneExperimentParams } from '@shared/interfaces/Experiment';
+import {
+  PostOneExperimentParams,
+} from '@shared/interfaces/Experiment';
 
 import { IpcService } from '../../services/IpcService';
 
@@ -24,11 +27,11 @@ const initialState = experimentsAdapter.getInitialState({
 // thunk functions
 export const fetchExperiment = createAsyncThunk(
   'experiments/fetchExperiment',
-  async (query) => {
+  async ({ id }: { id: string }) => {
     const response = await IpcService.send<{ experiment: Experiment }>(
       GET_ONE_EXPERIMENT_CHANNEL,
       {
-        params: { query },
+        params: { id },
       },
     );
     return response;
@@ -74,6 +77,19 @@ export const deleteExperiment = createAsyncThunk<
   return id;
 });
 
+export const editExperiment = createAsyncThunk<
+  Experiment,
+  { id: string; name?: string; description?: string }
+>('experiments/editExperiment', async ({ id, name, description }) => {
+  const response = await IpcService.send<Experiment>(
+    PATCH_ONE_EXPERIMENT_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
 const experimentsSlice = createSlice({
   name: 'experiments',
   initialState,
@@ -106,8 +122,11 @@ const experimentsSlice = createSlice({
         const experiment = action.payload.experiment;
         experimentsAdapter.addOne(state, experiment);
       })
-
-      .addCase(deleteExperiment.fulfilled, experimentsAdapter.removeOne);
+      .addCase(deleteExperiment.fulfilled, experimentsAdapter.removeOne)
+      .addCase(editExperiment.fulfilled, (state, action) => {
+        const experiment = action.payload;
+        experimentsAdapter.setOne(state, experiment);
+      });
   },
 });
 

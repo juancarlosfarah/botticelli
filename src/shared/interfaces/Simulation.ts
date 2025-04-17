@@ -29,6 +29,12 @@ export type GetOneSimulationParams = {
 
 export type DeleteOneSimulationParams = string;
 
+export type PatchOneSimulationParams = {
+  id: string;
+  name?: string;
+  description?: string;
+};
+
 // responses are currently simulations
 export type PostOneSimulationResponse = Simulation;
 export type GetOneSimulationResponse = Simulation;

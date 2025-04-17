@@ -30,14 +30,18 @@ import EditHumanParticipant from './components/agent/human/participant/EditHuman
 import HumanParticipant from './components/agent/human/participant/HumanParticipant';
 import HumanParticipants from './components/agent/human/participant/HumanParticipants';
 import NewHumanParticipant from './components/agent/human/participant/NewHumanParticipant';
+import EditExchangeTemplate from './components/exchange/EditExchangeTemplate.tsx';
 import Exchange from './components/exchange/Exchange.tsx';
 import ExchangeTemplate from './components/exchange/ExchangeTemplate';
 import ExchangeTemplates from './components/exchange/ExchangeTemplates';
 import Exchanges from './components/exchange/Exchanges.tsx';
 import NewExchangeTemplate from './components/exchange/NewExchangeTemplate';
+import EditExperiment from './components/experiment/EditExperiment.tsx';
 import Experiment from './components/experiment/Experiment';
 import Experiments from './components/experiment/Experiments';
 import NewExperiment from './components/experiment/NewExperiment';
+import EditInteraction from './components/interaction/EditInteraction.tsx';
+import EditInteractionTemplate from './components/interaction/EditInteractionTemplate.tsx';
 import Interaction from './components/interaction/Interaction';
 import InteractionTemplate from './components/interaction/InteractionTemplate';
 import InteractionTemplates from './components/interaction/InteractionTemplates';
@@ -47,9 +51,11 @@ import NewInteractionTemplate from './components/interaction/NewInteractionTempl
 import ParticipantInteraction from './components/interaction/ParticipantInteraction';
 import EditSettings from './components/settings/EditSettings';
 import Setting from './components/settings/Setting.tsx';
+import EditSimulation from './components/simulation/EditSimulation.tsx';
 import NewSimulation from './components/simulation/NewSimulation';
 import Simulation from './components/simulation/Simulation';
 import Simulations from './components/simulation/Simulations';
+import EditTrigger from './components/trigger/EditTrigger.tsx';
 import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
@@ -87,6 +93,10 @@ const router = createBrowserRouter([
         element: <Experiment />,
       },
       {
+        path: 'experiments/:experimentId/edit',
+        element: <EditExperiment />,
+      },
+      {
         path: 'exchanges',
         element: <Exchanges />,
       },
@@ -112,6 +122,10 @@ const router = createBrowserRouter([
         element: <ExchangeTemplate />,
       },
       {
+        path: 'exchanges/templates/:exchangeTemplateId/edit',
+        element: <EditExchangeTemplate />,
+      },
+      {
         path: 'interactions',
         element: <Interactions />,
       },
@@ -123,6 +137,12 @@ const router = createBrowserRouter([
         path: 'interactions/:interactionId',
         element: <Interaction />,
       },
+
+      {
+        path: 'interactions/:interactionTemplateId/edit',
+        element: <EditInteraction />,
+      },
+
       {
         path: 'interactions/templates',
         element: (
@@ -141,6 +161,11 @@ const router = createBrowserRouter([
         element: <InteractionTemplate />,
       },
       {
+        path: 'interactions/templates/:interactionTemplateId/edit',
+        element: <EditInteractionTemplate />,
+      },
+
+      {
         path: 'triggers',
         element: (
           <RequireAuth>
@@ -157,6 +182,12 @@ const router = createBrowserRouter([
         path: 'triggers/:triggerId',
         element: <Trigger />,
       },
+
+      {
+        path: 'triggers/:triggerId/edit',
+        element: <EditTrigger />,
+      },
+
       // artificial assistants
       {
         path: 'agents/artificial/assistants',
@@ -285,6 +316,12 @@ const router = createBrowserRouter([
         path: 'simulations/:simulationId',
         element: <Simulation />,
       },
+
+      {
+        path: 'simulations/:simulationId/edit',
+        element: <EditSimulation />,
+      },
+
       // setting
       {
         path: 'settings',

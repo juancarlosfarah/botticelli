@@ -37,6 +37,15 @@ export type PostOneExchangeTemplateParams = {
   email: string;
 };
 
+export type PatchOneExchangeTemplateParams = {
+  id: string;
+  name?: string;
+  description?: string;
+  instructions?: string;
+  participantInstructionsOnComplete?: string;
+  cue?: string;
+};
+
 export type GetOneExchangeTemplateParams = {
   id: string;
 };

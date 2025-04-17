@@ -8,6 +8,7 @@ import {
   DELETE_ONE_EXCHANGE_TEMPLATE_CHANNEL,
   GET_MANY_EXCHANGE_TEMPLATES_CHANNEL,
   GET_ONE_EXCHANGE_TEMPLATE_CHANNEL,
+  PATCH_ONE_EXCHANGE_TEMPLATE_CHANNEL,
   POST_ONE_EXCHANGE_TEMPLATE_CHANNEL,
 } from '@shared/channels';
 import ExchangeTemplate from '@shared/interfaces/ExchangeTemplate';
@@ -16,6 +17,7 @@ import {
   GetManyExchangeTemplateResponse,
   GetOneExchangeTemplateParams,
   GetOneExchangeTemplateResponse,
+  PatchOneExchangeTemplateParams,
   PostOneExchangeTemplateParams,
   PostOneExchangeTemplateResponse,
 } from '@shared/interfaces/ExchangeTemplate';
@@ -31,15 +33,15 @@ const initialState = exchangeTemplatesAdapter.getInitialState({
 
 // thunk functions
 export const fetchExchangeTemplate = createAsyncThunk<
-  GetOneExchangeTemplateResponse,
-  GetOneExchangeTemplateParams
->('exchangeTemplates/fetchExchangeTemplate', async (params) => {
-  return await IpcService.send<ExchangeTemplate, GetOneExchangeTemplateParams>(
-    GET_ONE_EXCHANGE_TEMPLATE_CHANNEL,
-    {
-      params,
-    },
-  );
+  { exchangeTemplate: ExchangeTemplate },
+  { id: string }
+>('exchangeTemplates/fetchExchangeTemplate', async ({ id }) => {
+  const response = await IpcService.send<{
+    exchangeTemplate: ExchangeTemplate;
+  }>(GET_ONE_EXCHANGE_TEMPLATE_CHANNEL, {
+    params: { id },
+  });
+  return response;
 });
 
 export const fetchExchangeTemplates = createAsyncThunk<
@@ -107,6 +109,22 @@ export const deleteOneExchangeTemplate = createAsyncThunk<
   return id;
 });
 
+export const editExchangeTemplate = createAsyncThunk<
+  ExchangeTemplate,
+  PatchOneExchangeTemplateParams
+>(
+  'exchangeTemplates/editExchangeTemplate',
+  async ({ id, name, description }) => {
+    const response = await IpcService.send<ExchangeTemplate>(
+      PATCH_ONE_EXCHANGE_TEMPLATE_CHANNEL,
+      {
+        params: { id, name, description },
+      },
+    );
+    return response;
+  },
+);
+
 const exchangeTemplatesSlice = createSlice({
   name: 'exchangeTemplates',
   initialState,
@@ -142,7 +160,12 @@ const exchangeTemplatesSlice = createSlice({
       .addCase(
         deleteOneExchangeTemplate.fulfilled,
         exchangeTemplatesAdapter.removeOne,
-      );
+      )
+      .addCase(editExchangeTemplate.fulfilled, (state, action) => {
+        const exchangeTemplate = action.payload;
+        exchangeTemplatesAdapter.setOne(state, exchangeTemplate);
+      });
+
     // // example of how to add a case that listens to actions from a different slice
     // .addCase(fetchInteractionTemplate.fulfilled, (state, action) => {
     //   const interactionTemplate = action.payload;

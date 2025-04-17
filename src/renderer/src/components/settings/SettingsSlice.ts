@@ -29,9 +29,8 @@ export const fetchSettings = createAsyncThunk<
 >('settings/fetchSettings', async ({ email }) => {
   const response = await IpcService.send<{ settings: Setting[] }>(
     GET_MANY_SETTINGS_CHANNEL,
-    {},
+    { params: { email } },
   );
-
   return response;
 });
 
@@ -63,7 +62,7 @@ const settingsSlice = createSlice({
         const filtered = action.payload.settings.filter(
           (s) => s.email === email,
         );
-        settingsAdapter.setAll(state, filtered);
+        filtered.forEach((s) => settingsAdapter.upsertOne(state, s));
         state.status = 'idle';
       })
 

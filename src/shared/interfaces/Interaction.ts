@@ -46,4 +46,10 @@ export type SetCurrentExchangeParams = {
   currentExchangeId: string;
 };
 
+export type PatchOneInteractionParams = {
+  id: string;
+  name?: string;
+  description?: string;
+};
+
 export default Interaction;

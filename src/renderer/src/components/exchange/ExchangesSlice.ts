@@ -168,7 +168,6 @@ const exchangesSlice = createSlice({
         exchangesAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
-
       .addCase(fetchExchange.pending, (state) => {
         state.status = 'loading';
       })
