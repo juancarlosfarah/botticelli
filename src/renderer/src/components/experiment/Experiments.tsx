@@ -19,7 +19,6 @@ export default function Experiments(): JSX.Element {
 
   useEffect(() => {
     if (currentUser) {
-      dispatch(fetchExperiments({ email: currentUser }));
       dispatch(fetchExperiments({ email: currentUser })).catch((error) => {
         console.error('Failed to fetch experiments:', error);
       });

@@ -27,14 +27,22 @@ export class GetManyExperimentsChannel extends GetManyChannel {
       return;
     }
 
-    const experimentRepository = AppDataSource.getRepository(Experiment);
+    try {
+      const experimentRepository = AppDataSource.getRepository(Experiment);
 
-    const experiments = await experimentRepository.find({
-      where: { email },
-    });
+      const experiments = await experimentRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(request.responseChannel, {
-      experiments: instanceToPlain(experiments),
-    });
+      event.sender.send(request.responseChannel, {
+        experiments: instanceToPlain(experiments),
+      });
+    } catch (error) {
+      console.error('Error fetching experiments:', error);
+      event.sender.send(request.responseChannel, {
+        experiments: [],
+        error: 'Failed to fetch experiments',
+      });
+    }
   }
 }
