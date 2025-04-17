@@ -1,15 +1,34 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Typography from '@mui/joy/Typography';
 
+import { AppDispatch } from '@renderer/store';
+
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
+import { selectCurrentUser } from '../user/UsersSlice';
+import { getNativeLanguageName } from './EditSettings';
+import { fetchSettings, selectSettingByEmail } from './SettingsSlice';
 
 const Settings = (): ReactElement => {
   const { t } = useTranslation();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const currentUser = useSelector(selectCurrentUser);
+
+  const setting = useSelector((state) =>
+    selectSettingByEmail(state, currentUser),
+  );
+
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(fetchSettings({ email: currentUser }));
+    }
+  }, [dispatch, currentUser]);
 
   return (
     <div>
@@ -44,14 +63,33 @@ const Settings = (): ReactElement => {
       </Box>
 
       <Typography sx={{}} level="title-md">
+        {t('User')}
+      </Typography>
+      <Typography>{setting?.email}</Typography>
+
+      <Typography sx={{}} level="title-md">
         {t('OpenAI API Key')}
       </Typography>
-      <Typography>*****</Typography>
+      <Typography>
+        {setting?.apiKey ? '••••••••' + setting.apiKey.slice(-4) : ''}
+      </Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
         {t('Language')}
       </Typography>
-      <Typography>{t('Current Language')}</Typography>
+      <Typography>
+        {setting?.language ? getNativeLanguageName(setting.language) : '-'}
+      </Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        {t('Model Provider')}
+      </Typography>
+      <Typography>{setting?.modelProvider}</Typography>
+
+      <Typography sx={{ mt: 1 }} level="title-md">
+        {t('Model')}
+      </Typography>
+      <Typography>{setting?.model}</Typography>
     </div>
   );
 };

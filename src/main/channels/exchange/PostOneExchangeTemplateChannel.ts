@@ -46,9 +46,23 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       triggers,
       softLimit,
       hardLimit,
+      email,
     } = request.params;
 
-    log.debug(`linking triggers: ${triggers}`);
+    if (!email) {
+      event.sender.send(request.responseChannel, {
+        error: 'Missing email',
+      });
+      return;
+    }
+
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
 
     const exchangeTemplate = new ExchangeTemplate();
     exchangeTemplate.name = name;
@@ -58,6 +72,7 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       participantInstructionsOnComplete;
     exchangeTemplate.cue = cue;
     exchangeTemplate.inputType = inputType;
+    exchangeTemplate.email = email;
 
     // limits
     if (softLimit) {

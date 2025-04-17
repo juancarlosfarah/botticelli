@@ -8,6 +8,7 @@ type InteractionTemplate = {
   participantInstructions: string;
   participantInstructionsOnComplete: string;
   exchangeTemplates: InteractionTemplateExchangeTemplate[];
+  email: string;
 };
 
 export type PostOneInteractionTemplateParams = {
@@ -16,6 +17,7 @@ export type PostOneInteractionTemplateParams = {
   modelInstructions: string;
   participantInstructions: string;
   participantInstructionsOnComplete: string;
+  email: string;
   // ids of exchange templates
   exchangeTemplates: string[];
 };

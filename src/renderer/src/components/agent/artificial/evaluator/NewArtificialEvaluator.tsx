@@ -1,6 +1,6 @@
-import { ChangeEvent, ReactElement, useState } from 'react';
+import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -13,23 +13,33 @@ import {
 import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
 
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 import log from 'electron-log/renderer';
 
 import { saveNewArtificialEvaluator } from '../../AgentsSlice';
 
 const NewArtificialEvaluator = (): ReactElement => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const currentUser = useSelector(selectCurrentUser);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
 
   const handleNewAgent = async (): Promise<void> => {
     const { payload } = await dispatch(
       saveNewArtificialEvaluator({
         description,
         name,
+        email: currentUser,
       }),
     );
     log.debug(`saveNewAgent response.payload:`, payload);

@@ -43,12 +43,16 @@ export const fetchExchangeTemplate = createAsyncThunk<
 });
 
 export const fetchExchangeTemplates = createAsyncThunk<
-  GetManyExchangeTemplateResponse,
-  void
->('exchangeTemplates/fetchExchangeTemplates', async () => {
-  return await IpcService.send<ExchangeTemplate[]>(
-    GET_MANY_EXCHANGE_TEMPLATES_CHANNEL,
-  );
+  ExchangeTemplate[],
+  { email: string }
+>('exchangeTemplates/fetchExchangeTemplates', async ({ email }) => {
+  const { exchangeTemplates } = await IpcService.send<{
+    exchangeTemplates: ExchangeTemplate[];
+  }>(GET_MANY_EXCHANGE_TEMPLATES_CHANNEL, {
+    params: { email },
+  });
+
+  return exchangeTemplates;
 });
 
 export const saveNewExchangeTemplate = createAsyncThunk<
@@ -67,6 +71,7 @@ export const saveNewExchangeTemplate = createAsyncThunk<
     inputType,
     softLimit,
     hardLimit,
+    email,
   }) => {
     return (await IpcService.send<
       PostOneExchangeTemplateResponse,
@@ -83,6 +88,7 @@ export const saveNewExchangeTemplate = createAsyncThunk<
         inputType,
         softLimit,
         hardLimit,
+        email,
       },
     })) as PostOneExchangeTemplateResponse;
   },
@@ -106,6 +112,7 @@ const exchangeTemplatesSlice = createSlice({
   initialState,
   reducers: {
     exchangeTemplateDeleted: exchangeTemplatesAdapter.removeOne,
+    exchangeTemplatesCleared: exchangeTemplatesAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -113,7 +120,11 @@ const exchangeTemplatesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchExchangeTemplates.fulfilled, (state, action) => {
-        exchangeTemplatesAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.filter(
+          (template) => template.email === email,
+        );
+        exchangeTemplatesAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
       .addCase(fetchExchangeTemplate.pending, (state) => {
@@ -146,6 +157,8 @@ const exchangeTemplatesSlice = createSlice({
 });
 
 export default exchangeTemplatesSlice.reducer;
+export const { exchangeTemplateDeleted, exchangeTemplatesCleared } =
+  exchangeTemplatesSlice.actions;
 
 export const {
   selectAll: selectAllExchangeTemplates,

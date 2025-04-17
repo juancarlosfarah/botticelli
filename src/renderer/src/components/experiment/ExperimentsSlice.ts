@@ -11,6 +11,7 @@ import {
   POST_ONE_EXPERIMENT_CHANNEL,
 } from '@shared/channels';
 import Experiment from '@shared/interfaces/Experiment';
+import { PostOneExperimentParams } from '@shared/interfaces/Experiment';
 
 import { IpcService } from '../../services/IpcService';
 
@@ -36,35 +37,29 @@ export const fetchExperiment = createAsyncThunk(
 
 export const fetchExperiments = createAsyncThunk(
   'experiments/fetchExperiments',
-  async () => {
-    return await IpcService.send<{ experiments: Experiment[] }>(
-      GET_MANY_EXPERIMENTS_CHANNEL,
-    );
+  async ({ email }: { email: string }) => {
+    const response = await IpcService.send<
+      { experiments: Experiment[] },
+      { email: string }
+    >(GET_MANY_EXPERIMENTS_CHANNEL, {
+      params: { email },
+    });
+    return response;
   },
 );
 
 export const saveNewExperiment = createAsyncThunk<
-  Experiment,
-  {
-    name: string;
-    description: string;
-    instructions: string;
-    conversations: string[];
-  }
+  { experiment: Experiment },
+  PostOneExperimentParams
 >(
   'experiments/saveNewExperiment',
-  async ({ description, interactionTemplates, name, participants }) => {
-    const response = await IpcService.send<{ experiment: any }>(
-      POST_ONE_EXPERIMENT_CHANNEL,
-      {
-        params: {
-          name,
-          description,
-          interactionTemplates,
-          participants,
-        },
-      },
-    );
+  async ({ email, description, interactionTemplates, participants }) => {
+    const response = await IpcService.send<
+      { experiment: Experiment },
+      { email: string }
+    >(POST_ONE_EXPERIMENT_CHANNEL, {
+      params: { email, description, interactionTemplates, participants },
+    });
     return response;
   },
 );
@@ -84,6 +79,7 @@ const experimentsSlice = createSlice({
   initialState,
   reducers: {
     experimentDeleted: experimentsAdapter.removeOne,
+    experimentsCleared: experimentsAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -91,25 +87,32 @@ const experimentsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchExperiments.fulfilled, (state, action) => {
-        experimentsAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.experiments.filter(
+          (experiment) => experiment.email === email,
+        );
+        experimentsAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(fetchExperiment.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchExperiment.fulfilled, (state, action) => {
-        experimentsAdapter.setOne(state, action.payload);
+        experimentsAdapter.setOne(state, action.payload.experiment);
         state.status = 'idle';
       })
       .addCase(saveNewExperiment.fulfilled, (state, action) => {
-        const experiment = action.payload;
+        const experiment = action.payload.experiment;
         experimentsAdapter.addOne(state, experiment);
       })
+
       .addCase(deleteExperiment.fulfilled, experimentsAdapter.removeOne);
   },
 });
 
-export const { experimentDeleted } = experimentsSlice.actions;
+export const { experimentDeleted, experimentsCleared } =
+  experimentsSlice.actions;
 
 export default experimentsSlice.reducer;
 

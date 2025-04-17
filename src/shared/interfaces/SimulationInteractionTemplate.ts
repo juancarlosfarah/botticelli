@@ -6,6 +6,7 @@ type SimulationInteractionTemplate = {
   order: number;
   simulation: Simulation;
   interactionTemplate: InteractionTemplate;
+  email: string;
 };
 
 export default SimulationInteractionTemplate;

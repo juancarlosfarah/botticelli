@@ -26,11 +26,12 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 import InputType from '@shared/enums/InputType';
 import capitalize from 'lodash.capitalize';
 import isNull from 'lodash.isnull';
 
-import { AppDispatch } from '../../store';
 import { fetchAgents, selectAssistants } from '../agent/AgentsSlice';
 import { fetchTriggers, selectTriggers } from '../trigger/TriggersSlice';
 import { saveNewExchangeTemplate } from './ExchangeTemplatesSlice';
@@ -43,6 +44,7 @@ const NewExchangeTemplate = (): ReactElement => {
   const availableTriggers = useSelector(selectTriggers);
   // for string enums, Object.values outputs the right side of the value
   const inputTypes = Object.values(InputType);
+  const currentUser = useSelector(selectCurrentUser);
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -57,6 +59,12 @@ const NewExchangeTemplate = (): ReactElement => {
   const [softLimit, setSoftLimit] = useState<number>(0);
   const [hardLimit, setHardLimit] = useState<number>(0);
   const [inputType, setInputType] = useState<InputType>(InputType.Text);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -76,6 +84,7 @@ const NewExchangeTemplate = (): ReactElement => {
         inputType,
         softLimit,
         hardLimit,
+        email: currentUser,
       }),
     );
 

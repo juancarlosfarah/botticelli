@@ -30,7 +30,22 @@ export class PostOneExchangeChannel extends PostOneChannel {
       participant,
       triggers,
       cue,
+      email,
     } = request.params;
+
+    if (!email) {
+      event.sender.send(request.responseChannel, {
+        error: 'Missing email',
+      });
+      return;
+    }
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
 
     log.debug(`linking triggers: ${triggers}`);
 
@@ -39,6 +54,7 @@ export class PostOneExchangeChannel extends PostOneChannel {
     exchange.description = description;
     exchange.instructions = instructions;
     exchange.cue = cue;
+    exchange.email = email;
 
     const agentRepository = AppDataSource.getRepository(Agent);
     const savedAssistant = await agentRepository.findOneBy({ id: assistant });

@@ -26,11 +26,9 @@ const initialState = triggersAdapter.getInitialState({
 export const fetchTrigger = createAsyncThunk(
   'triggers/fetchTrigger',
   async (query) => {
-    const response = await IpcService.send<{ trigger: any }>(
+    const response = await IpcService.send<{ trigger: Trigger }>(
       GET_ONE_TRIGGER_CHANNEL,
-      {
-        params: { query },
-      },
+      { params: { query } },
     );
 
     // debugging
@@ -42,8 +40,12 @@ export const fetchTrigger = createAsyncThunk(
 
 export const fetchTriggers = createAsyncThunk(
   'triggers/fetchTriggers',
-  async () => {
-    return await IpcService.send<{ triggers: any }>(GET_MANY_TRIGGERS_CHANNEL);
+  async ({ email }: { email: string }) => {
+    const response = await IpcService.send<{ triggers: Trigger[] }>(
+      GET_MANY_TRIGGERS_CHANNEL,
+      { params: { email } },
+    );
+    return response;
   },
 );
 
@@ -54,11 +56,12 @@ export const saveNewTrigger = createAsyncThunk<
     description: string;
     criteria: string;
     evaluator: Agent;
+    email: string;
   }
 >(
   'triggers/saveNewTrigger',
-  async ({ description, criteria, name, evaluator }) => {
-    const response = await IpcService.send<{ trigger: any }>(
+  async ({ description, criteria, name, evaluator, email }) => {
+    const response = await IpcService.send<{ trigger: Trigger }>(
       POST_ONE_TRIGGER_CHANNEL,
       {
         params: {
@@ -66,6 +69,7 @@ export const saveNewTrigger = createAsyncThunk<
           description,
           criteria,
           evaluator,
+          email,
         },
       },
     );
@@ -76,7 +80,7 @@ export const saveNewTrigger = createAsyncThunk<
 export const deleteTrigger = createAsyncThunk<string | number, string | number>(
   'triggers/deleteTrigger',
   async (id) => {
-    const response = await IpcService.send<{ trigger: any }>(
+    const response = await IpcService.send<{ trigger: Trigger }>(
       DELETE_ONE_TRIGGER_CHANNEL,
       {
         params: { id },
@@ -92,6 +96,7 @@ const triggersSlice = createSlice({
   initialState,
   reducers: {
     triggerDeleted: triggersAdapter.removeOne,
+    triggersCleared: triggersAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -99,18 +104,22 @@ const triggersSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchTriggers.fulfilled, (state, action) => {
-        triggersAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.triggers.filter(
+          (s) => s.email === email,
+        );
+        triggersAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
       .addCase(saveNewTrigger.fulfilled, (state, action) => {
         const trigger = action.payload;
-        triggersAdapter.addOne(state, trigger);
+        triggersAdapter.upsertOne(state, trigger);
       })
       .addCase(deleteTrigger.fulfilled, triggersAdapter.removeOne);
   },
 });
 
-export const { triggerDeleted } = triggersSlice.actions;
+export const { triggerDeleted, triggersCleared } = triggersSlice.actions;
 
 export default triggersSlice.reducer;
 

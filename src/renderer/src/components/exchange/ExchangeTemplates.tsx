@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
 import Button from '@mui/joy/Button';
 
 import { AppDispatch } from '../../store';
+import { selectCurrentUser } from '../user/UsersSlice';
 import ExchangeTemplateList from './ExchangeTemplateList';
 import ExchangeTemplateTable from './ExchangeTemplateTable.tsx';
 import { fetchExchangeTemplates } from './ExchangeTemplatesSlice';
@@ -13,10 +14,18 @@ import { fetchExchangeTemplates } from './ExchangeTemplatesSlice';
 export default function ExchangeTemplates(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
 
   useEffect(() => {
-    dispatch(fetchExchangeTemplates());
-  }, []);
+    if (currentUser) {
+      dispatch(fetchExchangeTemplates({ email: currentUser }));
+      dispatch(fetchExchangeTemplates({ email: currentUser })).catch(
+        (error) => {
+          console.error('Failed to fetch exchanges templates:', error);
+        },
+      );
+    }
+  }, [dispatch, currentUser]);
 
   return (
     <div>

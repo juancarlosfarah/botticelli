@@ -25,7 +25,9 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
-import { AppDispatch } from '../../store';
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
+
 import {
   fetchAgents,
   selectArtificialParticipants,
@@ -39,6 +41,8 @@ import { saveNewSimulation } from './SimulationsSlice';
 const NewSimulation = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
+
   const navigate = useNavigate();
 
   const availableInteractionTemplates = useSelector(selectInteractionTemplates);
@@ -52,6 +56,12 @@ const NewSimulation = (): ReactElement => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
     dispatch(fetchAgents());
     dispatch(fetchInteractionTemplates());
   }, []);
@@ -63,6 +73,7 @@ const NewSimulation = (): ReactElement => {
         description,
         interactionTemplates,
         participants,
+        email: currentUser,
       }),
     );
     // todo: handle error

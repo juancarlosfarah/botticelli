@@ -42,7 +42,23 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
       name,
       exchangeTemplates,
       participantInstructionsOnComplete,
+      email,
     } = request.params;
+
+    if (!email) {
+      event.sender.send(request.responseChannel, {
+        error: 'Missing email',
+      });
+      return;
+    }
+
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
 
     const interactionTemplate = new InteractionTemplate();
     interactionTemplate.name = name;
@@ -51,6 +67,7 @@ export class PostOneInteractionTemplateChannel extends PostOneChannel {
     interactionTemplate.participantInstructions = participantInstructions;
     interactionTemplate.participantInstructionsOnComplete =
       participantInstructionsOnComplete;
+    interactionTemplate.email = email;
 
     const interactionTemplateRepository =
       AppDataSource.getRepository(InteractionTemplate);

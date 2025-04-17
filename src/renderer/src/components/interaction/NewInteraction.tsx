@@ -19,6 +19,8 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 import log from 'electron-log/renderer';
 
 import { fetchExchanges, selectAllExchanges } from '../exchange/ExchangesSlice';
@@ -28,6 +30,7 @@ const NewInteraction = (): ReactElement => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
 
   const availableExchanges = useSelector(selectAllExchanges);
 
@@ -35,6 +38,12 @@ const NewInteraction = (): ReactElement => {
   const [instructions, setInstructions] = useState('');
   const [name, setName] = useState<string>('');
   const [exchanges, setExchanges] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     dispatch(fetchExchanges());
@@ -47,6 +56,7 @@ const NewInteraction = (): ReactElement => {
         description,
         instructions,
         exchanges,
+        email: currentUser,
       }),
     );
     log.debug(`saveNewInteraction response.payload:`, payload);

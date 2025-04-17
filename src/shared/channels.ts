@@ -13,6 +13,12 @@ export const DELETE_MESSAGE_CHANNEL = 'messages:delete';
 
 export const GENERATE_RESPONSE_CHANNEL = 'response:generate';
 
+export const GET_ONE_SETTING_CHANNEL = 'setting:get:one';
+export const GET_MANY_SETTINGS_CHANNEL = 'setting:get:many';
+
+export const PATCH_ONE_SETTING_CHANNEL = 'setting:patch:one';
+export const POST_SETTING_CHANNEL = 'setting:post';
+
 export const POST_AGENT_CHANNEL = 'agent:post';
 export const GET_AGENT_CHANNEL = 'agent:get';
 export const GET_AGENTS_CHANNEL = 'agents:get';
@@ -20,7 +26,6 @@ export const DELETE_AGENT_CHANNEL = 'agent:delete';
 
 export const GET_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
   'agent:artificial:assistant:get:one';
-
 export const POST_ONE_ARTIFICIAL_ASSISTANT_CHANNEL =
   'agent:artificial:assistant:post:one';
 export const GET_MANY_ARTIFICIAL_ASSISTANTS_CHANNEL =
@@ -57,6 +62,17 @@ export const GET_MANY_ARTIFICIAL_EVALUATORS_CHANNEL =
   'agents:artificial:evaluator:get:many';
 export const DELETE_ONE_ARTIFICIAL_EVALUATOR_CHANNEL =
   'agent:artificial:evaluator:delete:one';
+
+export const GET_ONE_HUMAN_ASSISTANT_CHANNEL = 'agent:human:assistant:get:one';
+
+export const GET_ONE_HUMAN_PARTICIPANT_CHANNEL =
+  'agent:human:participant:get:one';
+
+export const GET_MANY_HUMAN_ASSISTANTS_CHANNEL =
+  'agents:human:assistant:get:many';
+
+export const GET_MANY_HUMAN_PARTICIPANTS_CHANNEL =
+  'agents:human:participant:get:many';
 
 export const POST_ONE_HUMAN_PARTICIPANT_CHANNEL =
   'agent:human:participant:post:one';

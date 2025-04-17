@@ -50,13 +50,16 @@ export const fetchInteraction = createAsyncThunk<
 
 export const fetchInteractions = createAsyncThunk(
   'interactions/fetchInteractions',
-  async () => {
-    return await IpcService.send<{ interactions: any }>(
-      GET_MANY_INTERACTIONS_CHANNEL,
-    );
+  async ({ email }: { email: string }) => {
+    const response = await IpcService.send<
+      { interactions: Interaction[] },
+      { email: string }
+    >(GET_MANY_INTERACTIONS_CHANNEL, {
+      params: { email },
+    });
+    return response;
   },
 );
-
 export const saveNewInteraction = createAsyncThunk<
   Interaction,
   NewInteractionParams
@@ -71,17 +74,19 @@ export const saveNewInteraction = createAsyncThunk<
     // template,
     // participant,
     exchanges,
+    email,
   }) => {
-    const response = await IpcService.send<{ interaction: Interaction }>(
-      POST_ONE_INTERACTION_CHANNEL,
-      {
-        params: {
-          name,
-          description,
-          exchanges,
-        },
+    const response = await IpcService.send<
+      { interaction: Interaction },
+      { email: string }
+    >(POST_ONE_INTERACTION_CHANNEL, {
+      params: {
+        name,
+        description,
+        exchanges,
+        email,
       },
-    );
+    });
     return response;
   },
 );
@@ -136,6 +141,7 @@ const interactionsSlice = createSlice({
   initialState,
   reducers: {
     interactionDeleted: interactionsAdapter.removeOne,
+    interactionsCleared: interactionsAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -143,9 +149,14 @@ const interactionsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchInteractions.fulfilled, (state, action) => {
-        interactionsAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.interactions.filter(
+          (interaction) => interaction.email === email,
+        );
+        interactionsAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(fetchInteraction.pending, (state) => {
         state.status = 'loading';
       })
@@ -175,7 +186,8 @@ const interactionsSlice = createSlice({
   },
 });
 
-export const { interactionDeleted } = interactionsSlice.actions;
+export const { interactionDeleted, interactionsCleared } =
+  interactionsSlice.actions;
 
 export default interactionsSlice.reducer;
 

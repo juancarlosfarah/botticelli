@@ -1,15 +1,23 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { AppDispatch } from '@renderer/store.ts';
+
+import { selectCurrentUser } from '../user/UsersSlice';
 import ExchangeTable from './ExchangeTable.tsx';
 import { fetchExchanges } from './ExchangesSlice';
 
 export default function Exchanges(): JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const currentUser = useSelector(selectCurrentUser);
 
   useEffect(() => {
-    dispatch(fetchExchanges());
-  }, []);
+    if (currentUser) {
+      dispatch(fetchExchanges({ email: currentUser })).catch((error) => {
+        console.error('Failed to fetch exchanges:', error);
+      });
+    }
+  }, [dispatch, currentUser]);
 
   return (
     <div>

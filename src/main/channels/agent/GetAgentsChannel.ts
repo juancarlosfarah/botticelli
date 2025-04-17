@@ -19,7 +19,22 @@ export class GetAgentsChannel implements IpcChannel {
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
-    const agents = await AppDataSource.manager.find(Agent);
-    event.sender.send(request.responseChannel, instanceToPlain(agents));
+    const { email } = request.params;
+
+    if (!email) {
+      log.error('email is missing : can not fulfill get agents request');
+      event.sender.send(request.responseChannel, { agents: [] });
+      return;
+    }
+
+    const agentRepository = AppDataSource.getRepository(Agent);
+
+    const agents = await agentRepository.find({
+      where: { email },
+    });
+
+    event.sender.send(request.responseChannel, {
+      agents: instanceToPlain(agents),
+    });
   }
 }

@@ -11,11 +11,13 @@ type Simulation = {
   participants: Agent[];
   createdAt: Date;
   updatedAt: Date;
+  email: string;
 };
 
 export type PostOneSimulationParams = {
   description: string;
   name: string;
+  email: string;
   // ids
   interactionTemplates: string[];
   participants: string[];
