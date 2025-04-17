@@ -23,20 +23,25 @@ export class GetManyInteractionTemplatesChannel extends GetManyChannel {
     const { email } = request.params;
 
     if (!email) {
-      event.sender.send(request.responseChannel, { agents: [] });
+      event.sender.send(request.responseChannel, { interactionTemplates: [] });
       return;
     }
+    try {
+      const interactionTemplatesRepository =
+        AppDataSource.getRepository(InteractionTemplate);
 
-    const interactionTemplatesRepository =
-      AppDataSource.getRepository(InteractionTemplate);
+      const interactionTemplates = await interactionTemplatesRepository.find({
+        where: { email },
+      });
 
-    const interactionTemplates = await interactionTemplatesRepository.find({
-      where: { email },
-    });
-
-    event.sender.send(
-      request.responseChannel,
-      instanceToPlain(interactionTemplates),
-    );
+      event.sender.send(
+        request.responseChannel,
+        instanceToPlain(interactionTemplates),
+      );
+    } catch (error) {
+      event.sender.send(request.responseChannel, {
+        error: 'Failed to fetch interaction templates',
+      });
+    }
   }
 }

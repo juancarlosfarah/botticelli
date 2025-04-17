@@ -17,12 +17,15 @@ export default function Interactions(): JSX.Element {
   const { t } = useTranslation();
 
   const currentUser = useSelector(selectCurrentUser);
-
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchInteractions({ email: currentUser }));
+      dispatch(fetchInteractions({ email: currentUser })).catch((error) => {
+        console.error('Failed to fetch interactions:', error);
+      });
     }
   }, [dispatch, currentUser]);
+
   return (
     <div>
       <Button color="primary" to="/interactions/new" component={RouterLink}>

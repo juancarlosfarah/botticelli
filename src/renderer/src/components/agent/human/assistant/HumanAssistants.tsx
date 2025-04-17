@@ -19,8 +19,12 @@ export default function HumanAssistants(): ReactElement {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchAgents({ email: currentUser }));
+      dispatch(fetchAgents({ email: currentUser })).catch((error) => {
+        console.error('Failed to fetch human assistants:', error);
+      });
     }
   }, [dispatch, currentUser]);
+
   return (
     <div>
       <Button

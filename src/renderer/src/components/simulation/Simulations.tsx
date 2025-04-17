@@ -21,6 +21,9 @@ export default function Simulations(): JSX.Element {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchSimulations({ email: currentUser }));
+      dispatch(fetchSimulations({ email: currentUser })).catch((error) => {
+        console.error('Failed to fetch simulations:', error);
+      });
     }
   }, [dispatch, currentUser]);
 

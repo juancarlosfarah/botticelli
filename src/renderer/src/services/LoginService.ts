@@ -50,13 +50,40 @@ export async function onLoginSuccess(
   dispatch(exchangesCleared());
   dispatch(exchangeTemplatesCleared());
 
-  // fetch new user data
-  await dispatch(fetchTriggers({ email }));
-  await dispatch(fetchAgents({ email }));
-  await dispatch(fetchExperiments({ email }));
-  await dispatch(fetchSimulations({ email }));
-  await dispatch(fetchInteractions({ email }));
-  await dispatch(fetchInteractionTemplates({ email }));
-  await dispatch(fetchExchanges({ email }));
-  await dispatch(fetchExchangeTemplates({ email }));
+  //fetch new user data
+  try {
+    console.debug('Fetching triggers...');
+    await dispatch(fetchTriggers({ email })).unwrap();
+
+    console.debug('Fetching agents...');
+    await dispatch(fetchAgents({ email })).unwrap();
+
+    console.debug('Fetching experiments...');
+    await dispatch(fetchExperiments({ email })).unwrap();
+
+    console.debug('Fetching simulations...');
+    await dispatch(fetchSimulations({ email })).unwrap();
+
+    console.debug('Fetching interactions...');
+    await dispatch(fetchInteractions({ email })).unwrap();
+
+    console.debug('Fetching interaction templates...');
+    await dispatch(fetchInteractionTemplates({ email })).unwrap();
+
+    console.debug('Fetching exchanges...');
+    await dispatch(fetchExchanges({ email })).unwrap();
+
+    console.debug('Fetching exchange templates...');
+    await dispatch(fetchExchangeTemplates({ email })).unwrap();
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+
+    const isOffline = !navigator.onLine;
+
+    const message = isOffline
+      ? "You're offline. Please check your internet connection and try again."
+      : 'Something went wrong while fetching your data. Please try again.';
+
+    window.alert(message);
+  }
 }

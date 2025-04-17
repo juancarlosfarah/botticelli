@@ -32,14 +32,22 @@ export class GetManyTriggersChannel extends GetManyChannel {
       return;
     }
 
-    const triggerRepository = AppDataSource.getRepository(Trigger);
+    try {
+      const triggerRepository = AppDataSource.getRepository(Trigger);
 
-    const triggers = await triggerRepository.find({
-      where: { email },
-    });
+      const triggers = await triggerRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(request.responseChannel, {
-      triggers: instanceToPlain(triggers),
-    });
+      event.sender.send(request.responseChannel, {
+        triggers: instanceToPlain(triggers),
+      });
+    } catch (error) {
+      log.error('Error fetching triggers:', error);
+      event.sender.send(request.responseChannel, {
+        triggers: [],
+        error: 'Failed to fetch triggers',
+      });
+    }
   }
 }

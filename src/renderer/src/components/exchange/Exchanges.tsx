@@ -14,6 +14,9 @@ export default function Exchanges(): JSX.Element {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchExchanges({ email: currentUser }));
+      dispatch(fetchExchanges({ email: currentUser })).catch((error) => {
+        console.error('Failed to fetch exchanges:', error);
+      });
     }
   }, [dispatch, currentUser]);
 

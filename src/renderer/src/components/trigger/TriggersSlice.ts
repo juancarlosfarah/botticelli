@@ -25,10 +25,10 @@ const initialState = triggersAdapter.getInitialState({
 // thunk functions
 export const fetchTrigger = createAsyncThunk(
   'triggers/fetchTrigger',
-  async ({ email }: { email: string }) => {
+  async (query) => {
     const response = await IpcService.send<{ trigger: Trigger }>(
       GET_ONE_TRIGGER_CHANNEL,
-      { params: { email } },
+      { params: { query } },
     );
 
     // debugging

@@ -23,7 +23,7 @@ export class GetManyExperimentsChannel extends GetManyChannel {
     const { email } = request.params;
 
     if (!email) {
-      event.sender.send(request.responseChannel, { agents: [] });
+      event.sender.send(request.responseChannel, { experiments: [] });
       return;
     }
 

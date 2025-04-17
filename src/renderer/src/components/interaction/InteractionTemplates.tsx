@@ -20,6 +20,11 @@ export default function InteractionTemplates(): JSX.Element {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchInteractionTemplates({ email: currentUser }));
+      dispatch(fetchInteractionTemplates({ email: currentUser })).catch(
+        (error) => {
+          console.error('Failed to fetch interactions templates:', error);
+        },
+      );
     }
   }, [dispatch, currentUser]);
 

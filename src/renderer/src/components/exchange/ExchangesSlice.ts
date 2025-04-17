@@ -42,14 +42,16 @@ export const fetchExchange = createAsyncThunk<ExchangeResponse, ExchangeQuery>(
   },
 );
 
-export const fetchExchanges = createAsyncThunk<
-  ExchangesResponse,
-  { email: string }
->('exchanges/fetchExchanges', async ({ email }) => {
-  return await IpcService.send<Exchange[]>(GET_MANY_EXCHANGES_CHANNEL, {
-    params: { email },
-  });
-});
+export const fetchExchanges = createAsyncThunk<Exchange[], { email: string }>(
+  'exchanges/fetchExchanges',
+  async ({ email }) => {
+    const { exchanges } = await IpcService.send<{ exchanges: Exchange[] }>(
+      GET_MANY_EXCHANGES_CHANNEL,
+      { params: { email } },
+    );
+    return exchanges;
+  },
+);
 
 export const saveNewExchange = createAsyncThunk<
   ExchangeResponse,
@@ -166,6 +168,7 @@ const exchangesSlice = createSlice({
         exchangesAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(fetchExchange.pending, (state) => {
         state.status = 'loading';
       })

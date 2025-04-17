@@ -23,18 +23,26 @@ export class GetManyInteractionsChannel extends GetManyChannel {
     const { email } = request.params;
 
     if (!email) {
-      event.sender.send(request.responseChannel, { agents: [] });
+      event.sender.send(request.responseChannel, { interactions: [] });
       return;
     }
 
-    const interactionRepository = AppDataSource.getRepository(Interaction);
+    try {
+      const interactionRepository = AppDataSource.getRepository(Interaction);
 
-    const interactions = await interactionRepository.find({
-      where: { email },
-    });
+      const interactions = await interactionRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(request.responseChannel, {
-      interactions: instanceToPlain(interactions),
-    });
+      event.sender.send(request.responseChannel, {
+        interactions: instanceToPlain(interactions),
+      });
+    } catch (error) {
+      console.error('Error fetching interactions:', error);
+      event.sender.send(request.responseChannel, {
+        interactions: [],
+        error: 'Failed to fetch interactions',
+      });
+    }
   }
 }

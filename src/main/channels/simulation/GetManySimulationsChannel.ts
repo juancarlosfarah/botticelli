@@ -23,18 +23,25 @@ export class GetManySimulationsChannel extends GetManyChannel {
     const { email } = request.params;
 
     if (!email) {
-      event.sender.send(request.responseChannel, { agents: [] });
+      event.sender.send(request.responseChannel, { simulations: [] });
       return;
     }
 
-    const simulationRepository = AppDataSource.getRepository(Simulation);
+    try {
+      const simulationRepository = AppDataSource.getRepository(Simulation);
 
-    const simulations = await simulationRepository.find({
-      where: { email },
-    });
+      const simulations = await simulationRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(request.responseChannel, {
-      simulations: instanceToPlain(simulations),
-    });
+      event.sender.send(request.responseChannel, {
+        simulations: instanceToPlain(simulations),
+      });
+    } catch (error) {
+      event.sender.send(request.responseChannel, {
+        simulations: [],
+        error: 'Failed to fetch simulations',
+      });
+    }
   }
 }

@@ -19,8 +19,12 @@ export default function ArtificialParticipants(): ReactElement {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchAgents({ email: currentUser }));
+      dispatch(fetchAgents({ email: currentUser })).catch((error) => {
+        console.error('Failed to fetch artificial participants:', error);
+      });
     }
   }, [dispatch, currentUser]);
+
   return (
     <div>
       <Button

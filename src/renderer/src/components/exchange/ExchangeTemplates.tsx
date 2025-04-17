@@ -19,6 +19,11 @@ export default function ExchangeTemplates(): JSX.Element {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchExchangeTemplates({ email: currentUser }));
+      dispatch(fetchExchangeTemplates({ email: currentUser })).catch(
+        (error) => {
+          console.error('Failed to fetch exchanges templates:', error);
+        },
+      );
     }
   }, [dispatch, currentUser]);
 

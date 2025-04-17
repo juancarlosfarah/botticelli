@@ -20,6 +20,9 @@ export default function Triggers(): JSX.Element {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchTriggers({ email: currentUser }));
+      dispatch(fetchTriggers({ email: currentUser })).catch((error) => {
+        console.error('Failed to fetch triggers:', error);
+      });
     }
   }, [dispatch, currentUser]);
 

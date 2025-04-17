@@ -53,6 +53,12 @@ const NewExperiment = (): ReactElement => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
     dispatch(fetchAgents());
     dispatch(fetchInteractionTemplates());
   }, []);
@@ -61,17 +67,24 @@ const NewExperiment = (): ReactElement => {
     if (!currentUser) {
       throw new Error('No user logged in');
     }
-    const { payload } = await dispatch(
-      saveNewExperiment({
-        name,
-        description,
-        interactionTemplates,
-        participants,
-        email: currentUser,
-      }),
-    );
-    log.debug(`saveNewExperiment response.payload:`, payload);
-    navigate(`/experiments/${payload.id}`);
+    try {
+      const { payload } = await dispatch(
+        saveNewExperiment({
+          name,
+          description,
+          interactionTemplates,
+          participants,
+          email: currentUser,
+        }),
+      );
+      log.debug(`saveNewExperiment response.payload:`, payload);
+      navigate(`/experiments/${payload.id}`);
+    } catch (error) {
+      log.error('Failed to save experiment:', error);
+      window.alert(
+        'Failed to save experiment. Please check your connection or try again later.',
+      );
+    }
   };
 
   const handleChangeDescription = (

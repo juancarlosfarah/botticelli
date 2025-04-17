@@ -21,7 +21,7 @@ export default function Trigger(): ReactElement {
 
   useEffect(() => {
     if (triggerId && email) {
-      const query = { id: triggerId, email };
+      const query = { id: triggerId };
       dispatch(fetchTrigger(query));
       dispatch(fetchMessages(query));
     }

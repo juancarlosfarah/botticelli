@@ -27,6 +27,13 @@ export class PostOneInteractionChannel extends PostOneChannel {
 
     const { description, name, exchanges, email } = request.params;
 
+    if (!email) {
+      event.sender.send(request.responseChannel, {
+        error: 'Missing email',
+      });
+      return;
+    }
+
     // Basic email validation
     if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       event.sender.send(request.responseChannel, {

@@ -31,7 +31,7 @@ const NewTrigger = (): ReactElement => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const email = useSelector(selectCurrentUser);
+  const currentUser = useSelector(selectCurrentUser);
 
   const evaluators = useSelector(selectEvaluators);
 
@@ -39,6 +39,12 @@ const NewTrigger = (): ReactElement => {
   const [criteria, setCriteria] = useState('');
   const [name, setName] = useState<string>('');
   const [evaluator, setEvaluator] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     dispatch(fetchAgents());

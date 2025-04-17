@@ -61,6 +61,12 @@ const NewExchangeTemplate = (): ReactElement => {
   const [inputType, setInputType] = useState<InputType>(InputType.Text);
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
     dispatch(fetchAgents());
     dispatch(fetchTriggers());
   }, []);

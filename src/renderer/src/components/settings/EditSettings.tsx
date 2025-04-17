@@ -67,7 +67,7 @@ const EditSettings = (): ReactElement => {
   //avoid empty values when app starts
   useEffect(() => {
     if (currentUser) {
-      dispatch(fetchSettings());
+      dispatch(fetchSettings({ email: currentUser }));
     }
   }, [currentUser]);
 
@@ -92,14 +92,6 @@ const EditSettings = (): ReactElement => {
     newValue: string | null,
   ): void => {
     if (newValue) setModel(newValue);
-  };
-
-  const getNativeLanguageName = (code: string): string => {
-    const nativeName = new Intl.DisplayNames([code], {
-      type: 'language',
-      localeMatcher: 'lookup',
-    }).of(code);
-    return capitalize(nativeName) || code;
   };
 
   const handleChangeLanguage = (

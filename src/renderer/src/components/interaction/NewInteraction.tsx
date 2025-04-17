@@ -40,6 +40,12 @@ const NewInteraction = (): ReactElement => {
   const [exchanges, setExchanges] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
     dispatch(fetchExchanges());
   }, []);
 

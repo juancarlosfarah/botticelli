@@ -23,18 +23,26 @@ export class GetManyExchangesChannel extends GetManyChannel {
     const { email } = request.params;
 
     if (!email) {
-      event.sender.send(request.responseChannel, { agents: [] });
+      event.sender.send(request.responseChannel, { exchanges: [] });
       return;
     }
 
-    const exchangeRepository = AppDataSource.getRepository(Exchange);
+    try {
+      const exchangeRepository = AppDataSource.getRepository(Exchange);
 
-    const exchanges = await exchangeRepository.find({
-      where: { email },
-    });
+      const exchanges = await exchangeRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(request.responseChannel, {
-      exchanges: instanceToPlain(exchanges),
-    });
+      event.sender.send(request.responseChannel, {
+        exchanges: instanceToPlain(exchanges),
+      });
+    } catch (error) {
+      console.error('Error fetching exchanges:', error);
+      event.sender.send(request.responseChannel, {
+        exchanges: [],
+        error: 'Failed to fetch exchanges',
+      });
+    }
   }
 }

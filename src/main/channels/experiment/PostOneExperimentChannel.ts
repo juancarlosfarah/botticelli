@@ -56,6 +56,13 @@ export class PostOneExperimentChannel extends PostOneChannel {
     const { description, interactionTemplates, name, participants, email } =
       request.params;
 
+    if (!email) {
+      event.sender.send(request.responseChannel, {
+        error: 'Missing email',
+      });
+      return;
+    }
+
     // Basic email validation
     if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       event.sender.send(request.responseChannel, {
@@ -141,6 +148,7 @@ export class PostOneExperimentChannel extends PostOneChannel {
             interaction.template = savedInteractionTemplate;
             interaction.experiment = savedExperiment;
             interaction.order = interactionTemplateIndex;
+            interaction.email;
 
             let savedInteraction =
               await interactionRepository.save(interaction);
@@ -178,6 +186,7 @@ export class PostOneExperimentChannel extends PostOneChannel {
                 exchange.description = exchangeTemplate.description;
                 exchange.inputType = exchangeTemplate.inputType;
                 exchange.interaction = savedInteraction;
+                exchange.email = email;
 
                 // if not the last exchange, link next exchange, which is
                 // the previously saved exchange, as exchanges are saved in

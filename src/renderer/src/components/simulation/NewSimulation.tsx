@@ -56,6 +56,12 @@ const NewSimulation = (): ReactElement => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
     dispatch(fetchAgents());
     dispatch(fetchInteractionTemplates());
   }, []);

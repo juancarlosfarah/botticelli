@@ -29,12 +29,19 @@ export class GetManyArtificialParticipantsChannel extends GetManyChannel {
 
     const agentRepository = AppDataSource.getRepository(ArtificialParticipant);
 
-    const agents = await agentRepository.find({
-      where: { email },
-    });
+    try {
+      const agents = await agentRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(request.responseChannel, {
-      agents: instanceToPlain(agents),
-    });
+      event.sender.send(request.responseChannel, {
+        agents: instanceToPlain(agents),
+      });
+    } catch (error) {
+      event.sender.send(request.responseChannel, {
+        error: `Failed to retrieve artificial participants: ${error.message}`,
+        agents: [],
+      });
+    }
   }
 }

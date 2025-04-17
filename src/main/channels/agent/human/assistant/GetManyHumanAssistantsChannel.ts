@@ -29,12 +29,19 @@ export class GetManyHumanAssistantsChannel extends GetManyChannel {
 
     const agentRepository = AppDataSource.getRepository(HumanAssistant);
 
-    const agents = await agentRepository.find({
-      where: { email },
-    });
+    try {
+      const agents = await agentRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(request.responseChannel, {
-      agents: instanceToPlain(agents),
-    });
+      event.sender.send(request.responseChannel, {
+        agents: instanceToPlain(agents),
+      });
+    } catch (error) {
+      event.sender.send(request.responseChannel, {
+        error: `Failed to retrieve human assistants: ${error.message}`,
+        agents: [],
+      });
+    }
   }
 }

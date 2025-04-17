@@ -29,12 +29,19 @@ export class GetManyHumanParticipantsChannel extends GetManyChannel {
 
     const agentRepository = AppDataSource.getRepository(HumanParticipant);
 
-    const agents = await agentRepository.find({
-      where: { email },
-    });
+    try {
+      const agents = await agentRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(request.responseChannel, {
-      agents: instanceToPlain(agents),
-    });
+      event.sender.send(request.responseChannel, {
+        agents: instanceToPlain(agents),
+      });
+    } catch (error) {
+      event.sender.send(request.responseChannel, {
+        error: `Failed to retrieve human participants: ${error.message}`,
+        agents: [],
+      });
+    }
   }
 }

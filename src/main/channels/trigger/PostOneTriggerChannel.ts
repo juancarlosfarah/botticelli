@@ -26,6 +26,13 @@ export class PostOneTriggerChannel extends PostOneChannel {
 
     const { description, criteria, name, evaluator, email } = request.params;
 
+    if (!email) {
+      event.sender.send(request.responseChannel, {
+        error: 'Missing email',
+      });
+      return;
+    }
+
     // Basic email validation
     if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       event.sender.send(request.responseChannel, {

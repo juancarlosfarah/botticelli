@@ -43,15 +43,16 @@ export const fetchExchangeTemplate = createAsyncThunk<
 });
 
 export const fetchExchangeTemplates = createAsyncThunk<
-  GetManyExchangeTemplateResponse,
+  ExchangeTemplate[],
   { email: string }
 >('exchangeTemplates/fetchExchangeTemplates', async ({ email }) => {
-  return await IpcService.send<ExchangeTemplate[]>(
-    GET_MANY_EXCHANGE_TEMPLATES_CHANNEL,
-    {
-      params: { email },
-    },
-  );
+  const { exchangeTemplates } = await IpcService.send<{
+    exchangeTemplates: ExchangeTemplate[];
+  }>(GET_MANY_EXCHANGE_TEMPLATES_CHANNEL, {
+    params: { email },
+  });
+
+  return exchangeTemplates;
 });
 
 export const saveNewExchangeTemplate = createAsyncThunk<

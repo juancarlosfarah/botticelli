@@ -22,20 +22,27 @@ export class GetManyExchangeTemplatesChannel extends GetManyChannel {
     const { email } = request.params;
 
     if (!email) {
-      event.sender.send(request.responseChannel, { agents: [] });
+      event.sender.send(request.responseChannel, { exchangeTemplates: [] });
       return;
     }
 
-    const exchangeTemplatesRepository =
-      AppDataSource.getRepository(ExchangeTemplate);
+    try {
+      const exchangeTemplatesRepository =
+        AppDataSource.getRepository(ExchangeTemplate);
 
-    const exchangeTemplates = await exchangeTemplatesRepository.find({
-      where: { email },
-    });
+      const exchangeTemplates = await exchangeTemplatesRepository.find({
+        where: { email },
+      });
 
-    event.sender.send(
-      request.responseChannel,
-      instanceToPlain(exchangeTemplates),
-    );
+      event.sender.send(request.responseChannel, {
+        exchangeTemplates: instanceToPlain(exchangeTemplates),
+      });
+    } catch (error) {
+      console.error('Error fetching exchange templates:', error);
+      event.sender.send(request.responseChannel, {
+        exchangeTemplates: [],
+        error: 'Failed to fetch exchange templates',
+      });
+    }
   }
 }
