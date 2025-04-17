@@ -57,7 +57,7 @@ const NewTrigger = (): ReactElement => {
         description,
         criteria,
         evaluator,
-        email,
+        email: currentUser,
       }),
     );
     log.debug(`saveNewTrigger response.payload:`, payload);
