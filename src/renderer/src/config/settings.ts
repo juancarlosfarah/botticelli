@@ -2,7 +2,7 @@
 import {
   GeneralSettings,
   GeneralSettingsKeys,
-} from '@shared/interfaces/Settings';
+} from '@shared/interfaces/Setting';
 
 export const DEFAULT_ALLOW_REPLIES_SETTING = true;
 export const DEFAULT_ALLOW_REPORTING = true;

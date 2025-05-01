@@ -11,11 +11,13 @@ type Simulation = {
   participants: Agent[];
   createdAt: Date;
   updatedAt: Date;
+  email: string;
 };
 
 export type PostOneSimulationParams = {
   description: string;
   name: string;
+  email: string;
   // ids
   interactionTemplates: string[];
   participants: string[];
@@ -26,6 +28,12 @@ export type GetOneSimulationParams = {
 };
 
 export type DeleteOneSimulationParams = string;
+
+export type PatchOneSimulationParams = {
+  id: string;
+  name?: string;
+  description?: string;
+};
 
 // responses are currently simulations
 export type PostOneSimulationResponse = Simulation;

@@ -20,7 +20,7 @@ export default function AvatarWithStatus({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         badgeInset="4px 4px"
       >
-        <Avatar size="sm" {...rest} />
+        <Avatar sx={{ p: 0.5, opacity: 0.8 }} size="lg" {...rest} />
       </Badge>
     </div>
   );

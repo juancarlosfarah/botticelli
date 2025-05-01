@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import AgentType from '../../shared/interfaces/AgentType';
 import { Message } from './Message';
 
 @Entity()
@@ -18,14 +19,17 @@ export class Agent {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', default: '' })
+  email: string = '';
+
   @Column({ default: '' })
   name: string = '';
 
   @Column({ default: '' })
   description: string = '';
 
-  @Column()
-  type: string;
+  @Column({ type: 'varchar' })
+  type: AgentType;
 
   @OneToMany(() => Message, (message) => message.sender)
   messages: Relation<Message>[];

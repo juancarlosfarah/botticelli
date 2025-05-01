@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useRef, useState } from 'react';
-import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import CheckIcon from '@mui/icons-material/CheckRounded';
@@ -33,10 +33,12 @@ export default function TextInput({
   inputType,
 }: TextInputProps): ReactElement {
   const textAreaRef = useRef<HTMLDivElement>(null);
-  const [textAreaValue, setTextAreaValue] = React.useState('');
+  const [textAreaValue, setTextAreaValue] = useState('');
   const [keypressData, setKeypressData] = useState<KeyPressData[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const { t } = useTranslation();
 
   const focusOnTextArea = (): void => {
     const textareaElement = textAreaRef?.current?.querySelector('textarea');
@@ -77,8 +79,8 @@ export default function TextInput({
     <Box sx={{ px: 2, pb: 3 }}>
       <FormControl>
         <Textarea
-          placeholder="Type something here…"
-          aria-label="Message"
+          placeholder={t('Type something here…')}
+          aria-label={t('Message')}
           ref={textAreaRef}
           onChange={(e): void => {
             setTextAreaValue(e.target.value);
@@ -117,7 +119,7 @@ export default function TextInput({
                 endDecorator={<SendRoundedIcon />}
                 onClick={handleClick}
               >
-                Send
+                {t('Send')}
               </Button>
             </Stack>
           }
@@ -129,7 +131,12 @@ export default function TextInput({
                 key: event.key,
               },
             ]);
-            if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+            // submit with enter key (and no other key pressed)
+            if (
+              event.key === 'Enter' &&
+              !(event.metaKey || event.ctrlKey || event.shiftKey)
+            ) {
+              event.preventDefault();
               handleClick();
               // reset keypress data
               setKeypressData([]);

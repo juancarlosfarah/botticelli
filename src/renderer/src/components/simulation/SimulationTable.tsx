@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -22,6 +23,7 @@ export default function SimulationTable(): ReactElement {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
 
   const simulations = useSelector(selectSimulations);
+  const { t } = useTranslation();
 
   return (
     <React.Fragment>
@@ -80,7 +82,7 @@ export default function SimulationTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
             </tr>
@@ -121,9 +123,13 @@ export default function SimulationTable(): ReactElement {
                       component={RouterLink}
                       to={`/simulations/${row.id}`}
                     >
-                      View
+                      {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteSimulation} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteSimulation}
+                      editPath={`/simulations/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

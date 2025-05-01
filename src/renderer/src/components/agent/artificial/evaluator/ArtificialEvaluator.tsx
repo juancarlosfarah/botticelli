@@ -1,7 +1,9 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
 
@@ -13,6 +15,8 @@ import { fetchAgent, selectAgentById } from '../../AgentsSlice';
 export default function ArtificialEvaluator(): ReactElement {
   const { agentId } = useParams();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const query = { id: agentId };
@@ -23,7 +27,7 @@ export default function ArtificialEvaluator(): ReactElement {
   const agent = useSelector((state) => selectAgentById(state, agentId));
 
   if (!agent) {
-    return <div>Agent Not Found</div>;
+    return <div>{t('Agent Not Found')}</div>;
   }
 
   return (
@@ -32,18 +36,22 @@ export default function ArtificialEvaluator(): ReactElement {
       <Box
         sx={{
           display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
           my: 1,
           gap: 1,
-          flexDirection: { xs: 'column', sm: 'row' },
-          alignItems: { xs: 'start', sm: 'center' },
-          flexWrap: 'wrap',
-          justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">{`Agent #${agentId}`}</Typography>
+        <Button
+          color="neutral"
+          onClick={() => navigate(`/agents/artificial/evaluators`)}
+        >
+          {t('Back')}
+        </Button>
+        <Typography level="h2">Agent</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{agent.name}</Typography>
       <Typography sx={{ mt: 1 }} level="title-md">

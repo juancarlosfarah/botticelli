@@ -8,10 +8,17 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Typography,
+} from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
@@ -19,11 +26,12 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 import InputType from '@shared/enums/InputType';
 import capitalize from 'lodash.capitalize';
 import isNull from 'lodash.isnull';
 
-import { AppDispatch } from '../../store';
 import { fetchAgents, selectAssistants } from '../agent/AgentsSlice';
 import { fetchTriggers, selectTriggers } from '../trigger/TriggersSlice';
 import { saveNewExchangeTemplate } from './ExchangeTemplatesSlice';
@@ -31,10 +39,12 @@ import { saveNewExchangeTemplate } from './ExchangeTemplatesSlice';
 const NewExchangeTemplate = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const assistants = useSelector(selectAssistants);
   const availableTriggers = useSelector(selectTriggers);
   // for string enums, Object.values outputs the right side of the value
   const inputTypes = Object.values(InputType);
+  const currentUser = useSelector(selectCurrentUser);
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -49,6 +59,12 @@ const NewExchangeTemplate = (): ReactElement => {
   const [softLimit, setSoftLimit] = useState<number>(0);
   const [hardLimit, setHardLimit] = useState<number>(0);
   const [inputType, setInputType] = useState<InputType>(InputType.Text);
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     dispatch(fetchAgents());
@@ -68,6 +84,7 @@ const NewExchangeTemplate = (): ReactElement => {
         inputType,
         softLimit,
         hardLimit,
+        email: currentUser,
       }),
     );
 
@@ -168,11 +185,22 @@ const NewExchangeTemplate = (): ReactElement => {
 
   return (
     <>
+      <Button
+        color="neutral"
+        onClick={() => navigate('/exchanges/templates')}
+        style={{
+          maxWidth: '50px',
+          maxHeight: '50px',
+        }}
+      >
+        {t('Back')}
+      </Button>
+      <Typography level="h2">{t('New Exchange')}</Typography>
       <FormControl>
-        <FormLabel>Name</FormLabel>
+        <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />
         <FormHelperText>
-          This is an internal name for this exchange template.
+          {t('This is an internal name for this exchange template.')}
         </FormHelperText>
       </FormControl>
 
@@ -180,7 +208,7 @@ const NewExchangeTemplate = (): ReactElement => {
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal description for this exchange template.
+          {t('This is an internal description for this exchange template.')}
         </FormHelperText>
       </FormControl>
 
@@ -188,7 +216,9 @@ const NewExchangeTemplate = (): ReactElement => {
         <FormLabel>Instructions</FormLabel>
         <Textarea value={instructions} onChange={handleChangeInstructions} />
         <FormHelperText>
-          These are the instructions that will be sent to the language model.
+          {t(
+            'These are the instructions that will be sent to the language model.',
+          )}
         </FormHelperText>
       </FormControl>
 
@@ -201,7 +231,7 @@ const NewExchangeTemplate = (): ReactElement => {
       </FormControl>
 
       <FormControl>
-        <FormLabel>Input Type</FormLabel>
+        <FormLabel>{t('Input Type')}</FormLabel>
         <Select value={inputType} onChange={handleChangeInputType}>
           {inputTypes.map((inputType) => (
             <Option value={inputType} key={inputType}>
@@ -223,19 +253,20 @@ const NewExchangeTemplate = (): ReactElement => {
       </FormControl>
 
       <FormControl>
-        <FormLabel>Instructions On Complete</FormLabel>
+        <FormLabel>{t('Instructions On Complete')}</FormLabel>
         <Textarea
           value={participantInstructionsOnComplete}
           onChange={handleChangeParticipantInstructionsOnComplete}
         />
         <FormHelperText>
-          These are the instructions that are shown to the participant when the
-          exchange has been marked as completed.
+          {t(
+            'These are the instructions that are shown to the participant when the exchange has been marked as completed.',
+          )}
         </FormHelperText>
       </FormControl>
 
       <FormControl>
-        <FormLabel>Triggers</FormLabel>
+        <FormLabel>{t('Triggers')}</FormLabel>
         <Select
           multiple
           value={triggers}
@@ -266,37 +297,34 @@ const NewExchangeTemplate = (): ReactElement => {
       </FormControl>
 
       <FormControl>
-        <FormLabel>Soft Limit</FormLabel>
+        <FormLabel>{t('Soft Limit')}</FormLabel>
         <Input
           slotProps={{ input: { type: 'number', interval: 1, min: 0 } }}
           value={softLimit}
           onChange={handleChangeSoftLimit}
         />
         <FormHelperText>
-          When the exchange reaches this total number of messages, the exchange
-          will be marked as completed. Participants will be able to continue to
-          send messages, but they will be also able to dismiss the exchange.
-          Zero means there is no limit. Usually this number divided by two
-          equals the number of messages sent by a participant.
+          {t(
+            'When the exchange reaches this total number of user messages, the exchange will be marked as completed. Participants will be able to continue to send messages, but they will be also able to dismiss the exchange. Zero means there is no limit.',
+          )}
         </FormHelperText>
       </FormControl>
 
       <FormControl>
-        <FormLabel>Hard Limit</FormLabel>
+        <FormLabel>{t('Hard Limit')}</FormLabel>
         <Input
           slotProps={{ input: { type: 'number', interval: 1, min: 0 } }}
           value={hardLimit}
           onChange={handleChangeHardLimit}
         />
         <FormHelperText>
-          When the exchange reaches this total number of messages, the exchange
-          will be marked as blocked. Participants will not longer be able to
-          send messages. Zero means there is no limit. Usually this number
-          divided by two equals the number of messages sent by a participant.
+          {t(
+            'When the exchange reaches this total number of user messages, the exchange will be marked as blocked. Participants will not longer be able to send messages. Zero means there is no limit.',
+          )}
         </FormHelperText>
       </FormControl>
 
-      <Button onClick={handleNewExchangeTemplate}>Save</Button>
+      <Button onClick={handleNewExchangeTemplate}>{t('Save')}</Button>
     </>
   );
 };

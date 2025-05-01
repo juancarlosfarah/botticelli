@@ -20,6 +20,7 @@ import { InteractionTemplate } from './entity/InteractionTemplate';
 import { InteractionTemplateExchangeTemplate } from './entity/InteractionTemplateExchangeTemplate';
 import { KeyPressEvent } from './entity/KeyPressEvent';
 import { Message } from './entity/Message';
+import { Setting } from './entity/Setting';
 import { Simulation } from './entity/Simulation';
 import { SimulationInteractionTemplate } from './entity/SimulationInteractionTemplate';
 import { Trigger } from './entity/Trigger';
@@ -48,6 +49,7 @@ export const AppDataSource = new DataSource({
     InteractionTemplateExchangeTemplate,
     ExperimentInteractionTemplate,
     Simulation,
+    Setting,
     SimulationInteractionTemplate,
     Event,
     KeyPressEvent,

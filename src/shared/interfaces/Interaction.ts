@@ -21,6 +21,7 @@ type Interaction = {
   completedAt: Date;
   createdAt: Date;
   updatedAt: Date;
+  email: string;
 };
 
 export type NewInteractionParams = {
@@ -33,10 +34,22 @@ export type NewInteractionParams = {
   template: InteractionTemplate;
   participant: Agent;
   exchanges: Exchange[];
+  email: string;
 };
 
 export type GetOneInteractionParams = {
   id: string;
+};
+
+export type SetCurrentExchangeParams = {
+  interactionId: string;
+  currentExchangeId: string;
+};
+
+export type PatchOneInteractionParams = {
+  id: string;
+  name?: string;
+  description?: string;
 };
 
 export default Interaction;

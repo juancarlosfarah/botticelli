@@ -14,6 +14,7 @@ type ExchangeTemplate = {
   triggers: Trigger[];
   softLimit: number;
   hardLimit: number;
+  email: string;
 };
 
 export type PostOneExchangeTemplateResponse = ExchangeTemplate;
@@ -33,6 +34,16 @@ export type PostOneExchangeTemplateParams = {
   inputType: InputType;
   softLimit?: number;
   hardLimit?: number;
+  email: string;
+};
+
+export type PatchOneExchangeTemplateParams = {
+  id: string;
+  name?: string;
+  description?: string;
+  instructions?: string;
+  participantInstructionsOnComplete?: string;
+  cue?: string;
 };
 
 export type GetOneExchangeTemplateParams = {

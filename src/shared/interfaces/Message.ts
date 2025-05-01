@@ -31,7 +31,7 @@ export type PostOneMessageParams = {
   sender: string;
   inputType: InputType;
   evaluate: boolean;
-  keyPressEvents: KeyPressData[];
+  keyPressEvents?: KeyPressData[];
 };
 
 // refers to the electron handler

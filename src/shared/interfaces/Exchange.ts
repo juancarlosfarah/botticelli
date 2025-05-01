@@ -29,10 +29,12 @@ type Exchange = {
   dismissedAt: Date;
   createdAt: Date;
   updatedAt: Date;
+  email: string;
 };
 
 export type ExchangeQuery = {
   id: string;
+  email: string;
 };
 
 export type ExchangeResponse = Exchange;

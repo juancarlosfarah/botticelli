@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CheckIcon from '@mui/icons-material/CheckRounded';
 import Alert from '@mui/joy/Alert';
 import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 
@@ -11,10 +15,12 @@ import InputType from '@shared/enums/InputType';
 import { log } from 'electron-log/renderer';
 
 import { Message } from '../../../../shared/interfaces/Message';
+import robot from '../../assets/robot.png?asset';
 import { AppDispatch, RootState } from '../../store';
 import { MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
 import {
+  dismissExchange,
   fetchExchange,
   selectExchangeById,
   startExchange,
@@ -22,7 +28,7 @@ import {
 import MessageLoader from '../layout/MessageLoader';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-import { fetchMessages, selectMessages } from './MessagesSlice';
+import { fetchMessages, selectMessages, saveNewMessage } from './MessagesSlice';
 
 type MessagesPaneProps = {
   exchangeId: string;
@@ -48,13 +54,18 @@ export default function MessagesPane({
   participantId,
   readOnly = false,
 }: MessagesPaneProps): React.ReactElement {
+  // status is an array where each entry marks a "loading" process
   const status = useSelector((state: RootState) => state.messages.status);
+
+  const [textAreaValue, setTextAreaValue] = React.useState('');
 
   const dispatch = useDispatch<AppDispatch>();
   const messages = useSelector(selectMessages);
   const exchange = useSelector((state) =>
     selectExchangeById(state, exchangeId),
   );
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchExchange({ id: exchangeId }));
@@ -68,11 +79,34 @@ export default function MessagesPane({
   }, [exchange]);
 
   if (!exchange) {
-    return <>Exchange Not Found</>;
+    return <>{t('Exchange Not Found')}</>;
   }
 
+  // completed is flagged when we reached the soft limit
   const showParticipantInstructionsOnComplete =
     exchange.completed && exchange.participantInstructionsOnComplete;
+
+  // we calculate the number of user messages to
+  // calculate whether we have reached the hard limit
+  const numUserMessages = messages.filter(
+    (message) => message?.sender?.id === participantId,
+  ).length;
+
+  // hard complete is when we've reached the hard limit
+  const hardComplete =
+    exchange.completed &&
+    exchange.hardLimit &&
+    numUserMessages >= exchange.hardLimit;
+
+  // the message showed upon reaching the hard limit is slightly
+  // different to the one we show when the soft limit is reached
+  const messageOnComplete = hardComplete
+    ? t('This exchange has been marked as completed. Please click **Done**.')
+    : exchange.participantInstructionsOnComplete;
+
+  const handleDismiss = (): void => {
+    dispatch(dismissExchange(exchangeId));
+  };
 
   return (
     <>
@@ -99,7 +133,6 @@ export default function MessagesPane({
           <Stack spacing={2} justifyContent="flex-end">
             {messages.map((message: MessageProps, index: number) => {
               const isYou = message?.sender?.id === participantId;
-              // console.log(messages);
 
               {
                 if (
@@ -152,7 +185,7 @@ export default function MessagesPane({
                 }
               }
             })}
-            {status === 'loading' && (
+            {status.length !== 0 && (
               <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
                 <Stack
                   direction="row"
@@ -160,24 +193,54 @@ export default function MessagesPane({
                   spacing={2}
                   sx={{ mb: 0.25 }}
                 >
+                  <AvatarWithStatus online src={robot} />
                   <MessageLoader />
                 </Stack>
               </Box>
             )}
             {showParticipantInstructionsOnComplete && (
-              <Alert variant="soft" color="success">
-                {exchange.participantInstructionsOnComplete}
+              <Alert
+                variant="soft"
+                color="success"
+                endDecorator={
+                  <Button
+                    size="sm"
+                    color="success"
+                    endDecorator={<CheckIcon />}
+                    sx={{ alignSelf: 'center', borderRadius: 'sm' }}
+                    onClick={handleDismiss}
+                    disabled={readOnly || exchange.dismissed}
+                  >
+                    {t('Done')}
+                  </Button>
+                }
+              >
+                <ReactMarkdown>{messageOnComplete}</ReactMarkdown>
               </Alert>
             )}
           </Stack>
         </Box>
-        {!(readOnly || exchange.dismissed) && (
+        {!(readOnly || exchange.dismissed || hardComplete) && (
           <MessageInput
             inputType={exchange.inputType}
             participantId={participantId}
             interactionId={interactionId}
             exchangeId={exchangeId}
+            textAreaValue={textAreaValue}
+            setTextAreaValue={setTextAreaValue}
             completed={exchange.completed}
+            onSubmit={(keyPressEvents): void => {
+              dispatch(
+                saveNewMessage({
+                  interactionId,
+                  exchangeId,
+                  keyPressEvents,
+                  content: textAreaValue,
+                  evaluate: true,
+                  sender: participantId,
+                }),
+              );
+            }}
           />
         )}
       </Sheet>

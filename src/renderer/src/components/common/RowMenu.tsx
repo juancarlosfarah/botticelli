@@ -1,5 +1,7 @@
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import Divider from '@mui/joy/Divider';
@@ -13,9 +15,16 @@ type Props = {
   rowId: string | number;
   // todo: proper type
   deleteHandler: Function;
+  editPath?: string;
 };
-export default function RowMenu({ rowId, deleteHandler }: Props): ReactElement {
+export default function RowMenu({
+  rowId,
+  deleteHandler,
+  editPath,
+}: Props): ReactElement {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const handleDelete = (): void => {
     dispatch(deleteHandler(rowId));
   };
@@ -29,12 +38,10 @@ export default function RowMenu({ rowId, deleteHandler }: Props): ReactElement {
         <MoreHorizRoundedIcon />
       </MenuButton>
       <Menu size="sm" sx={{ minWidth: 140 }}>
-        <MenuItem>Edit</MenuItem>
-        <MenuItem>Rename</MenuItem>
-        <MenuItem>Move</MenuItem>
+        <MenuItem onClick={() => navigate(editPath)}>{t('Edit')}</MenuItem>
         <Divider />
         <MenuItem color="danger" onClick={handleDelete}>
-          Delete
+          {t('Delete')}
         </MenuItem>
       </Menu>
     </Dropdown>

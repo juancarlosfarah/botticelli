@@ -5,6 +5,7 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
+  COMPLETE_EXCHANGE_CHANNEL,
   DELETE_ONE_EXCHANGE_CHANNEL,
   GET_MANY_EXCHANGES_CHANNEL,
   GET_ONE_EXCHANGE_CHANNEL,
@@ -41,10 +42,14 @@ export const fetchExchange = createAsyncThunk<ExchangeResponse, ExchangeQuery>(
   },
 );
 
-export const fetchExchanges = createAsyncThunk<ExchangesResponse>(
+export const fetchExchanges = createAsyncThunk<Exchange[], { email: string }>(
   'exchanges/fetchExchanges',
-  async () => {
-    return await IpcService.send<Exchange[]>(GET_MANY_EXCHANGES_CHANNEL);
+  async ({ email }) => {
+    const { exchanges } = await IpcService.send<{ exchanges: Exchange[] }>(
+      GET_MANY_EXCHANGES_CHANNEL,
+      { params: { email } },
+    );
+    return exchanges;
   },
 );
 
@@ -58,6 +63,7 @@ export const saveNewExchange = createAsyncThunk<
     assistant: Agent;
     participant: Agent;
     triggers: number;
+    email: string;
   }
 >(
   'exchanges/saveNewExchange',
@@ -69,6 +75,7 @@ export const saveNewExchange = createAsyncThunk<
     participant,
     triggers,
     cue,
+    email,
   }) => {
     const response = await IpcService.send<{ exchange: Exchange }>(
       POST_ONE_EXCHANGE_CHANNEL,
@@ -81,6 +88,7 @@ export const saveNewExchange = createAsyncThunk<
           participant,
           triggers,
           cue,
+          email,
         },
       },
     );
@@ -98,6 +106,20 @@ export const startExchange = createAsyncThunk<ExchangeResponse, string>(
       },
     );
     log.debug(`startExchange response`);
+    return response;
+  },
+);
+
+export const completeExchange = createAsyncThunk<ExchangeResponse, string>(
+  'exchanges/completeExchange',
+  async (id) => {
+    const response = await IpcService.send<{ exchange: Exchange }>(
+      COMPLETE_EXCHANGE_CHANNEL,
+      {
+        params: { id },
+      },
+    );
+    log.debug(`completeExchange response`);
     return response;
   },
 );
@@ -131,6 +153,7 @@ const exchangesSlice = createSlice({
   initialState,
   reducers: {
     exchangeDeleted: exchangesAdapter.removeOne,
+    exchangesCleared: exchangesAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -138,7 +161,11 @@ const exchangesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchExchanges.fulfilled, (state, action) => {
-        exchangesAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.filter(
+          (exchange) => exchange.email === email,
+        );
+        exchangesAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
       .addCase(fetchExchange.pending, (state) => {
@@ -148,6 +175,9 @@ const exchangesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(dismissExchange.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(completeExchange.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchExchange.fulfilled, (state, action) => {
@@ -162,12 +192,17 @@ const exchangesSlice = createSlice({
         exchangesAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
+      .addCase(completeExchange.fulfilled, (state, action) => {
+        exchangesAdapter.setOne(state, action.payload);
+        state.status = 'idle';
+      })
       .addCase(saveNewExchange.fulfilled, (state, action) => {
         exchangesAdapter.addOne(state, action.payload);
       })
       .addCase(deleteOneExchange.fulfilled, exchangesAdapter.removeOne);
   },
 });
+export const { exchangeDeleted, exchangesCleared } = exchangesSlice.actions;
 
 export default exchangesSlice.reducer;
 

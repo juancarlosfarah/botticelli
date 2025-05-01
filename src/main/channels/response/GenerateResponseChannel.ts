@@ -6,7 +6,8 @@ import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 import OpenAi, { OpenAI } from 'openai';
 
-import { OPENAI_API_KEY, OPENAI_ORG_ID } from '../../config/env';
+import AgentType from '../../../shared/interfaces/AgentType';
+import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_ORG_ID } from '../../config/env';
 import { AppDataSource } from '../../data-source';
 import { Exchange } from '../../entity/Exchange';
 import { Message } from '../../entity/Message';
@@ -38,12 +39,15 @@ export class GenerateResponseChannel implements IpcChannel {
 
     // evaluate
     const triggers = exchange?.triggers || [];
-    const instructions = exchange?.instructions || '';
+    const interactionInstructions =
+      exchange?.interaction?.modelInstructions || '';
+    const exchangeInstructions = exchange?.instructions || '';
     const assistant = exchange?.assistant;
 
     const evaluations: string[] = [];
 
     if (triggers.length === 0) {
+      // if there are no triggers, completed will always be marked as false
       log.warn(`empty triggers`);
     }
     for (const trigger of triggers) {
@@ -58,13 +62,16 @@ export class GenerateResponseChannel implements IpcChannel {
             role: 'user',
             content: `Assistant's Description: ${assistant.description}`,
           },
-          { role: 'user', content: `Instructions: ${instructions}` },
+          {
+            role: 'user',
+            content: `Instructions: ${interactionInstructions} ${exchangeInstructions}`,
+          },
           {
             role: 'user',
             content: `Conversation: ${messagesToText(messages)}`,
           },
         ],
-        model: 'gpt-3.5-turbo',
+        model: OPENAI_MODEL,
       });
       evaluations.push(evaluation.choices[0].message.content || '');
     }
@@ -97,7 +104,9 @@ export class GenerateResponseChannel implements IpcChannel {
     exchange: Exchange,
     messages: Message[],
   ): Promise<Message> {
-    const instructions = exchange.instructions;
+    const exchangeInstructions = exchange.instructions;
+    const interactionInstructions =
+      exchange?.interaction?.modelInstructions || '';
 
     const assistant = exchange?.assistant;
 
@@ -108,14 +117,22 @@ export class GenerateResponseChannel implements IpcChannel {
 
     // transform messages to prompt format
     const prompt = messagesToPrompt(messages);
+    const messagesPrompt = [
+      { role: 'system', content: assistant.description },
+      {
+        role: 'system',
+        content: interactionInstructions,
+      },
+      {
+        role: 'system',
+        content: exchangeInstructions,
+      },
+      ...prompt,
+    ];
 
     const completion = await this.openAi.chat.completions.create({
-      messages: [
-        { role: 'system', content: assistant.description },
-        { role: 'system', content: instructions },
-        ...prompt,
-      ],
-      model: 'gpt-4',
+      messages: messagesPrompt,
+      model: OPENAI_MODEL,
     });
 
     // debug
@@ -173,9 +190,15 @@ export class GenerateResponseChannel implements IpcChannel {
       exchange: { id: exchangeId },
     });
 
+    const userMessages = messages.filter(
+      (message) => message?.sender?.type === AgentType.HumanParticipant,
+    );
+
+    log.debug(`number of user messages:`, userMessages.length);
+
     // need to check if soft limit is not zero, as that indicates there's no limit
     const hasSoftLimit = exchange.softLimit;
-    const reachedSoftLimit = messages.length >= exchange.softLimit;
+    const reachedSoftLimit = userMessages.length >= exchange.softLimit;
     if (hasSoftLimit && reachedSoftLimit) {
       exchange.completed = true;
       await this.completeExchange(exchange);

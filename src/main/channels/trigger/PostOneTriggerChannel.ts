@@ -24,12 +24,27 @@ export class PostOneTriggerChannel extends PostOneChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    const { description, criteria, name, evaluator } = request.params;
+    const { description, criteria, name, evaluator, email } = request.params;
 
+    if (!email) {
+      event.sender.send(request.responseChannel, {
+        error: 'Missing email',
+      });
+      return;
+    }
+
+    // Basic email validation
+    if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      event.sender.send(request.responseChannel, {
+        error: 'Invalid email format',
+      });
+      return;
+    }
     const trigger = new Trigger();
     trigger.name = name;
     trigger.description = description;
     trigger.criteria = criteria;
+    trigger.email = email;
 
     const agentRepository = AppDataSource.getRepository(Agent);
     const savedEvaluator = await agentRepository.findOneBy({ id: evaluator });

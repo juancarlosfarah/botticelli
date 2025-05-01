@@ -8,8 +8,10 @@ import exchangesReducer from './components/exchange/ExchangesSlice';
 import experimentsReducer from './components/experiment/ExperimentsSlice';
 import interactionTemplatesReducer from './components/interaction/InteractionTemplatesSlice';
 import interactionsReducer from './components/interaction/InteractionsSlice';
+import settingsReducer from './components/settings/SettingsSlice';
 import simulationsReducer from './components/simulation/SimulationsSlice';
 import triggersReducer from './components/trigger/TriggersSlice';
+import userReducer from './components/user/UsersSlice';
 
 const store = configureStore({
   reducer: {
@@ -24,6 +26,8 @@ const store = configureStore({
     experiments: experimentsReducer,
     simulations: simulationsReducer,
     audios: audiosReducer,
+    settings: settingsReducer,
+    user: userReducer,
   },
 });
 

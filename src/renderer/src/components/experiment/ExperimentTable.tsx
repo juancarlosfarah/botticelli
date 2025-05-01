@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -22,6 +23,7 @@ export default function ExperimentTable(): ReactElement {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
 
   const experiments = useSelector(selectExperiments);
+  const { t } = useTranslation();
 
   return (
     <React.Fragment>
@@ -80,54 +82,60 @@ export default function ExperimentTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
             </tr>
           </thead>
           <tbody>
-            {stableSort(experiments, getComparator(order, 'id')).map((row) => (
-              <tr key={row.id}>
-                <td style={{ textAlign: 'center', width: 120 }}>
-                  <Checkbox
-                    size="sm"
-                    checked={selected.includes(row.id)}
-                    color={selected.includes(row.id) ? 'primary' : undefined}
-                    onChange={(event) => {
-                      setSelected((ids) =>
-                        event.target.checked
-                          ? ids.concat(row.id)
-                          : ids.filter((itemId) => itemId !== row.id),
-                      );
-                    }}
-                    slotProps={{ checkbox: { sx: { textAlign: 'left' } } }}
-                    sx={{ verticalAlign: 'text-bottom' }}
-                  />
-                </td>
-                <td>
-                  <Typography level="body-xs">
-                    {_.truncate(row.name, 25)}
-                  </Typography>
-                </td>
-                <td>
-                  <Typography level="body-xs">
-                    {_.truncate(row.description, 25)}
-                  </Typography>
-                </td>
-                <td>
-                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                    <Link
-                      level="body-xs"
-                      component={RouterLink}
-                      to={`/experiments/${row.id}`}
-                    >
-                      View
-                    </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteExperiment} />
-                  </Box>
-                </td>
-              </tr>
-            ))}
+            {stableSort(experiments, getComparator(order, 'name')).map(
+              (row) => (
+                <tr key={row.id}>
+                  <td style={{ textAlign: 'center', width: 120 }}>
+                    <Checkbox
+                      size="sm"
+                      checked={selected.includes(row.id)}
+                      color={selected.includes(row.id) ? 'primary' : undefined}
+                      onChange={(event) => {
+                        setSelected((ids) =>
+                          event.target.checked
+                            ? ids.concat(row.id)
+                            : ids.filter((itemId) => itemId !== row.id),
+                        );
+                      }}
+                      slotProps={{ checkbox: { sx: { textAlign: 'left' } } }}
+                      sx={{ verticalAlign: 'text-bottom' }}
+                    />
+                  </td>
+                  <td>
+                    <Typography level="body-xs">
+                      {_.truncate(row.name, 25)}
+                    </Typography>
+                  </td>
+                  <td>
+                    <Typography level="body-xs">
+                      {_.truncate(row.description, 25)}
+                    </Typography>
+                  </td>
+                  <td>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                      <Link
+                        level="body-xs"
+                        component={RouterLink}
+                        to={`/experiments/${row.id}`}
+                      >
+                        {t('View')}
+                      </Link>
+                      <RowMenu
+                        rowId={row.id}
+                        deleteHandler={deleteExperiment}
+                        editPath={`/experiments/${row.id}/edit`}
+                      />
+                    </Box>
+                  </td>
+                </tr>
+              ),
+            )}
           </tbody>
         </Table>
       </Sheet>

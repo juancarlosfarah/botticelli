@@ -7,10 +7,17 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Typography,
+} from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
@@ -18,7 +25,9 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
-import { AppDispatch } from '../../store';
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
+
 import {
   fetchExchangeTemplates,
   selectAllExchangeTemplates,
@@ -28,6 +37,8 @@ import { saveNewInteractionTemplate } from './InteractionTemplatesSlice';
 const NewInteractionTemplate = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
 
   const availableExchangeTemplates = useSelector(selectAllExchangeTemplates);
 
@@ -54,6 +65,7 @@ const NewInteractionTemplate = (): ReactElement => {
         participantInstructions,
         participantInstructionsOnComplete,
         exchangeTemplates,
+        email: currentUser,
       }),
     );
 
@@ -106,52 +118,69 @@ const NewInteractionTemplate = (): ReactElement => {
 
   return (
     <>
+      <Button
+        color="neutral"
+        onClick={() => navigate('/interactions/templates')}
+        style={{
+          maxWidth: '50px',
+          maxHeight: '50px',
+        }}
+      >
+        {t('Back')}
+      </Button>
+      <Typography level="h2">{t('New Interaction')}</Typography>
       <FormControl>
-        <FormLabel>Name</FormLabel>
+        <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the interaction template's name.`}</FormHelperText>
-      </FormControl>
-      <FormControl>
-        <FormLabel>Description</FormLabel>
-        <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this interaction template.
+          {t("This is the interaction template's name.")}
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Model Instructions</FormLabel>
+        <FormLabel>{t('Description')}</FormLabel>
+        <Textarea value={description} onChange={handleChangeDescription} />
+        <FormHelperText>
+          {t('This is an internal description for this interaction template.')}
+        </FormHelperText>
+      </FormControl>
+      <FormControl>
+        <FormLabel>{t('Model Instructions')}</FormLabel>
         <Textarea
           value={modelInstructions}
           onChange={handleChangeModelInstructions}
         />
         <FormHelperText>
-          These are the instructions that will be sent to the language model.
+          {t(
+            'These are the instructions that will be sent to the language model.',
+          )}
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Participant Instructions</FormLabel>
+        <FormLabel>{t('Participant Instructions')}</FormLabel>
         <Textarea
           value={participantInstructions}
           onChange={handleChangeParticipantInstructions}
         />
         <FormHelperText>
-          These are the instructions that will be shown to participants at the
-          start of the interaction.
+          {t(
+            'These are the instructions that will be shown to participants at the start of the interaction.',
+          )}
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Participant Instructions On Complete</FormLabel>
+        <FormLabel>{t('Participant Instructions On Complete')}</FormLabel>
         <Textarea
           value={participantInstructionsOnComplete}
           onChange={handleChangeParticipantInstructionsOnComplete}
         />
         <FormHelperText>
-          These are the instructions that are shown to the participant when the
-          interaction has been marked as completed.
+          {t(
+            'These are the instructions that are shown to the participant when the interaction has been marked as completed.',
+          )}
         </FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>Exchange Templates</FormLabel>
+        <FormLabel>{t('Exchange Templates')}</FormLabel>
         <Select
           multiple
           value={exchangeTemplates}
@@ -180,7 +209,7 @@ const NewInteractionTemplate = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewInteractionTemplate}>Save</Button>
+      <Button onClick={handleNewInteractionTemplate}>{t('Save')}</Button>
     </>
   );
 };

@@ -7,10 +7,17 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Typography,
+} from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
@@ -18,7 +25,9 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
-import { AppDispatch } from '../../store';
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
+
 import {
   fetchAgents,
   selectArtificialParticipants,
@@ -31,6 +40,9 @@ import { saveNewSimulation } from './SimulationsSlice';
 
 const NewSimulation = (): ReactElement => {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
+
   const navigate = useNavigate();
 
   const availableInteractionTemplates = useSelector(selectInteractionTemplates);
@@ -44,6 +56,12 @@ const NewSimulation = (): ReactElement => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
     dispatch(fetchAgents());
     dispatch(fetchInteractionTemplates());
   }, []);
@@ -55,6 +73,7 @@ const NewSimulation = (): ReactElement => {
         description,
         interactionTemplates,
         participants,
+        email: currentUser,
       }),
     );
     // todo: handle error
@@ -92,17 +111,28 @@ const NewSimulation = (): ReactElement => {
 
   return (
     <>
+      <Button
+        color="neutral"
+        onClick={() => navigate('/simulations')}
+        style={{
+          maxWidth: '50px',
+          maxHeight: '50px',
+        }}
+      >
+        {t('Back')}
+      </Button>
+      <Typography level="h2">{t('New Simulation')}</Typography>
       <FormControl>
-        <FormLabel>Name</FormLabel>
+        <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the simulation's name.`}</FormHelperText>
+        <FormHelperText>{t("This is the simulation's name.")}</FormHelperText>
       </FormControl>
 
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this simulation.
+          {t('This is an internal description for this simulation.')}
         </FormHelperText>
       </FormControl>
 
@@ -166,7 +196,7 @@ const NewSimulation = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewSimulation}>Save</Button>
+      <Button onClick={handleNewSimulation}>{t('Save')}</Button>
     </>
   );
 };

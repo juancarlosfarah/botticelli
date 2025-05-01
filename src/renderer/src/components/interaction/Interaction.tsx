@@ -1,7 +1,9 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
 import List from '@mui/joy/List';
@@ -19,9 +21,11 @@ import { fetchInteraction, selectInteractionById } from './InteractionsSlice';
 export default function Interaction(): ReactElement {
   const { interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   if (typeof interactionId === 'undefined') {
-    return <div>Interaction Not Found</div>;
+    return <div>{t('Interaction Not Found')}</div>;
   }
 
   useEffect(() => {
@@ -35,7 +39,7 @@ export default function Interaction(): ReactElement {
   );
 
   if (!interaction) {
-    return <div>Interaction Not Found</div>;
+    return <div>{t('Interaction Not Found')}</div>;
   }
 
   // get exchanges from an interaction
@@ -43,6 +47,17 @@ export default function Interaction(): ReactElement {
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+        }}
+      >
+        <Button color="neutral" onClick={() => navigate(-1)}>
+          {t('Back')}
+        </Button>
+      </Box>
+
       <CustomBreadcrumbs />
       <Box
         sx={{
@@ -58,7 +73,7 @@ export default function Interaction(): ReactElement {
         <Typography level="h2">Interaction</Typography>
       </Box>
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{interaction.name}</Typography>
 
@@ -68,17 +83,17 @@ export default function Interaction(): ReactElement {
       <Typography>{interaction.description}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Model Instructions
+        {t('Model Instructions')}
       </Typography>
       <Typography>{interaction.modelInstructions}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Participant Instructions
+        {t('Participant Instructions')}
       </Typography>
       <Typography>{interaction.participantInstructions}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Experiment
+        {t('Experiment')}
       </Typography>
       <Typography>
         {interaction?.experiment ? (
@@ -95,7 +110,7 @@ export default function Interaction(): ReactElement {
       </Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Exchanges
+        {t('Exchanges')}
       </Typography>
       <List component="ol" marker="decimal">
         {_.orderBy(exchanges, 'order', 'asc').map((exchange) => {

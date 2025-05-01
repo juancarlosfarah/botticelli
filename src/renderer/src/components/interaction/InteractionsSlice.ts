@@ -8,12 +8,15 @@ import {
   DELETE_ONE_INTERACTION_CHANNEL,
   GET_MANY_INTERACTIONS_CHANNEL,
   GET_ONE_INTERACTION_CHANNEL,
+  PATCH_ONE_INTERACTION_CHANNEL,
   POST_ONE_INTERACTION_CHANNEL,
 } from '@shared/channels';
 import { START_INTERACTION_CHANNEL } from '@shared/channels';
+import { SET_CURRENT_EXCHANGE_CHANNEL } from '@shared/channels';
 import Interaction from '@shared/interfaces/Interaction';
 import { NewInteractionParams } from '@shared/interfaces/Interaction';
 import { GetOneInteractionParams } from '@shared/interfaces/Interaction';
+import { SetCurrentExchangeParams } from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
@@ -48,13 +51,16 @@ export const fetchInteraction = createAsyncThunk<
 
 export const fetchInteractions = createAsyncThunk(
   'interactions/fetchInteractions',
-  async () => {
-    return await IpcService.send<{ interactions: any }>(
-      GET_MANY_INTERACTIONS_CHANNEL,
-    );
+  async ({ email }: { email: string }) => {
+    const response = await IpcService.send<
+      { interactions: Interaction[] },
+      { email: string }
+    >(GET_MANY_INTERACTIONS_CHANNEL, {
+      params: { email },
+    });
+    return response;
   },
 );
-
 export const saveNewInteraction = createAsyncThunk<
   Interaction,
   NewInteractionParams
@@ -69,17 +75,19 @@ export const saveNewInteraction = createAsyncThunk<
     // template,
     // participant,
     exchanges,
+    email,
   }) => {
-    const response = await IpcService.send<{ interaction: Interaction }>(
-      POST_ONE_INTERACTION_CHANNEL,
-      {
-        params: {
-          name,
-          description,
-          exchanges,
-        },
+    const response = await IpcService.send<
+      { interaction: Interaction },
+      { email: string }
+    >(POST_ONE_INTERACTION_CHANNEL, {
+      params: {
+        name,
+        description,
+        exchanges,
+        email,
       },
-    );
+    });
     return response;
   },
 );
@@ -98,6 +106,23 @@ export const startInteraction = createAsyncThunk<Interaction, string>(
   },
 );
 
+export const setCurrentExchange = createAsyncThunk<
+  Interaction,
+  SetCurrentExchangeParams
+>(
+  'interactions/setCurrentExchange',
+  async ({ currentExchangeId, interactionId }) => {
+    const response = await IpcService.send<
+      Interaction,
+      SetCurrentExchangeParams
+    >(SET_CURRENT_EXCHANGE_CHANNEL, {
+      params: { currentExchangeId, interactionId },
+    });
+    log.debug(`setCurrentExchange response`);
+    return response;
+  },
+);
+
 export const deleteInteraction = createAsyncThunk<
   string | number,
   string | number
@@ -112,11 +137,25 @@ export const deleteInteraction = createAsyncThunk<
   return id;
 });
 
+export const editInteraction = createAsyncThunk<
+  Interaction,
+  { id: string; name?: string; description?: string }
+>('interactions/editInteraction', async ({ id, name, description }) => {
+  const response = await IpcService.send<Interaction>(
+    PATCH_ONE_INTERACTION_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
 const interactionsSlice = createSlice({
   name: 'interactions',
   initialState,
   reducers: {
     interactionDeleted: interactionsAdapter.removeOne,
+    interactionsCleared: interactionsAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -124,14 +163,26 @@ const interactionsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchInteractions.fulfilled, (state, action) => {
-        interactionsAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.interactions.filter(
+          (interaction) => interaction.email === email,
+        );
+        interactionsAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(fetchInteraction.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(startInteraction.pending, (state) => {
         state.status = 'loading';
+      })
+      .addCase(setCurrentExchange.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(setCurrentExchange.fulfilled, (state, action) => {
+        interactionsAdapter.setOne(state, action.payload);
+        state.status = 'idle';
       })
       .addCase(fetchInteraction.fulfilled, (state, action) => {
         interactionsAdapter.setOne(state, action.payload);
@@ -145,11 +196,16 @@ const interactionsSlice = createSlice({
         interactionsAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
-      .addCase(deleteInteraction.fulfilled, interactionsAdapter.removeOne);
+      .addCase(deleteInteraction.fulfilled, interactionsAdapter.removeOne)
+      .addCase(editInteraction.fulfilled, (state, action) => {
+        const interaction = action.payload;
+        interactionsAdapter.setOne(state, interaction);
+      });
   },
 });
 
-export const { interactionDeleted } = interactionsSlice.actions;
+export const { interactionDeleted, interactionsCleared } =
+  interactionsSlice.actions;
 
 export default interactionsSlice.reducer;
 

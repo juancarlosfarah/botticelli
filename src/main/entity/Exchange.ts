@@ -24,6 +24,9 @@ export class Exchange {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', default: '' })
+  email: string;
+
   @Column({ default: '' })
   name: string = '';
 
@@ -84,6 +87,9 @@ export class Exchange {
 
   @Column({ default: '' })
   participantInstructionsOnComplete: string = '';
+
+  @Column({ default: '' })
+  participantInstructionsOnHardComplete: string = '';
 
   @Column({ default: null, type: 'datetime' })
   startedAt: Date;

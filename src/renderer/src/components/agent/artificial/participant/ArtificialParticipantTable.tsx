@@ -1,8 +1,8 @@
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Box from '@mui/joy/Box';
 import Checkbox from '@mui/joy/Checkbox';
 import Link from '@mui/joy/Link';
@@ -17,10 +17,11 @@ import RowMenu from '../../../common/RowMenu';
 import { deleteAgent, selectArtificialParticipants } from '../../AgentsSlice';
 
 function ArtificialParticipantTable(): ReactElement {
-  const [order, setOrder] = useState<Order>('desc');
+  const [order] = useState<Order>('desc');
   const [selected, setSelected] = useState<readonly string[]>([]);
 
   const agents = useSelector(selectArtificialParticipants);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -75,26 +76,7 @@ function ArtificialParticipantTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 20, padding: '12px 6px' }}>
-                <Link
-                  underline="none"
-                  color="primary"
-                  component="button"
-                  onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
-                  fontWeight="lg"
-                  endDecorator={<ArrowDropDownIcon />}
-                  sx={{
-                    '& svg': {
-                      transition: '0.2s',
-                      transform:
-                        order === 'desc' ? 'rotate(0deg)' : 'rotate(180deg)',
-                    },
-                  }}
-                >
-                  ID
-                </Link>
-              </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 50, padding: '12px 6px' }}></th>
             </tr>
@@ -119,16 +101,13 @@ function ArtificialParticipantTable(): ReactElement {
                   />
                 </td>
                 <td>
-                  <Typography level="body-xs">{row.id}</Typography>
-                </td>
-                <td>
                   <Typography level="body-xs">
-                    {_.truncate(row.name, 25)}
+                    {_.truncate(row.name, { length: 25 })}
                   </Typography>
                 </td>
                 <td>
                   <Typography level="body-xs">
-                    {_.truncate(row.description, 25)}
+                    {_.truncate(row.description, { length: 25 })}
                   </Typography>
                 </td>
                 <td>
@@ -136,11 +115,15 @@ function ArtificialParticipantTable(): ReactElement {
                     <Link
                       level="body-xs"
                       component={RouterLink}
-                      to={`/agents/${row.id}`}
+                      to={`/agents/artificial/participants/${row.id}`}
                     >
-                      View
+                      {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteAgent} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteAgent}
+                      editPath={`/agents/artificial/participants/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

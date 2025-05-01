@@ -19,6 +19,9 @@ export class ExchangeTemplate {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', default: '' })
+  email: string;
+
   @Column({ default: '' })
   name: string = '';
 
@@ -30,6 +33,9 @@ export class ExchangeTemplate {
 
   @Column({ default: '' })
   participantInstructionsOnComplete: string = '';
+
+  @Column({ default: '' })
+  participantInstructionsOnHardComplete: string = '';
 
   @Column({ default: '' })
   cue: string = '';

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -22,6 +23,7 @@ export default function InteractionTable(): ReactElement {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
 
   const interactions = useSelector(selectInteractions);
+  const { t } = useTranslation();
 
   return (
     <React.Fragment>
@@ -80,7 +82,7 @@ export default function InteractionTable(): ReactElement {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: 100, padding: '12px 6px' }}>Name</th>
+              <th style={{ width: 100, padding: '12px 6px' }}>{t('Name')}</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Description</th>
               <th style={{ width: 100, padding: '12px 6px' }}>Participant</th>
               <th style={{ width: 50, padding: '12px 6px' }}> </th>
@@ -127,9 +129,13 @@ export default function InteractionTable(): ReactElement {
                       component={RouterLink}
                       to={`/interactions/${row.id}`}
                     >
-                      View
+                      {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteInteraction} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteInteraction}
+                      editPath={`/interactions/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

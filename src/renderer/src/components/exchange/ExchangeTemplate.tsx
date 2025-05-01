@@ -1,7 +1,9 @@
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { Button } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
@@ -21,6 +23,8 @@ import {
 export default function ExchangeTemplate(): ReactElement {
   const { exchangeTemplateId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (!exchangeTemplateId) {
     return <div>Invalid Exchange Template ID</div>;
@@ -37,7 +41,7 @@ export default function ExchangeTemplate(): ReactElement {
   );
 
   if (!exchangeTemplate) {
-    return <div>Exchange Template Not Found</div>;
+    return <div>{t('Exchange Template Not Found')}</div>;
   }
 
   // extract triggers
@@ -45,6 +49,20 @@ export default function ExchangeTemplate(): ReactElement {
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+        }}
+      >
+        <Button
+          color="neutral"
+          onClick={() => navigate('/exchanges/templates')}
+        >
+          {t('Back')}
+        </Button>
+      </Box>
+
       <CustomBreadcrumbs />
       <Box
         sx={{
@@ -57,11 +75,11 @@ export default function ExchangeTemplate(): ReactElement {
           justifyContent: 'space-between',
         }}
       >
-        <Typography level="h2">Exchange Template</Typography>
+        <Typography level="h2">{t('Exchange Template')}</Typography>
       </Box>
 
       <Typography sx={{}} level="title-md">
-        Name
+        {t('Name')}
       </Typography>
       <Typography>{exchangeTemplate.name}</Typography>
 
@@ -81,7 +99,7 @@ export default function ExchangeTemplate(): ReactElement {
       <Typography>{exchangeTemplate.cue}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Input Type
+        {t('Input Type')}
       </Typography>
       <Typography>{capitalize(exchangeTemplate.inputType)}</Typography>
 
@@ -91,24 +109,24 @@ export default function ExchangeTemplate(): ReactElement {
       <Typography>{exchangeTemplate?.assistant?.name || '—'}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Soft Limit
+        {t('Soft Limit')}
       </Typography>
       <Typography>{exchangeTemplate?.softLimit || '—'}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Hard Limit
+        {t('Hard Limit')}
       </Typography>
       <Typography>{exchangeTemplate?.hardLimit || '—'}</Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Instructions On Complete
+        {t('Instructions On Complete')}
       </Typography>
       <Typography>
         {exchangeTemplate.participantInstructionsOnComplete}
       </Typography>
 
       <Typography sx={{ mt: 1 }} level="title-md">
-        Triggers
+        {t('Triggers')}
       </Typography>
       <List component="ol" marker="decimal">
         {triggers.map((trigger: Trigger) => {

@@ -1,24 +1,34 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
 import Button from '@mui/joy/Button';
+
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 
 import ExperimentList from './ExperimentList.tsx';
 import ExperimentTable from './ExperimentTable.tsx';
 import { fetchExperiments } from './ExperimentsSlice';
 
 export default function Experiments(): JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
+  const currentUser = useSelector(selectCurrentUser);
 
   useEffect(() => {
-    dispatch(fetchExperiments());
-  }, []);
+    if (currentUser) {
+      dispatch(fetchExperiments({ email: currentUser })).catch((error) => {
+        console.error('Failed to fetch experiments:', error);
+      });
+    }
+  }, [dispatch, currentUser]);
 
   return (
     <div>
       <Button color="primary" to="/experiments/new" component={RouterLink}>
-        New Experiment
+        {t('New Experiment')}
       </Button>
       <ExperimentTable />
       <ExperimentList />

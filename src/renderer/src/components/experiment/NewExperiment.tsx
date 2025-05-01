@@ -7,10 +7,17 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, FormControl, FormHelperText, FormLabel } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Typography,
+} from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Chip from '@mui/joy/Chip';
 import Input from '@mui/joy/Input';
@@ -18,6 +25,8 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Textarea from '@mui/joy/Textarea';
 
+import { selectCurrentUser } from '@renderer/components/user/UsersSlice';
+import { AppDispatch } from '@renderer/store';
 import log from 'electron-log/renderer';
 
 import { fetchAgents, selectParticipants } from '../agent/AgentsSlice';
@@ -28,8 +37,10 @@ import {
 import { saveNewExperiment } from './ExperimentsSlice';
 
 const NewExperiment = (): ReactElement => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  const currentUser = useSelector(selectCurrentUser);
 
   const availableInteractionTemplates = useSelector(selectInteractionTemplates);
   const availableParticipants = useSelector(selectParticipants);
@@ -42,21 +53,38 @@ const NewExperiment = (): ReactElement => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
     dispatch(fetchAgents());
     dispatch(fetchInteractionTemplates());
   }, []);
-
   const handleNewExperiment = async (): Promise<void> => {
-    const { payload } = await dispatch(
-      saveNewExperiment({
-        name,
-        description,
-        interactionTemplates,
-        participants,
-      }),
-    );
-    log.debug(`saveNewExperiment response.payload:`, payload);
-    navigate(`/experiments/${payload.id}`);
+    if (!currentUser) {
+      throw new Error('No user logged in');
+    }
+
+    try {
+      const { payload } = await dispatch(
+        saveNewExperiment({
+          name,
+          description,
+          interactionTemplates,
+          participants,
+          email: currentUser,
+        }),
+      );
+
+      log.debug(`saveNewExperiment response.payload:`, payload);
+
+      navigate(`/experiments/${payload.id}`);
+    } catch (error) {
+      log.error('Failed to save experiment:', error);
+      window.alert(`Failed to save experiment: ${String(error)}`);
+    }
   };
 
   const handleChangeDescription = (
@@ -87,16 +115,39 @@ const NewExperiment = (): ReactElement => {
 
   return (
     <>
+      <Button
+        color="neutral"
+        onClick={() => navigate('/experiments')}
+        style={{
+          maxWidth: '50px',
+          maxHeight: '50px',
+        }}
+      >
+        {t('Back')}
+      </Button>
+      <Typography level="h2">{t('New Experiment')}</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 1,
+          gap: 1,
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'start', sm: 'center' },
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+        }}
+      ></Box>
+
       <FormControl>
-        <FormLabel>Name</FormLabel>
+        <FormLabel>{t('Name')}</FormLabel>
         <Input value={name} onChange={handleChangeName} />
-        <FormHelperText>{`This is the experiment's name.`}</FormHelperText>
+        <FormHelperText>{t("This is the experiment's name.")}</FormHelperText>
       </FormControl>
       <FormControl>
         <FormLabel>Description</FormLabel>
         <Textarea value={description} onChange={handleChangeDescription} />
         <FormHelperText>
-          This is an internal descriptions for this experiment.
+          {t('This is an internal description for this experiment.')}
         </FormHelperText>
       </FormControl>
       <FormControl>
@@ -159,7 +210,7 @@ const NewExperiment = (): ReactElement => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleNewExperiment}>Save</Button>
+      <Button onClick={handleNewExperiment}>{t('Save')}</Button>
     </>
   );
 };

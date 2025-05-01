@@ -21,6 +21,9 @@ export class InteractionTemplate {
   @Column({ default: '' })
   name: string = '';
 
+  @Column({ type: 'text', default: '' })
+  email: string;
+
   @Column({ default: '' })
   description: string = '';
 

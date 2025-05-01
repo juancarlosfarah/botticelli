@@ -8,6 +8,7 @@ import {
   DELETE_ONE_INTERACTION_TEMPLATE_CHANNEL,
   GET_MANY_INTERACTION_TEMPLATES_CHANNEL,
   GET_ONE_INTERACTION_TEMPLATE_CHANNEL,
+  PATCH_ONE_INTERACTION_TEMPLATE_CHANNEL,
   POST_ONE_INTERACTION_TEMPLATE_CHANNEL,
 } from '@shared/channels';
 import InteractionTemplate from '@shared/interfaces/InteractionTemplate';
@@ -44,15 +45,15 @@ export const fetchInteractionTemplate = createAsyncThunk<
   return response;
 });
 
-export const fetchInteractionTemplates =
-  createAsyncThunk<GetManyInteractionTemplatesResponse>(
-    'interactionTemplates/fetchInteractionTemplates',
-    async () => {
-      return await IpcService.send<GetManyInteractionTemplatesResponse>(
-        GET_MANY_INTERACTION_TEMPLATES_CHANNEL,
-      );
-    },
+export const fetchInteractionTemplates = createAsyncThunk<
+  GetManyInteractionTemplatesResponse,
+  { email: string }
+>('interactionTemplates/fetchInteractionTemplates', async ({ email }) => {
+  return await IpcService.send<GetManyInteractionTemplatesResponse>(
+    GET_MANY_INTERACTION_TEMPLATES_CHANNEL,
+    { params: { email } },
   );
+});
 
 export const saveNewInteractionTemplate = createAsyncThunk<
   PostOneInteractionTemplateResponse,
@@ -66,6 +67,7 @@ export const saveNewInteractionTemplate = createAsyncThunk<
     participantInstructionsOnComplete,
     name,
     exchangeTemplates,
+    email,
   }) => {
     return await IpcService.send<
       PostOneInteractionTemplateResponse,
@@ -78,6 +80,7 @@ export const saveNewInteractionTemplate = createAsyncThunk<
         participantInstructions,
         participantInstructionsOnComplete,
         exchangeTemplates,
+        email,
       },
     });
   },
@@ -96,11 +99,28 @@ export const deleteInteractionTemplate = createAsyncThunk<
   return id;
 });
 
+export const editInteractionTemplate = createAsyncThunk<
+  InteractionTemplate,
+  { id: string; name?: string; description?: string }
+>(
+  'interactionTemplates/editInteractionTemplate',
+  async ({ id, name, description }) => {
+    const response = await IpcService.send<InteractionTemplate>(
+      PATCH_ONE_INTERACTION_TEMPLATE_CHANNEL,
+      {
+        params: { id, name, description },
+      },
+    );
+    return response;
+  },
+);
+
 const interactionTemplatesSlice = createSlice({
   name: 'interactionTemplates',
   initialState,
   reducers: {
     interactionTemplateDeleted: interactionTemplatesAdapter.removeOne,
+    interactionsTemplateCleared: interactionTemplatesAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -108,9 +128,14 @@ const interactionTemplatesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchInteractionTemplates.fulfilled, (state, action) => {
-        interactionTemplatesAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.filter(
+          (template) => template.email === email,
+        );
+        interactionTemplatesAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(fetchInteractionTemplate.pending, (state) => {
         state.status = 'loading';
       })
@@ -125,11 +150,16 @@ const interactionTemplatesSlice = createSlice({
       .addCase(
         deleteInteractionTemplate.fulfilled,
         interactionTemplatesAdapter.removeOne,
-      );
+      )
+      .addCase(editInteractionTemplate.fulfilled, (state, action) => {
+        const interactionTemplate = action.payload;
+        interactionTemplatesAdapter.setOne(state, interactionTemplate);
+      });
   },
 });
 
-export const { interactionTemplateDeleted } = interactionTemplatesSlice.actions;
+export const { interactionTemplateDeleted, interactionsTemplateCleared } =
+  interactionTemplatesSlice.actions;
 
 export default interactionTemplatesSlice.reducer;
 

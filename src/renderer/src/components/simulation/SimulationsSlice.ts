@@ -8,15 +8,16 @@ import {
   DELETE_ONE_SIMULATION_CHANNEL,
   GET_MANY_SIMULATIONS_CHANNEL,
   GET_ONE_SIMULATION_CHANNEL,
+  PATCH_ONE_SIMULATION_CHANNEL,
   POST_ONE_SIMULATION_CHANNEL,
 } from '@shared/channels';
 import Simulation from '@shared/interfaces/Simulation';
 import {
   DeleteOneSimulationParams,
   DeleteOneSimulationResponse,
-  GetManySimulationsResponse,
   GetOneSimulationParams,
   GetOneSimulationResponse,
+  PatchOneSimulationParams,
   PostOneSimulationParams,
   PostOneSimulationResponse,
 } from '@shared/interfaces/Simulation';
@@ -44,12 +45,20 @@ export const fetchSimulation = createAsyncThunk<
   return response;
 });
 
-export const fetchSimulations = createAsyncThunk<GetManySimulationsResponse>(
+export const fetchSimulations = createAsyncThunk(
   'simulations/fetchSimulations',
-  async () => {
-    return await IpcService.send<GetManySimulationsResponse>(
+  async ({ email }: { email: string }) => {
+    const response = await IpcService.send<
+      { simulations: Simulation[] },
+      { email: string }
+    >(
       GET_MANY_SIMULATIONS_CHANNEL,
+
+      {
+        params: { email },
+      },
     );
+    return response;
   },
 );
 
@@ -58,7 +67,7 @@ export const saveNewSimulation = createAsyncThunk<
   PostOneSimulationParams
 >(
   'simulations/saveNewSimulation',
-  async ({ description, interactionTemplates, name, participants }) => {
+  async ({ description, interactionTemplates, name, participants, email }) => {
     const response = await IpcService.send<Simulation, PostOneSimulationParams>(
       POST_ONE_SIMULATION_CHANNEL,
       {
@@ -67,6 +76,7 @@ export const saveNewSimulation = createAsyncThunk<
           description,
           interactionTemplates,
           participants,
+          email,
         },
       },
     );
@@ -84,11 +94,25 @@ export const deleteSimulation = createAsyncThunk<
   return id;
 });
 
+export const editSimulation = createAsyncThunk<
+  Simulation,
+  PatchOneSimulationParams
+>('simulations/editSimulation', async ({ id, name, description }) => {
+  const response = await IpcService.send<Simulation>(
+    PATCH_ONE_SIMULATION_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
 const simulationsSlice = createSlice({
   name: 'simulations',
   initialState,
   reducers: {
     simulationDeleted: simulationsAdapter.removeOne,
+    simulationsCleared: simulationsAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
@@ -96,9 +120,14 @@ const simulationsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchSimulations.fulfilled, (state, action) => {
-        simulationsAdapter.setAll(state, action.payload);
+        const email = action.meta.arg.email;
+        const filtered = action.payload.simulations.filter(
+          (s) => s.email === email,
+        );
+        simulationsAdapter.setAll(state, filtered);
         state.status = 'idle';
       })
+
       .addCase(fetchSimulation.pending, (state) => {
         state.status = 'loading';
       })
@@ -110,11 +139,16 @@ const simulationsSlice = createSlice({
         const simulation = action.payload;
         simulationsAdapter.addOne(state, simulation);
       })
-      .addCase(deleteSimulation.fulfilled, simulationsAdapter.removeOne);
+      .addCase(deleteSimulation.fulfilled, simulationsAdapter.removeOne)
+      .addCase(editSimulation.fulfilled, (state, action) => {
+        const simulation = action.payload;
+        simulationsAdapter.setOne(state, simulation);
+      });
   },
 });
 
-export const { simulationDeleted } = simulationsSlice.actions;
+export const { simulationDeleted, simulationsCleared } =
+  simulationsSlice.actions;
 
 export default simulationsSlice.reducer;
 
