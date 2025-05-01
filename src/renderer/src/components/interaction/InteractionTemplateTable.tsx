@@ -132,6 +132,7 @@ export default function InteractionTemplateTable(): ReactElement {
                       <RowMenu
                         rowId={row.id}
                         deleteHandler={deleteInteractionTemplate}
+                        editPath={`/interactions/templates/${row.id}/edit`}
                       />
                     </Box>
                   </td>

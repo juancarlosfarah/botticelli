@@ -8,6 +8,7 @@ import {
   DELETE_ONE_EXPERIMENT_CHANNEL,
   GET_MANY_EXPERIMENTS_CHANNEL,
   GET_ONE_EXPERIMENT_CHANNEL,
+  PATCH_ONE_EXPERIMENT_CHANNEL,
   POST_ONE_EXPERIMENT_CHANNEL,
 } from '@shared/channels';
 import Experiment from '@shared/interfaces/Experiment';
@@ -24,11 +25,11 @@ const initialState = experimentsAdapter.getInitialState({
 // thunk functions
 export const fetchExperiment = createAsyncThunk(
   'experiments/fetchExperiment',
-  async (query) => {
+  async ({ id }: { id: string }) => {
     const response = await IpcService.send<{ experiment: Experiment }>(
       GET_ONE_EXPERIMENT_CHANNEL,
       {
-        params: { query },
+        params: { query: { id } },
       },
     );
     return response;
@@ -49,18 +50,19 @@ export const fetchExperiments = createAsyncThunk(
 );
 
 export const saveNewExperiment = createAsyncThunk<
-  { experiment: Experiment },
+  Experiment,
   PostOneExperimentParams
 >(
   'experiments/saveNewExperiment',
-  async ({ email, description, interactionTemplates, participants }) => {
+  async ({ email, name, description, interactionTemplates, participants }) => {
     const response = await IpcService.send<
       { experiment: Experiment },
-      { email: string }
+      PostOneExperimentParams
     >(POST_ONE_EXPERIMENT_CHANNEL, {
-      params: { email, description, interactionTemplates, participants },
+      params: { email, name, description, interactionTemplates, participants },
     });
-    return response;
+
+    return response.experiment;
   },
 );
 
@@ -72,6 +74,19 @@ export const deleteExperiment = createAsyncThunk<
     params: { id },
   });
   return id;
+});
+
+export const editExperiment = createAsyncThunk<
+  Experiment,
+  { id: string; name?: string; description?: string }
+>('experiments/editExperiment', async ({ id, name, description }) => {
+  const response = await IpcService.send<Experiment>(
+    PATCH_ONE_EXPERIMENT_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
 });
 
 const experimentsSlice = createSlice({
@@ -99,15 +114,18 @@ const experimentsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchExperiment.fulfilled, (state, action) => {
-        experimentsAdapter.setOne(state, action.payload.experiment);
+        experimentsAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
       .addCase(saveNewExperiment.fulfilled, (state, action) => {
-        const experiment = action.payload.experiment;
+        const experiment = action.payload;
         experimentsAdapter.addOne(state, experiment);
       })
-
-      .addCase(deleteExperiment.fulfilled, experimentsAdapter.removeOne);
+      .addCase(deleteExperiment.fulfilled, experimentsAdapter.removeOne)
+      .addCase(editExperiment.fulfilled, (state, action) => {
+        const experiment = action.payload;
+        experimentsAdapter.setOne(state, experiment);
+      });
   },
 });
 

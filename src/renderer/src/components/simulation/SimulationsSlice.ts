@@ -8,6 +8,7 @@ import {
   DELETE_ONE_SIMULATION_CHANNEL,
   GET_MANY_SIMULATIONS_CHANNEL,
   GET_ONE_SIMULATION_CHANNEL,
+  PATCH_ONE_SIMULATION_CHANNEL,
   POST_ONE_SIMULATION_CHANNEL,
 } from '@shared/channels';
 import Simulation from '@shared/interfaces/Simulation';
@@ -16,6 +17,7 @@ import {
   DeleteOneSimulationResponse,
   GetOneSimulationParams,
   GetOneSimulationResponse,
+  PatchOneSimulationParams,
   PostOneSimulationParams,
   PostOneSimulationResponse,
 } from '@shared/interfaces/Simulation';
@@ -92,6 +94,19 @@ export const deleteSimulation = createAsyncThunk<
   return id;
 });
 
+export const editSimulation = createAsyncThunk<
+  Simulation,
+  PatchOneSimulationParams
+>('simulations/editSimulation', async ({ id, name, description }) => {
+  const response = await IpcService.send<Simulation>(
+    PATCH_ONE_SIMULATION_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
 const simulationsSlice = createSlice({
   name: 'simulations',
   initialState,
@@ -124,7 +139,11 @@ const simulationsSlice = createSlice({
         const simulation = action.payload;
         simulationsAdapter.addOne(state, simulation);
       })
-      .addCase(deleteSimulation.fulfilled, simulationsAdapter.removeOne);
+      .addCase(deleteSimulation.fulfilled, simulationsAdapter.removeOne)
+      .addCase(editSimulation.fulfilled, (state, action) => {
+        const simulation = action.payload;
+        simulationsAdapter.setOne(state, simulation);
+      });
   },
 });
 

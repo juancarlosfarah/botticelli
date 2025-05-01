@@ -8,6 +8,7 @@ import {
   DELETE_ONE_INTERACTION_CHANNEL,
   GET_MANY_INTERACTIONS_CHANNEL,
   GET_ONE_INTERACTION_CHANNEL,
+  PATCH_ONE_INTERACTION_CHANNEL,
   POST_ONE_INTERACTION_CHANNEL,
 } from '@shared/channels';
 import { START_INTERACTION_CHANNEL } from '@shared/channels';
@@ -136,6 +137,19 @@ export const deleteInteraction = createAsyncThunk<
   return id;
 });
 
+export const editInteraction = createAsyncThunk<
+  Interaction,
+  { id: string; name?: string; description?: string }
+>('interactions/editInteraction', async ({ id, name, description }) => {
+  const response = await IpcService.send<Interaction>(
+    PATCH_ONE_INTERACTION_CHANNEL,
+    {
+      params: { id, name, description },
+    },
+  );
+  return response;
+});
+
 const interactionsSlice = createSlice({
   name: 'interactions',
   initialState,
@@ -182,7 +196,11 @@ const interactionsSlice = createSlice({
         interactionsAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
-      .addCase(deleteInteraction.fulfilled, interactionsAdapter.removeOne);
+      .addCase(deleteInteraction.fulfilled, interactionsAdapter.removeOne)
+      .addCase(editInteraction.fulfilled, (state, action) => {
+        const interaction = action.payload;
+        interactionsAdapter.setOne(state, interaction);
+      });
   },
 });
 

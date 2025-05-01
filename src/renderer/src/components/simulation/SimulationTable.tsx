@@ -125,7 +125,11 @@ export default function SimulationTable(): ReactElement {
                     >
                       {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteSimulation} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteSimulation}
+                      editPath={`/simulations/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

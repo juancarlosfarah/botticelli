@@ -233,9 +233,8 @@ export class PostOneExperimentChannel extends PostOneChannel {
       experimentInteractionTemplates,
     );
 
-    event.sender.send(
-      request.responseChannel,
-      instanceToPlain(savedExperiment),
-    );
+    event.sender.send(request.responseChannel, {
+      experiment: instanceToPlain(savedExperiment),
+    });
   }
 }

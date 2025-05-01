@@ -1,4 +1,5 @@
 export const POST_ONE_EXCHANGE_CHANNEL = 'exchange:post:one';
+
 export const GET_ONE_EXCHANGE_CHANNEL = 'exchange:get:one';
 export const GET_MANY_EXCHANGES_CHANNEL = 'exchanges:get:many';
 export const DELETE_ONE_EXCHANGE_CHANNEL = 'exchange:delete:one';
@@ -85,12 +86,15 @@ export const POST_ONE_TRIGGER_CHANNEL = 'trigger:post:one';
 export const GET_MANY_TRIGGERS_CHANNEL = 'trigger:get:many';
 export const DELETE_ONE_TRIGGER_CHANNEL = 'trigger:delete:one';
 export const GET_ONE_TRIGGER_CHANNEL = 'trigger:get:one';
+export const PATCH_ONE_TRIGGER_CHANNEL = 'trigger:patch:one';
 
 // interactions
 export const POST_ONE_INTERACTION_CHANNEL = 'interaction:post:one';
 export const GET_MANY_INTERACTIONS_CHANNEL = 'interaction:get:many';
 export const DELETE_ONE_INTERACTION_CHANNEL = 'interaction:delete:one';
 export const GET_ONE_INTERACTION_CHANNEL = 'interaction:get:one';
+export const PATCH_ONE_INTERACTION_CHANNEL = 'interaction:patch:one';
+
 export const POST_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:post:one';
 export const GET_MANY_INTERACTION_TEMPLATES_CHANNEL =
@@ -99,6 +103,8 @@ export const DELETE_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:delete:one';
 export const GET_ONE_INTERACTION_TEMPLATE_CHANNEL =
   'interaction:template:get:one';
+export const PATCH_ONE_INTERACTION_TEMPLATE_CHANNEL =
+  'interaction:template:patch:one';
 export const START_INTERACTION_CHANNEL = 'interaction:start';
 export const SET_CURRENT_EXCHANGE_CHANNEL = 'interaction:set:current_exchange';
 
@@ -107,8 +113,11 @@ export const POST_ONE_EXPERIMENT_CHANNEL = 'experiment:post:one';
 export const GET_MANY_EXPERIMENTS_CHANNEL = 'experiment:get:many';
 export const DELETE_ONE_EXPERIMENT_CHANNEL = 'experiment:delete:one';
 export const GET_ONE_EXPERIMENT_CHANNEL = 'experiment:get:one';
+export const PATCH_ONE_EXPERIMENT_CHANNEL = 'experiment:patch:one';
 
 export const POST_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:post:one';
+export const PATCH_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:post:one';
+
 export const GET_ONE_EXCHANGE_TEMPLATE_CHANNEL = 'exchange:template:get:one';
 export const GET_MANY_EXCHANGE_TEMPLATES_CHANNEL = 'exchange:template:get:many';
 export const DELETE_ONE_EXCHANGE_TEMPLATE_CHANNEL =
@@ -119,6 +128,7 @@ export const POST_ONE_SIMULATION_CHANNEL = 'simulation:post:one';
 export const GET_ONE_SIMULATION_CHANNEL = 'simulation:get:one';
 export const GET_MANY_SIMULATIONS_CHANNEL = 'simulation:get:many';
 export const DELETE_ONE_SIMULATION_CHANNEL = 'simulation:delete:one';
+export const PATCH_ONE_SIMULATION_CHANNEL = 'simulation:patch:one';
 
 // events
 export const POST_ONE_KEY_PRESS_EVENT_CHANNEL = 'event:key:press:post:one';

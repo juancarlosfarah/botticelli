@@ -113,7 +113,7 @@ const NewSimulation = (): ReactElement => {
     <>
       <Button
         color="neutral"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/simulations')}
         style={{
           maxWidth: '50px',
           maxHeight: '50px',

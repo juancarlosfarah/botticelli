@@ -131,7 +131,11 @@ export default function InteractionTable(): ReactElement {
                     >
                       {t('View')}
                     </Link>
-                    <RowMenu rowId={row.id} deleteHandler={deleteInteraction} />
+                    <RowMenu
+                      rowId={row.id}
+                      deleteHandler={deleteInteraction}
+                      editPath={`/interactions/${row.id}/edit`}
+                    />
                   </Box>
                 </td>
               </tr>

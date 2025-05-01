@@ -49,12 +49,14 @@ import { GetManyExchangeTemplatesChannel } from './channels/exchange/GetManyExch
 import { GetManyExchangesChannel } from './channels/exchange/GetManyExchangesChannel';
 import { GetOneExchangeChannel } from './channels/exchange/GetOneExchangeChannel';
 import { GetOneExchangeTemplateChannel } from './channels/exchange/GetOneExchangeTemplateChannel';
+import { PatchOneExchangeTemplateChannel } from './channels/exchange/PatchOneExchangeTemplateChannel';
 import { PostOneExchangeChannel } from './channels/exchange/PostOneExchangeChannel';
 import { PostOneExchangeTemplateChannel } from './channels/exchange/PostOneExchangeTemplateChannel';
 import { StartExchangeChannel } from './channels/exchange/StartExchangeChannel';
 import { DeleteOneExperimentChannel } from './channels/experiment/DeleteOneExperimentChannel';
 import { GetManyExperimentsChannel } from './channels/experiment/GetManyExperimentsChannel';
 import { GetOneExperimentChannel } from './channels/experiment/GetOneExperimentChannel';
+import { PatchOneExperimentChannel } from './channels/experiment/PatchOneExperimentChannel';
 import { PostOneExperimentChannel } from './channels/experiment/PostOneExperimentChannel';
 import { DeleteOneInteractionChannel } from './channels/interaction/DeleteOneInteractionChannel';
 import { DeleteOneInteractionTemplateChannel } from './channels/interaction/DeleteOneInteractionTemplateChannel';
@@ -62,6 +64,8 @@ import { GetManyInteractionTemplatesChannel } from './channels/interaction/GetMa
 import { GetManyInteractionsChannel } from './channels/interaction/GetManyInteractionsChannel';
 import { GetOneInteractionChannel } from './channels/interaction/GetOneInteractionChannel';
 import { GetOneInteractionTemplateChannel } from './channels/interaction/GetOneInteractionTemplateChannel';
+import { PatchOneInteractionChannel } from './channels/interaction/PatchOneInteractionChannel';
+import { PatchOneInteractionTemplateChannel } from './channels/interaction/PatchOneInteractionTemplateChannel';
 import { PostOneInteractionChannel } from './channels/interaction/PostOneInteractionChannel';
 import { PostOneInteractionTemplateChannel } from './channels/interaction/PostOneInteractionTemplateChannel';
 import { SetCurrentExchangeChannel } from './channels/interaction/SetCurrentExchangeChannel';
@@ -75,10 +79,12 @@ import { PatchOneSettingChannel } from './channels/settings/PatchOneSettingChann
 import { DeleteOneSimulationChannel } from './channels/simulation/DeleteOneSimulationChannel';
 import { GetManySimulationsChannel } from './channels/simulation/GetManySimulationsChannel';
 import { GetOneSimulationChannel } from './channels/simulation/GetOneSimulationChannel';
+import { PatchOneSimulationChannel } from './channels/simulation/PatchOneSimulationChannel';
 import { PostOneSimulationChannel } from './channels/simulation/PostOneSimulationChannel';
 import { DeleteOneTriggerChannel } from './channels/trigger/DeleteOneTriggerChannel';
 import { GetManyTriggersChannel } from './channels/trigger/GetManyTriggersChannel';
 import { GetOneTriggerChannel } from './channels/trigger/GetOneTriggerChannel';
+import { PatchOneTriggerChannel } from './channels/trigger/PatchOneTriggerChannel';
 import { PostOneTriggerChannel } from './channels/trigger/PostOneTriggerChannel';
 import { AppDataSource } from './data-source';
 import { IpcChannel } from './interfaces/IpcChannel';
@@ -229,6 +235,7 @@ new Main().init([
   new StartExchangeChannel(),
   new DismissExchangeChannel(),
   new CompleteExchangeChannel(),
+  new PatchOneExchangeTemplateChannel(),
   // messages
   new PostMessageChannel(),
   new GetMessagesChannel(),
@@ -272,6 +279,7 @@ new Main().init([
   new GetOneTriggerChannel(),
   new GetManyTriggersChannel(),
   new DeleteOneTriggerChannel(),
+  new PatchOneTriggerChannel(),
   // interactions
   new PostOneInteractionChannel(),
   new GetOneInteractionChannel(),
@@ -279,6 +287,8 @@ new Main().init([
   new DeleteOneInteractionChannel(),
   new StartInteractionChannel(),
   new PostOneInteractionTemplateChannel(),
+  new PatchOneInteractionTemplateChannel(),
+  new PatchOneInteractionChannel(),
   new GetOneInteractionTemplateChannel(),
   new GetManyInteractionTemplatesChannel(),
   new DeleteOneInteractionTemplateChannel(),
@@ -288,11 +298,13 @@ new Main().init([
   new GetOneExperimentChannel(),
   new GetManyExperimentsChannel(),
   new DeleteOneExperimentChannel(),
+  new PatchOneExperimentChannel(),
   // simulations
   new PostOneSimulationChannel(),
   new GetOneSimulationChannel(),
   new GetManySimulationsChannel(),
   new DeleteOneSimulationChannel(),
+  new PatchOneSimulationChannel(),
   // settings
   new PatchOneSettingChannel(),
   new GetOneSettingChannel(),

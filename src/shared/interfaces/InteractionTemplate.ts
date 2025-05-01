@@ -22,6 +22,15 @@ export type PostOneInteractionTemplateParams = {
   exchangeTemplates: string[];
 };
 
+export type PatchOneInteractionTemplateParams = {
+  id: string;
+  name?: string;
+  description?: string;
+  modelInstructions?: string;
+  participantInstructions?: string;
+  participantInstructionsOnComplete?: string;
+};
+
 export type PostOneInteractionTemplateResponse = InteractionTemplate;
 
 export type GetManyInteractionTemplatesResponse = InteractionTemplate[];

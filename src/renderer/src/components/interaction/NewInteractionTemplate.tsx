@@ -120,7 +120,7 @@ const NewInteractionTemplate = (): ReactElement => {
     <>
       <Button
         color="neutral"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/interactions/templates')}
         style={{
           maxWidth: '50px',
           maxHeight: '50px',
