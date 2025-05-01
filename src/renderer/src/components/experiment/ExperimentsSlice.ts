@@ -29,7 +29,7 @@ export const fetchExperiment = createAsyncThunk(
     const response = await IpcService.send<{ experiment: Experiment }>(
       GET_ONE_EXPERIMENT_CHANNEL,
       {
-        params: { id },
+        params: { query: { id } },
       },
     );
     return response;
@@ -114,7 +114,7 @@ const experimentsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchExperiment.fulfilled, (state, action) => {
-        experimentsAdapter.setOne(state, action.payload.experiment);
+        experimentsAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
       .addCase(saveNewExperiment.fulfilled, (state, action) => {
