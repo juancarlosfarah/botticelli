@@ -40,7 +40,7 @@ export default function Trigger(): ReactElement {
           my: 1,
         }}
       >
-        <Button color="neutral" onClick={() => navigate(-1)}>
+        <Button color="neutral" onClick={() => navigate('/triggers')}>
           {t('Back')}
         </Button>
       </Box>

@@ -94,7 +94,7 @@ const NewTrigger = (): ReactElement => {
     <>
       <Button
         color="neutral"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/triggers')}
         style={{
           maxWidth: '50px',
           maxHeight: '50px',

@@ -9,7 +9,8 @@ import Option from '@mui/joy/Option';
 import Select from '@mui/joy/Select';
 import Typography from '@mui/joy/Typography';
 
-import { AppDispatch } from '@renderer/store';
+import { AppDispatch, RootState } from '@renderer/store';
+import Model from '@shared/enums/Model';
 
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import { selectCurrentUser } from '../user/UsersSlice';
@@ -23,7 +24,7 @@ const Settings = (): ReactElement => {
 
   const currentUser = useSelector(selectCurrentUser);
 
-  const setting = useSelector((state) =>
+  const setting = useSelector((state: RootState) =>
     selectSettingByEmail(state, currentUser),
   );
 
@@ -35,11 +36,23 @@ const Settings = (): ReactElement => {
     }
   }, [dispatch, currentUser]);
 
+  useEffect(() => {
+    setSelectedLanguage(i18n.language);
+  }, [i18n.language]);
+
   const handleLanguageChange = (_: any, value: string | null) => {
     if (!value) return;
     i18n.changeLanguage(value);
     setSelectedLanguage(value);
   };
+
+  const defaultSetting = {
+    apiKey: '',
+    modelProvider: 'OpenAI',
+    model: Model.GPT_4O,
+    language: i18n.language || 'en',
+  };
+  const effectiveSetting = setting ?? defaultSetting;
 
   return (
     <div>
@@ -109,25 +122,26 @@ const Settings = (): ReactElement => {
         ))}
       </Select>
 
-      {/* The rest only when logged in */}
       {currentUser && (
         <>
           <Typography level="title-md" sx={{ mt: 2 }}>
             {t('OpenAI API Key')}
           </Typography>
           <Typography>
-            {setting?.apiKey ? '••••••••' + setting.apiKey.slice(-4) : ''}
+            {effectiveSetting.apiKey
+              ? '••••••••' + effectiveSetting.apiKey.slice(-4)
+              : t('Not Set')}
           </Typography>
 
           <Typography level="title-md" sx={{ mt: 2 }}>
             {t('Model Provider')}
           </Typography>
-          <Typography>{setting?.modelProvider ?? '-'}</Typography>
+          <Typography>{effectiveSetting.modelProvider}</Typography>
 
           <Typography level="title-md" sx={{ mt: 2 }}>
             {t('Model')}
           </Typography>
-          <Typography>{setting?.model ?? '-'}</Typography>
+          <Typography>{effectiveSetting.model}</Typography>
         </>
       )}
     </div>

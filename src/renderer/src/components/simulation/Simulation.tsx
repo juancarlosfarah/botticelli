@@ -60,7 +60,7 @@ export default function Simulation(): ReactElement {
           my: 1,
         }}
       >
-        <Button color="neutral" onClick={() => navigate(-1)}>
+        <Button color="neutral" onClick={() => navigate('/simulations')}>
           {t('Back')}
         </Button>
       </Box>

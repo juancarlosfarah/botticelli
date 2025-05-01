@@ -67,7 +67,7 @@ export default function Experiment(): ReactElement {
           my: 1,
         }}
       >
-        <Button color="neutral" onClick={() => navigate(-1)}>
+        <Button color="neutral" onClick={() => navigate('/experiments')}>
           {t('Back')}
         </Button>
       </Box>

@@ -187,7 +187,7 @@ const NewExchangeTemplate = (): ReactElement => {
     <>
       <Button
         color="neutral"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/exchanges/templates')}
         style={{
           maxWidth: '50px',
           maxHeight: '50px',

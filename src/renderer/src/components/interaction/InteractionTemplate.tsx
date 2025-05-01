@@ -56,7 +56,10 @@ export default function InteractionTemplate(): ReactElement {
           my: 1,
         }}
       >
-        <Button color="neutral" onClick={() => navigate(-1)}>
+        <Button
+          color="neutral"
+          onClick={() => navigate('/interactions/templates')}
+        >
           {t('Back')}
         </Button>
       </Box>

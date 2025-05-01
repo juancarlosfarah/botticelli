@@ -62,11 +62,11 @@ const NewExperiment = (): ReactElement => {
     dispatch(fetchAgents());
     dispatch(fetchInteractionTemplates());
   }, []);
-
   const handleNewExperiment = async (): Promise<void> => {
     if (!currentUser) {
       throw new Error('No user logged in');
     }
+
     try {
       const { payload } = await dispatch(
         saveNewExperiment({
@@ -77,13 +77,13 @@ const NewExperiment = (): ReactElement => {
           email: currentUser,
         }),
       );
+
       log.debug(`saveNewExperiment response.payload:`, payload);
+
       navigate(`/experiments/${payload.id}`);
     } catch (error) {
       log.error('Failed to save experiment:', error);
-      window.alert(
-        'Failed to save experiment. Please check your connection or try again later.',
-      );
+      window.alert(`Failed to save experiment: ${String(error)}`);
     }
   };
 
@@ -117,7 +117,7 @@ const NewExperiment = (): ReactElement => {
     <>
       <Button
         color="neutral"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/experiments')}
         style={{
           maxWidth: '50px',
           maxHeight: '50px',

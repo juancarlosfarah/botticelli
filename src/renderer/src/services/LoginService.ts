@@ -77,13 +77,5 @@ export async function onLoginSuccess(
     await dispatch(fetchExchangeTemplates({ email })).unwrap();
   } catch (error) {
     console.error('Error fetching user data:', error);
-
-    const isOffline = !navigator.onLine;
-
-    const message = isOffline
-      ? "You're offline. Please check your internet connection and try again."
-      : 'Something went wrong while fetching your data. Please try again.';
-
-    window.alert(message);
   }
 }
