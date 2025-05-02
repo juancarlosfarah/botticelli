@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,10 @@ import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 
+import InputType from '@shared/enums/InputType';
+import { log } from 'electron-log/renderer';
+
+import { Message } from '../../../../shared/interfaces/Message';
 import robot from '../../assets/robot.png?asset';
 import { AppDispatch, RootState } from '../../store';
 import { MessageProps } from '../../types';
@@ -24,7 +28,7 @@ import {
 import MessageLoader from '../layout/MessageLoader';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-import { fetchMessages, selectMessages } from './MessagesSlice';
+import { fetchMessages, selectMessages, saveNewMessage } from './MessagesSlice';
 
 type MessagesPaneProps = {
   exchangeId: string;
@@ -32,6 +36,17 @@ type MessagesPaneProps = {
   interactionId: string;
   readOnly?: boolean;
 };
+
+function bufferToBlobUrl(buffer: Buffer): string {
+  // Convert the Buffer to a Uint8Array
+  const uint8Array = new Uint8Array(buffer);
+
+  // Create a Blob from the Uint8Array
+  const blob = new Blob([uint8Array], { type: 'audio/wav' });
+
+  // Create a URL for the Blob
+  return URL.createObjectURL(blob);
+}
 
 export default function MessagesPane({
   exchangeId,
@@ -41,6 +56,8 @@ export default function MessagesPane({
 }: MessagesPaneProps): React.ReactElement {
   // status is an array where each entry marks a "loading" process
   const status = useSelector((state: RootState) => state.messages.status);
+
+  const [textAreaValue, setTextAreaValue] = React.useState('');
 
   const dispatch = useDispatch<AppDispatch>();
   const messages = useSelector(selectMessages);
@@ -117,27 +134,65 @@ export default function MessagesPane({
             {messages.map((message: MessageProps, index: number) => {
               const isYou = message?.sender?.id === participantId;
 
-              return (
-                <Stack
-                  key={index}
-                  direction="row"
-                  spacing={2}
-                  flexDirection={isYou ? 'row-reverse' : 'row'}
-                >
-                  {!isYou && <AvatarWithStatus online src={robot} />}
-                  <ChatBubble
-                    variant={isYou ? 'sent' : 'received'}
-                    content={message.content}
-                    // timestamp={message.updatedAt.toString()}
-                    attachment={false}
-                    sender={isYou ? t('You') : message?.sender}
-                  />
-                </Stack>
-              );
+              {
+                if (
+                  exchange.inputType == InputType.Voice &&
+                  isYou &&
+                  message.audioBlobs
+                ) {
+                  console.log('voice input messagesPane');
+                  const audioBlobs = message.audioBlobs;
+                  const urls = audioBlobs.map((blob) =>
+                    URL.createObjectURL(blob),
+                  );
+                  return (
+                    <Stack
+                      key={index}
+                      direction="row"
+                      spacing={2}
+                      flexDirection={isYou ? 'row-reverse' : 'row'}
+                    >
+                      <div>
+                        {urls.map((url, index) => (
+                          <div key={index}>
+                            <audio controls>
+                              <source src={url} type="audio/wav" />
+                              Your browser does not support the audio element.
+                            </audio>
+                          </div>
+                        ))}
+                      </div>
+                    </Stack>
+                  );
+                } else {
+                  return (
+                    <Stack
+                      key={index}
+                      direction="row"
+                      spacing={2}
+                      flexDirection={isYou ? 'row-reverse' : 'row'}
+                    >
+                      {!isYou && <AvatarWithStatus online src="" />}
+                      <ChatBubble
+                        variant={isYou ? 'sent' : 'received'}
+                        content={message.content}
+                        // timestamp={message.updatedAt.toString()}
+                        attachment={false}
+                        sender={isYou ? 'You' : message?.sender}
+                      />
+                    </Stack>
+                  );
+                }
+              }
             })}
             {status.length !== 0 && (
               <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
-                <Stack direction="row" spacing={2} sx={{ mb: 0.25 }}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  spacing={2}
+                  sx={{ mb: 0.25 }}
+                >
                   <AvatarWithStatus online src={robot} />
                   <MessageLoader />
                 </Stack>
@@ -171,7 +226,21 @@ export default function MessagesPane({
             participantId={participantId}
             interactionId={interactionId}
             exchangeId={exchangeId}
+            textAreaValue={textAreaValue}
+            setTextAreaValue={setTextAreaValue}
             completed={exchange.completed}
+            onSubmit={(keyPressEvents): void => {
+              dispatch(
+                saveNewMessage({
+                  interactionId,
+                  exchangeId,
+                  keyPressEvents,
+                  content: textAreaValue,
+                  evaluate: true,
+                  sender: participantId,
+                }),
+              );
+            }}
           />
         )}
       </Sheet>

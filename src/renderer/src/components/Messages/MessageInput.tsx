@@ -12,7 +12,15 @@ export type MessageInputProps = {
   interactionId: string;
   participantId: string;
   inputType: InputType;
+  textAreaValue: string;
+  setTextAreaValue: (value: string) => void;
+  onSubmit: (keyPressData: KeyPressData[]) => void;
   completed: boolean;
+};
+
+type KeyPressData = {
+  timestamp: number;
+  key: string;
 };
 
 export default function MessageInput({

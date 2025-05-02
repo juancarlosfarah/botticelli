@@ -49,6 +49,8 @@ export class PostOneExchangeTemplateChannel extends PostOneChannel {
       email,
     } = request.params;
 
+    log.debug(`linking triggers: ${triggers}`);
+
     if (!email) {
       event.sender.send(request.responseChannel, {
         error: 'Missing email',

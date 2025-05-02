@@ -39,6 +39,11 @@ import { GetManyHumanParticipantsChannel } from './channels/agent/human/particip
 import { GetOneHumanParticipantChannel } from './channels/agent/human/participant/GetOneHumanParticipantChannel';
 import { PatchOneHumanParticipantChannel } from './channels/agent/human/participant/PatchOneHumanParticipantChannel';
 import { PostOneHumanParticipantChannel } from './channels/agent/human/participant/PostOneHumanParticipantChannel';
+import { DeleteOneAudioChannel } from './channels/audio/DeleteOneAudioChannel';
+import { GenerateAudioTranscriptonChannel } from './channels/audio/GenerateAudiosTranscriptionChannel';
+import { GetManyAudioChannel } from './channels/audio/GetManyAudiosChannel';
+import { PostManyAudiosChannel } from './channels/audio/PostAudiosMessageChannel';
+import { PostOneAudioChannel } from './channels/audio/PostOneAudioChannel';
 import { PostManyKeyPressEventsChannel } from './channels/event/PostManyKeyPressEventsChannel';
 import { PostOneKeyPressEventChannel } from './channels/event/PostOneKeyPressEventChannel';
 import { CompleteExchangeChannel } from './channels/exchange/CompleteExchangeChannel';
@@ -312,4 +317,10 @@ new Main().init([
   // events
   new PostOneKeyPressEventChannel(),
   new PostManyKeyPressEventsChannel(),
+  // audios
+  new PostOneAudioChannel(),
+  new GenerateAudioTranscriptonChannel(),
+  new PostManyAudiosChannel(),
+  new GetManyAudioChannel(),
+  new DeleteOneAudioChannel(),
 ]);

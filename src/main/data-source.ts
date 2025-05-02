@@ -6,6 +6,7 @@ import { ArtificialAgent } from './entity/ArtificialAgent';
 import { ArtificialAssistant } from './entity/ArtificialAssistant';
 import { ArtificialEvaluator } from './entity/ArtificialEvaluator';
 import { ArtificialParticipant } from './entity/ArtificialParticipant';
+import { Audio } from './entity/Audio';
 import { Event } from './entity/Event';
 import { Exchange } from './entity/Exchange';
 import { ExchangeTemplate } from './entity/ExchangeTemplate';
@@ -52,6 +53,7 @@ export const AppDataSource = new DataSource({
     SimulationInteractionTemplate,
     Event,
     KeyPressEvent,
+    Audio,
   ],
   migrations: [],
   subscribers: [],

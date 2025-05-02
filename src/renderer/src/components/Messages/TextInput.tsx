@@ -2,6 +2,7 @@ import { ReactElement, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import CheckIcon from '@mui/icons-material/CheckRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { Stack } from '@mui/joy';
 import Box from '@mui/joy/Box';
@@ -13,6 +14,7 @@ import InputType from '@shared/enums/InputType';
 import { KeyPressData } from '@shared/interfaces/Event';
 
 import { AppDispatch } from '../../store';
+import { dismissExchange } from '../exchange/ExchangesSlice';
 import { saveNewMessage } from './MessagesSlice';
 
 export type TextInputProps = {
@@ -27,6 +29,7 @@ export default function TextInput({
   exchangeId,
   participantId,
   interactionId,
+  completed,
   inputType,
 }: TextInputProps): ReactElement {
   const textAreaRef = useRef<HTMLDivElement>(null);
@@ -68,6 +71,10 @@ export default function TextInput({
     }
   };
 
+  const handleDismiss = (): void => {
+    dispatch(dismissExchange(exchangeId));
+  };
+
   return (
     <Box sx={{ px: 2, pb: 3 }}>
       <FormControl>
@@ -94,6 +101,17 @@ export default function TextInput({
                 borderColor: 'divider',
               }}
             >
+              {completed && (
+                <Button
+                  size="sm"
+                  color="success"
+                  endDecorator={<CheckIcon />}
+                  sx={{ alignSelf: 'center', borderRadius: 'sm' }}
+                  onClick={handleDismiss}
+                >
+                  Done
+                </Button>
+              )}
               <Button
                 size="sm"
                 color="primary"

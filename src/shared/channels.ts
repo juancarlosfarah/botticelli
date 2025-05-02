@@ -133,3 +133,13 @@ export const PATCH_ONE_SIMULATION_CHANNEL = 'simulation:patch:one';
 // events
 export const POST_ONE_KEY_PRESS_EVENT_CHANNEL = 'event:key:press:post:one';
 export const POST_MANY_KEY_PRESS_EVENTS_CHANNEL = 'event:key:press:post:many';
+
+// audios
+export const GENERATE_AUDIO_TRANSCRIPTION_CHANNEL =
+  'audio:transcription:generate';
+export const POST_ONE_AUDIO_CHANNEL = 'audio:post:one';
+export const TRANSCRIBE_ONE_AUDIO_CHANNEL = 'audio:transcribe:one';
+export const POST_AUDIOS_CHANNEL = 'audios:post:many';
+export const SEND_AUDIOS_CHANNEL = 'audios:send';
+export const GET_MANY_AUDIOS_CHANNEL = 'audios:get:many';
+export const DELETE_ONE_AUDIO_CHANNEL = 'audio:delete:one';

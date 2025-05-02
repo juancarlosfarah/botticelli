@@ -7,12 +7,16 @@ import {
 import {
   DELETE_MESSAGE_CHANNEL,
   GET_MESSAGES_CHANNEL,
+  GET_MESSAGE_CHANNEL,
   POST_MESSAGE_CHANNEL,
 } from '@shared/channels';
 import {
   GENERATE_RESPONSE_CHANNEL,
   POST_MANY_KEY_PRESS_EVENTS_CHANNEL,
 } from '@shared/channels';
+import { GET_MANY_AUDIOS_CHANNEL } from '@shared/channels';
+import InputType from '@shared/enums/InputType';
+import { GetManyAudiosParams } from '@shared/interfaces/Audio';
 import {
   PostManyKeyPressEventsHandleResponse,
   PostManyKeyPressEventsParams,
@@ -23,8 +27,6 @@ import {
   GenerateResponseParams,
   GenerateResponseResponse,
   Message,
-} from '@shared/interfaces/Message';
-import {
   DeleteOneMessageHandlerParams,
   DeleteOneMessageParams,
   DeleteOneMessageResponse,
@@ -65,6 +67,23 @@ const initialState = messagesAdapter.getInitialState({
 });
 
 // thunk functions
+export const fetchMessage = createAsyncThunk(
+  'messages/fetchMessage',
+  async (query) => {
+    const response = await IpcService.send<{ message: any }>(
+      GET_MESSAGE_CHANNEL,
+      {
+        params: { query },
+      },
+    );
+
+    // debugging
+    log.debug(`fetchMessage response`);
+
+    return response;
+  },
+);
+
 export const fetchMessages = createAsyncThunk<
   GetManyMessagesResponse,
   GetManyMessagesParams
@@ -185,6 +204,7 @@ const messagesSlice = createSlice({
   initialState,
   reducers: {
     messageDeleted: messagesAdapter.removeOne,
+    updateMessage: messagesAdapter.updateOne,
   },
   extraReducers: (builder) => {
     builder
@@ -227,7 +247,7 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { messageDeleted } = messagesSlice.actions;
+export const { messageDeleted, updateMessage } = messagesSlice.actions;
 
 export default messagesSlice.reducer;
 

@@ -13,6 +13,7 @@ import {
 
 import InputType from '../../shared/enums/InputType';
 import { Agent } from './Agent';
+import { Audio } from './Audio';
 import { ExchangeTemplate } from './ExchangeTemplate';
 import { Interaction } from './Interaction';
 import { Message } from './Message';
@@ -67,6 +68,9 @@ export class Exchange {
 
   @OneToMany(() => Message, (message) => message.exchange, { eager: true })
   messages: Relation<Message[]>;
+
+  @OneToMany(() => Audio, (audio) => audio.exchange, { eager: true })
+  audios: Relation<Audio[]>;
 
   @ManyToOne(() => Agent, { eager: true })
   assistant: Relation<Agent>;
