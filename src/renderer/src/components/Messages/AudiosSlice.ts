@@ -106,20 +106,24 @@ export const transcribeAndSendAudio = createAsyncThunk<
     ).unwrap();
 
     if (transcription?.trim()) {
-      await dispatch(
-        saveNewMessage({
-          interactionId,
-          exchangeId,
-          content: transcription || '',
-          evaluate: true,
-          sender: {
-            id: participantId,
-            type: 'user',
-          },
-          keyPressEvents: [],
-          inputType: InputType.Voice,
-        }),
-      ).unwrap();
+      try {
+        await dispatch(
+          saveNewMessage({
+            interactionId,
+            exchangeId,
+            content: transcription || '',
+            evaluate: true,
+            sender: {
+              id: participantId,
+              type: 'user',
+            },
+            keyPressEvents: [],
+            inputType: InputType.Voice,
+          }),
+        ).unwrap();
+      } catch (error) {
+        log.error('Failed to save transcribed message:', error);
+      }
     }
   },
 );
@@ -288,11 +292,15 @@ const audiosSlice = createSlice({
         console.log('[REDUX] transcribeAudio.fulfilled');
         state.status.toSend = 'idle';
       })
+      .addCase(transcribeAudio.rejected, (state, action) => {
+        console.error('[REDUX] transcribeAudio.rejected:', action.error);
+        state.status.toSend = 'idle';
+      })
+
       .addCase(sendAudios.rejected, (state, action) => {
         console.error('[REDUX] sendAudios.rejected:', action.error);
         state.status.toSend = 'idle';
       })
-
       .addCase(postAudios.rejected, (state) => {
         state.status.toSend = 'idle';
       });

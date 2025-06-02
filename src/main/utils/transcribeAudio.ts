@@ -179,7 +179,7 @@ export const transcribeAudio = async ({
   if (!fs.existsSync(modelPath)) throw new Error('Model file not found');
 
   try {
-    await resampleAudio(intermediatePath, resampledFilePath, 16000);
+    await resampleAudio(intermediatePath, resampledFilePath);
 
     console.log('[DEBUG] Checking resampled path:', resampledFilePath);
     console.log('[DEBUG] File exists:', fs.existsSync(resampledFilePath));
