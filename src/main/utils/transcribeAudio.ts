@@ -20,6 +20,7 @@ try {
   console.log('[FFmpeg] ffmpeg -version:\n', versionOutput);
 } catch (err) {
   console.error('[FFmpeg] ERROR running ffmpeg -version:', err);
+  throw new Error('FFmpeg is required but not found or not working.');
 }
 
 console.log('[FFmpeg] Using ffmpeg path:', ffmpegPath);
@@ -221,6 +222,6 @@ export const transcribeAudio = async ({
     return transcript;
   } catch (err) {
     console.error('[transcribeAudio] Error:', err);
-    return '';
+    return '[transcription failed]';
   }
 };

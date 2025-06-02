@@ -69,7 +69,20 @@ export const transcribeAudio = createAsyncThunk<
 >(
   'audios/transcribeAudio',
   async ({ blobPath, exchangeId, participantId, audioId }) => {
-    console.log('[THUNK] Transcribing:', blobPath);
+    if (!blobPath) {
+      throw new Error('[transcribeAudio] Missing parameter: blobPath');
+    }
+    if (!exchangeId) {
+      throw new Error('[transcribeAudio] Missing parameter: exchangeId');
+    }
+    if (!participantId) {
+      throw new Error('[transcribeAudio] Missing parameter: participantId');
+    }
+    if (!audioId) {
+      throw new Error('[transcribeAudio] Missing parameter: audioId');
+    }
+
+    console.log('Transcribing:', blobPath);
 
     const response = await IpcService.send<
       string,
@@ -81,7 +94,7 @@ export const transcribeAudio = createAsyncThunk<
     const safeResponse =
       typeof response === 'string' ? response : JSON.stringify(response);
 
-    console.log('[THUNK] Received transcription:', safeResponse);
+    console.log('Received transcription:', safeResponse);
     return safeResponse;
   },
 );
