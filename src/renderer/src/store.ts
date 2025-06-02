@@ -1,4 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { persistReducer, persistStore } from 'redux-persist';
+import { Persistor } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import thunk from 'redux-thunk';
 
 import audiosReducer from './components/Messages/AudiosSlice';
 import messagesReducer from './components/Messages/MessagesSlice';
@@ -13,27 +17,46 @@ import simulationsReducer from './components/simulation/SimulationsSlice';
 import triggersReducer from './components/trigger/TriggersSlice';
 import userReducer from './components/user/UsersSlice';
 
-const store = configureStore({
-  reducer: {
-    // define a top-level state field named `key`, handled by `value`
-    exchanges: exchangesReducer,
-    exchangeTemplates: exchangeTemplatesReducer,
-    messages: messagesReducer,
-    agents: agentsReducer,
-    triggers: triggersReducer,
-    interactions: interactionsReducer,
-    interactionTemplates: interactionTemplatesReducer,
-    experiments: experimentsReducer,
-    simulations: simulationsReducer,
-    audios: audiosReducer,
-    settings: settingsReducer,
-    user: userReducer,
-  },
+// Per-slice persistence config for user
+const userPersistConfig = {
+  key: 'user',
+  storage,
+  whitelist: ['currentUser'],
+};
+
+const rootReducer = combineReducers({
+  exchanges: exchangesReducer,
+  exchangeTemplates: exchangeTemplatesReducer,
+  messages: messagesReducer,
+  agents: agentsReducer,
+  triggers: triggersReducer,
+  interactions: interactionsReducer,
+  interactionTemplates: interactionTemplatesReducer,
+  experiments: experimentsReducer,
+  simulations: simulationsReducer,
+  audios: audiosReducer,
+  settings: settingsReducer,
+  user: persistReducer(userPersistConfig, userReducer),
 });
 
-// infer the `RootState` and `AppDispatch` types from the store itself
+//Root-level persist config
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['settings', 'user'],
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// define a top-level state field named `key`, handled by `value`
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: [thunk],
+});
+
+export const persistor: Persistor = persistStore(store);
+
 export type RootState = ReturnType<typeof store.getState>;
-
 export type AppDispatch = typeof store.dispatch;
-
 export default store;

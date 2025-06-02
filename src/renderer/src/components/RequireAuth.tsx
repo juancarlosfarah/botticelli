@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-// adjust path
 import { Box, Button, Typography } from '@mui/joy';
 
 import { selectCurrentUser } from '../components/user/UsersSlice';

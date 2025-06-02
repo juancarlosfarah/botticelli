@@ -186,8 +186,9 @@ export class GenerateResponseChannel implements IpcChannel {
       return;
     }
 
-    const messages = await messageRepository.findBy({
-      exchange: { id: exchangeId },
+    const messages = await messageRepository.find({
+      where: { exchange: { id: exchangeId } },
+      relations: { sender: true },
     });
 
     const userMessages = messages.filter(
@@ -217,6 +218,11 @@ export class GenerateResponseChannel implements IpcChannel {
       if (savedMessage) {
         // debug
         log.debug(`generated response:`, savedMessage?.id);
+      }
+
+      if (!savedMessage) {
+        log.error(`[ERROR] Message was saved but not retrieved. ID: ${id}`);
+        return;
       }
 
       event.sender.send(request.responseChannel, instanceToPlain(savedMessage));

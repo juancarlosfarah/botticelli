@@ -110,20 +110,22 @@ const EditSettings = (): ReactElement => {
 
   const handleEditSettings = async (): Promise<void> => {
     if (!currentUser) {
-      console.error('No current user!');
+      log.error('No current user!');
       return;
     }
 
+    log.info('Entered API Key:', apiKey);
+
     if (!apiKey?.trim()) {
       setApiKeyError(true);
-      console.error('API Key is required');
+      log.error('API Key is required');
       return;
     }
 
     setApiKeyError(false);
 
     try {
-      const { payload, type } = await dispatch(
+      const resultAction = await dispatch(
         editSetting({
           email: currentUser,
           apiKey,
@@ -133,9 +135,13 @@ const EditSettings = (): ReactElement => {
         }),
       );
 
-      console.debug(type, payload);
+      log.debug('EditSetting response:', resultAction);
 
-      navigate('/settings');
+      if (editSetting.fulfilled.match(resultAction)) {
+        navigate('/settings');
+      } else {
+        log.error('Failed to update settings:', resultAction);
+      }
     } catch (error) {
       log.error(`Error updating settings: ${error}`);
     }
@@ -154,7 +160,7 @@ const EditSettings = (): ReactElement => {
       await dispatch(editSetting(defaultSettings));
       navigate('/settings');
     } catch (error) {
-      console.error('Error resetting settings:', error);
+      log.error('Error resetting settings:', error);
     }
   };
 

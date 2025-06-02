@@ -10,40 +10,42 @@ import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
 import Typography from '@mui/joy/Typography';
 
-import log from 'electron-log/renderer';
-
-import { AppDispatch } from '../../store';
+import { AppDispatch, RootState } from '../../store';
 import MessagesPane from '../Messages/MessagesPane';
 import {
   fetchInteraction,
   selectInteractionById,
+  selectInteractionStatusById,
   startInteraction,
 } from './InteractionsSlice';
 
-export default function ParticipantInteraction(): ReactElement {
+export default function ParticipantInteraction(): ReactElement | null {
   const { experimentId, participantId, interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-
   const { t } = useTranslation();
 
-  if (!interactionId || !experimentId || !participantId) {
+  if (!experimentId || !participantId || !interactionId) {
     return <div>{t('Interaction Not Found')}</div>;
   }
 
-  useEffect(() => {
-    const query = { id: interactionId };
-    log.debug(`fetching interaction ${interactionId}`);
-    dispatch(fetchInteraction(query));
-  }, [interactionId]);
-
-  const interaction = useSelector((state) =>
+  const interaction = useSelector((state: RootState) =>
     selectInteractionById(state, interactionId),
   );
 
-  if (!interaction) {
-    return <div>{t('Interaction Not Found')}</div>;
-  }
+  const status = useSelector((state: RootState) =>
+    selectInteractionStatusById(state, interactionId),
+  );
 
+  useEffect(() => {
+    dispatch(fetchInteraction({ id: interactionId }));
+  }, [dispatch, interactionId]);
+
+  if (!interaction) {
+    if (status === 'failed') {
+      return <div>{t('Interaction Not Found')}</div>;
+    }
+    return null;
+  }
   const handleStartInteraction = (): void => {
     dispatch(startInteraction(interactionId));
   };

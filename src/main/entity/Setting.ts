@@ -1,6 +1,7 @@
 import Language from '@shared/enums/Language';
 import Model from '@shared/enums/Model';
 import ModelProvider from '@shared/enums/ModelProvider';
+import { Unique } from 'typeorm';
 import {
   AfterLoad,
   Column,
@@ -11,6 +12,7 @@ import {
 } from 'typeorm';
 
 @Entity()
+@Unique(['email'])
 export class Setting {
   @PrimaryGeneratedColumn('uuid')
   id: string;

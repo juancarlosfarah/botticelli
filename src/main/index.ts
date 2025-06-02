@@ -1,5 +1,7 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils';
-import { BrowserWindow, app, ipcMain, shell } from 'electron';
+import { app } from 'electron';
+import { BrowserWindow, ipcMain, shell } from 'electron';
+import { systemPreferences } from 'electron';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
   REDUX_DEVTOOLS,
@@ -7,7 +9,9 @@ import installExtension, {
 import log from 'electron-log/main';
 import fs from 'fs';
 import i18nextBackend from 'i18next-electron-fs-backend';
+import path from 'path';
 import { join } from 'path';
+import process from 'process';
 import 'reflect-metadata';
 import 'reflect-metadata';
 
@@ -95,10 +99,21 @@ import { AppDataSource } from './data-source';
 import { IpcChannel } from './interfaces/IpcChannel';
 import MenuFactory from './menu';
 
+log.info('[MAIN] Main process started from:', __filename);
+
+log.info('[main] Botticelli starting...');
+log.info(`[BOOT] Started with args: ${JSON.stringify(process.argv)}`);
+
+let isQuitting = false;
+
+// In this file you can include the rest of your app"s specific main process
+// code. You can also put them in separate files and require them here.
+
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 
 class Main {
+  private mainWindow: BrowserWindow | null = null;
   public init(ipcChannels: IpcChannel[]): void {
     // initialize the logger for any renderer process
     log.initialize({ preload: true });
@@ -112,20 +127,92 @@ class Main {
         // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.
         app.whenReady().then(() => {
+          if (process.platform === 'darwin') {
+            systemPreferences
+              .askForMediaAccess('microphone')
+              .then((granted) => {
+                log.info('[PERMISSIONS] Microphone access granted:', granted);
+                if (!granted) {
+                  log.warn('[PERMISSIONS] User denied microphone permission');
+                }
+              });
+          }
+
+          this.createWindow();
+          log.info('[MAIN] app is ready');
+          app.on('before-quit', () => {
+            isQuitting = true;
+          });
+
+          if (app.isPackaged) {
+            const whisperBin = {
+              darwin: 'main',
+              linux: 'main',
+              win32: 'main.exe',
+            }[process.platform];
+
+            const whisperBinaryPath = path.join(
+              process.resourcesPath,
+              'whisper-bin',
+              process.platform,
+              whisperBin,
+            );
+
+            if (fs.existsSync(whisperBinaryPath)) {
+              process.env.WHISPER_CPP_DIR = path.dirname(whisperBinaryPath);
+              process.env.WHISPER_CPP_BIN = whisperBinaryPath;
+
+              log.info(
+                '[INIT] whisper-node initialized with prebuilt binary:',
+                whisperBinaryPath,
+              );
+            } else {
+              log.error(
+                '[INIT] whisper-node binary not found at:',
+                whisperBinaryPath,
+              );
+
+              log.info('[INIT] resourcesPath:', process.resourcesPath);
+
+              const isProd = app.isPackaged;
+              const resolvedFfmpegPath = isProd
+                ? path.join(process.resourcesPath, 'ffmpeg')
+                : require('ffmpeg-static');
+
+              log.info('[INIT] resolved FFmpeg path:', resolvedFfmpegPath);
+            }
+          }
+
+          app.on('activate', () => {
+            // re-create a window in the app when the
+            // dock icon is clicked and there are no other windows open.
+            if (!this.mainWindow || this.mainWindow.isDestroyed()) {
+              this.createWindow();
+            } else {
+              this.mainWindow.show();
+              this.mainWindow.focus();
+            }
+          });
+
           this.createWindow();
 
-          installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
-            .then((name) => log.debug(`Added Extension:  ${name}`))
-            .catch((err) => log.error('An error occurred: ', err));
+          if (is.dev) {
+            installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+              .then((name) => log.debug(`Added Extension:  ${name}`))
+              .catch((err) => log.error('An error occurred: ', err));
+          }
         });
-        app.on('window-all-closed', this.onWindowAllClosed);
-        app.on('activate', this.onActivate);
+
+        app.on('window-all-closed', this.onWindowAllClosed.bind(this));
+        app.on('activate', this.onActivate.bind(this));
+
         // Default open or close DevTools by F12 in development
         // and ignore CommandOrControl + R in production.
         // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
         app.on('browser-window-created', (_, window) => {
           optimizer.watchWindowShortcuts(window);
         });
+
         this.registerIpcChannels(ipcChannels);
       })
       .catch((error) => log.error(error));
@@ -166,49 +253,102 @@ class Main {
   }
 
   private createWindow(): void {
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+      this.mainWindow.show();
+      this.mainWindow.focus();
+      return;
+    }
+
+    log.info('[WINDOW] createWindow called');
+
+    const indexPath = is.dev
+      ? path.resolve(__dirname, '..', '..', 'out', 'renderer', 'index.html')
+      : path.resolve(__dirname, '..', 'renderer', 'index.html');
+
+    log.info('[DEBUG] Loading file from:', indexPath);
+    log.info('[CHECK] Attempting to load:', indexPath);
+
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    this.mainWindow = new BrowserWindow({
       width: 900,
       height: 670,
+      x: 100,
+      y: 100,
       show: false,
+      backgroundColor: '#ffffff',
       autoHideMenuBar: true,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
+        contextIsolation: true,
         sandbox: false,
         devTools: is.dev,
       },
     });
 
+    const mainWindow = this.mainWindow;
+
+    mainWindow.on('show', () => {
+      log.info('[DEBUG] mainWindow show event');
+    });
+
+    mainWindow.on('ready-to-show', () => {
+      log.info('[DEBUG] mainWindow ready-to-show event');
+    });
+
+    mainWindow.on('closed', () => {
+      log.info('[DEBUG] mainWindow closed');
+      this.mainWindow = null;
+    });
+
+    mainWindow.on('close', (e) => {
+      if (process.platform === 'darwin' && !isQuitting) {
+        e.preventDefault();
+        mainWindow.hide();
+      }
+    });
+
+    mainWindow.webContents.on(
+      'did-fail-load',
+      (_event, errorCode, errorDescription, validatedURL) => {
+        log.error(
+          `[LOAD FAIL] Code ${errorCode} on ${validatedURL}: ${errorDescription}`,
+        );
+      },
+    );
+
+    mainWindow.once('ready-to-show', () => {
+      log.info('[WINDOW] ready-to-show');
+      mainWindow.show();
+      mainWindow.focus();
+    });
+
+    // Fallback: show after timeout if ready-to-show doesn't fire
+    setTimeout(() => {
+      if (mainWindow && !mainWindow.isDestroyed() && !mainWindow.isVisible()) {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    }, 3000);
+
     // Sets up main bindings for our i18next backend
     i18nextBackend.mainBindings(ipcMain, mainWindow, fs);
 
     const menuBuilder = MenuFactory(mainWindow, app.name);
-
     menuBuilder.buildMenu(i18nextMainBackend);
 
     // Set up necessary bindings to update the menu items
     // based on the current language selected
-    i18nextMainBackend.on('initialized', (loaded) => {
+    i18nextMainBackend.on('initialized', () => {
       i18nextMainBackend.changeLanguage('en');
-      i18nextMainBackend.off('initialized'); // Remove listener to this event as it's not needed anymore
+      i18nextMainBackend.off('initialized');
     });
 
-    // When the i18n framework starts up, this event is called
-    // (presumably when the default language is initialized)
-    // BEFORE the "initialized" event is fired - this causes an
-    // error in the logs. To prevent said error, we only call the
-    // below code until AFTER the i18n framework has finished its
-    // "initialized" event.
     i18nextMainBackend.on('languageChanged', (lng) => {
       if (i18nextMainBackend.isInitialized) {
         menuBuilder.buildMenu(i18nextMainBackend);
         mainWindow.webContents.send('languageSignal', lng);
       }
-    });
-
-    mainWindow.on('ready-to-show', () => {
-      mainWindow.show();
     });
 
     mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -221,8 +361,21 @@ class Main {
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
       mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
     } else {
-      mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
+      if (!fs.existsSync(indexPath)) {
+        log.info('[ERROR] index.html does not exist at', indexPath);
+      } else {
+        log.info('[SUCCESS] index.html found, loading...');
+        log.info('[DEBUG] __dirname:', __dirname);
+        log.info('[DEBUG] Files in same folder:', fs.readdirSync(__dirname));
+
+        mainWindow.loadFile(indexPath);
+      }
     }
+
+    mainWindow.setAlwaysOnTop(true);
+    mainWindow.show();
+    mainWindow.focus();
+    mainWindow.setAlwaysOnTop(false);
   }
 }
 

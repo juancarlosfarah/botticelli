@@ -2,30 +2,54 @@ appId: com.electron.app
 productName: botticelli
 directories:
   buildResources: build
+
 files:
-  - '!**/.vscode/*'
-  - '!src/*'
+  - out/renderer/**/*
+  - out/main/**
+  - out/preload/**
+  - node_modules/whisper-node/**
+  - resources/whisper-bin/**
+  - models/**
+  - package.json
+  - '!**/*.map'
+  - '!**/.vscode/**'
+  - '!src/**'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc,dev-app-update.yml,CHANGELOG.md,README.md}'
-  - '!{.env.local,.env.local.*,.npmrc,pnpm-lock.yaml}'
-  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
-asarUnpack:
-  - resources/**
+  - '!*.config.js'
+  - '!{.env*,*.md,.eslint*,.prettier*}'
+
+extraResources:
+  - from: resources/ffmpeg
+    to: ffmpeg
+  - from: resources/whisper-bin
+    to: whisper-bin
+  - from: resources/models
+    to: models
+
+asar: false
+
+extraMetadata:
+  main: out/main/index.js
+
 win:
   executableName: botticelli
+
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+
 mac:
-  entitlementsInherit: build/entitlements.mac.plist
-  extendInfo:
-    - NSCameraUsageDescription: Application requests access to the device's camera.
-    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
-    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
-  notarize: false
+  identity: '-'
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist.xml
+  entitlementsInherit: build/entitlements.mac.plist.xml
+  target:
+    - dmg
+  extendInfo: build/Info.plist.xml
+
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:

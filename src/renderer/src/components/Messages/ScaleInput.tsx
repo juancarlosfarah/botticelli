@@ -59,7 +59,10 @@ export default function ScaleInput({
           keyPressEvents: keypressData,
           content: value.toString(),
           evaluate: false,
-          sender: participantId,
+          sender: {
+            id: participantId,
+            type: 'user',
+          },
         }),
       );
       setValue(null);

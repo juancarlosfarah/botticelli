@@ -1,3 +1,4 @@
+import { getUserAudioPath } from '@main/utils/path';
 import { GET_MANY_AUDIOS_CHANNEL } from '@shared/channels';
 import { GetManyAudiosParams } from '@shared/interfaces/Audio';
 import { instanceToPlain } from 'class-transformer';
@@ -32,11 +33,10 @@ export class GetManyAudioChannel implements IpcChannel {
     }
     const audioBuffers: ArrayBuffer[] = [];
     const { messageId } = request.params;
-    const messagePath = path.join(
-      __dirname,
-      '../../src/saved_audios',
-      messageId,
-    );
+
+    const messagePath = getUserAudioPath(messageId);
+    log.debug('[DEBUG] getManyAudios will read from:', messagePath);
+
     log.debug('Message path:', messagePath);
     if (!existsSync(messagePath)) {
       log.debug('Directory does not exist:', messagePath);

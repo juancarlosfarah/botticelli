@@ -28,7 +28,7 @@ import {
 import MessageLoader from '../layout/MessageLoader';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-import { fetchMessages, selectMessages, saveNewMessage } from './MessagesSlice';
+import { fetchMessages, saveNewMessage, selectMessages } from './MessagesSlice';
 
 type MessagesPaneProps = {
   exchangeId: string;
@@ -134,17 +134,38 @@ export default function MessagesPane({
             {messages.map((message: MessageProps, index: number) => {
               const isYou = message?.sender?.id === participantId;
 
+              console.log(
+                '[UI] audioBlobs for message:',
+                message.id,
+                message.audioBlobs,
+              );
+
               {
+                console.log(
+                  '[UI] Message audio blobs:',
+                  message.audioBlobs?.length,
+                  message,
+                );
+
                 if (
-                  exchange.inputType == InputType.Voice &&
                   isYou &&
-                  message.audioBlobs
+                  Array.isArray(message.audioBlobs) &&
+                  message.audioBlobs.length > 0
                 ) {
-                  console.log('voice input messagesPane');
-                  const audioBlobs = message.audioBlobs;
-                  const urls = audioBlobs.map((blob) =>
+                  const urls = message.audioBlobs.map((blob) =>
                     URL.createObjectURL(blob),
                   );
+
+                  console.log(
+                    'participantId:',
+                    participantId,
+                    'sender.id:',
+                    message.sender?.id,
+                    'isYou:',
+                    isYou,
+                  );
+                  console.log('audioBlobs:', message.audioBlobs);
+
                   return (
                     <Stack
                       key={index}
@@ -176,9 +197,11 @@ export default function MessagesPane({
                       <ChatBubble
                         variant={isYou ? 'sent' : 'received'}
                         content={message.content}
-                        // timestamp={message.updatedAt.toString()}
                         attachment={false}
-                        sender={isYou ? 'You' : message?.sender}
+                        sender={message?.sender}
+                        timestamp={message.timestamp}
+                        audioBlobs={message.audioBlobs}
+                        participantId={participantId}
                       />
                     </Stack>
                   );
@@ -237,7 +260,11 @@ export default function MessagesPane({
                   keyPressEvents,
                   content: textAreaValue,
                   evaluate: true,
-                  sender: participantId,
+                  inputType: exchange.inputType,
+                  sender: {
+                    id: participantId,
+                    type: 'user',
+                  },
                 }),
               );
             }}

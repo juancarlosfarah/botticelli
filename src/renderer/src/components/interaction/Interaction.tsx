@@ -16,17 +16,25 @@ import _ from 'lodash';
 
 import { AppDispatch } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import { fetchInteraction, selectInteractionById } from './InteractionsSlice';
+import {
+  fetchInteraction,
+  selectInteractionById,
+  selectInteractionStatusById,
+} from './InteractionsSlice';
 
-export default function Interaction(): ReactElement {
+export default function Interaction(): ReactElement | null {
   const { interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  if (typeof interactionId === 'undefined') {
-    return <div>{t('Interaction Not Found')}</div>;
-  }
+  const status = useSelector((state: RootState) =>
+    selectInteractionStatusById(state, interactionId),
+  );
+
+  const interaction: InteractionType | undefined = useSelector((state) =>
+    selectInteractionById(state, interactionId),
+  );
 
   useEffect(() => {
     const query = { id: interactionId };
@@ -34,11 +42,14 @@ export default function Interaction(): ReactElement {
     dispatch(fetchInteraction(query));
   }, [interactionId]);
 
-  const interaction: InteractionType | undefined = useSelector((state) =>
-    selectInteractionById(state, interactionId),
-  );
+  if (typeof interactionId === 'undefined') {
+    return <div>{t('Interaction Not Found')}</div>;
+  }
 
   if (!interaction) {
+    if (status === 'loading') {
+      return null;
+    }
     return <div>{t('Interaction Not Found')}</div>;
   }
 

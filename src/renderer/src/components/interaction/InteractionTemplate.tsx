@@ -20,16 +20,23 @@ import {
   fetchInteractionTemplate,
   selectInteractionTemplateById,
 } from './InteractionTemplatesSlice';
+import {
+  selectInteractionStatus,
+  selectInteractionStatusById,
+} from './InteractionsSlice';
 
-export default function InteractionTemplate(): ReactElement {
+export default function InteractionTemplate(): ReactElement | null {
   const { interactionTemplateId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  if (typeof interactionTemplateId === 'undefined') {
-    return <div>Interaction Not Found</div>;
-  }
+  const interactionTemplate: InteractionTemplateType | undefined = useSelector(
+    (state: RootState) =>
+      selectInteractionTemplateById(state, interactionTemplateId),
+  );
+
+  const exchangeTemplates = interactionTemplate.exchangeTemplates || [];
 
   useEffect(() => {
     const query = { id: interactionTemplateId };
@@ -37,16 +44,17 @@ export default function InteractionTemplate(): ReactElement {
     dispatch(fetchInteractionTemplate(query));
   }, [interactionTemplateId]);
 
-  const interactionTemplate: InteractionTemplateType | undefined = useSelector(
-    (state: RootState) =>
-      selectInteractionTemplateById(state, interactionTemplateId),
-  );
-
-  if (!interactionTemplate) {
-    return <div>Interaction Template Not Found</div>;
+  if (!interactionTemplateId) {
+    return <div>{t('InteractionTemplate ID Not Found')}</div>;
   }
 
-  const exchangeTemplates = interactionTemplate?.exchangeTemplates || [];
+  if (!interactionTemplate) {
+    return null;
+  }
+
+  if (typeof interactionTemplateId === 'undefined') {
+    return <div>{t('Interaction Template Not Found')}</div>;
+  }
 
   return (
     <>

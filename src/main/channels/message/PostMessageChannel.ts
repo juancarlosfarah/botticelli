@@ -1,3 +1,4 @@
+import { Agent } from '@main/entity/Agent';
 import { POST_MESSAGE_CHANNEL } from '@shared/channels';
 import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { PostOneMessageHandlerParams } from '@shared/interfaces/Message';
@@ -6,6 +7,7 @@ import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
 import { AppDataSource } from '../../data-source';
+import { Exchange } from '../../entity/Exchange';
 import { Message } from '../../entity/Message';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 
@@ -18,14 +20,12 @@ export class PostMessageChannel implements IpcChannel {
     event: IpcMainEvent,
     request: IpcRequest<PostOneMessageHandlerParams>,
   ): Promise<void> {
-    // debug
     log.debug(`handling ${this.getName()}...`);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    // todo: error handling
     if (!request.params) {
       event.sender.send(request.responseChannel, {});
       return;
@@ -33,23 +33,51 @@ export class PostMessageChannel implements IpcChannel {
 
     const { exchangeId, content, sender, inputType } = request.params;
 
-    // debug
     log.debug(`posting message:`, content, `for exchange`, exchangeId);
 
-    const messageRepository = AppDataSource.getRepository(Message);
-    const message = new Message();
-    message.content = content;
-    message.exchange = exchangeId;
-    message.sender = sender;
-    message.inputType = inputType;
+    try {
+      const messageRepository = AppDataSource.getRepository(Message);
+      const exchangeRepository = AppDataSource.getRepository(Exchange);
+      const agentRepository = AppDataSource.getRepository(Agent);
 
-    const { id } = await messageRepository.save(message);
+      const senderAgent = sender?.id
+        ? await agentRepository.findOneBy({ id: sender.id })
+        : null;
 
-    const savedResponse = await messageRepository.findOneBy({ id });
+      if (!senderAgent) {
+        log.error(`Invalid sender provided:`, sender);
+        event.sender.send(request.responseChannel, {
+          error: `Invalid sender`,
+        });
+        return;
+      }
 
-    // debug
-    log.debug(`posted message ${savedResponse?.id}`);
+      const exchange = await exchangeRepository.findOneBy({ id: exchangeId });
 
-    event.sender.send(request.responseChannel, instanceToPlain(savedResponse));
+      if (!exchange) {
+        log.error(`Exchange not found with id: ${exchangeId}`);
+        event.sender.send(request.responseChannel, {
+          error: `Exchange not found with id ${exchangeId}`,
+        });
+        return;
+      }
+
+      const message = new Message();
+      message.content = content;
+      message.exchange = exchange;
+      message.sender = senderAgent;
+      message.inputType = inputType;
+
+      const saved = await messageRepository.save(message);
+
+      log.debug(`posted message ${saved?.id}`);
+      event.sender.send(request.responseChannel, instanceToPlain(saved));
+    } catch (error) {
+      log.error(`Error posting message:`, error);
+      event.sender.send(request.responseChannel, {
+        error: 'Failed to save message',
+        detail: error.message,
+      });
+    }
   }
 }

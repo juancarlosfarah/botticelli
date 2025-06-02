@@ -61,7 +61,10 @@ export default function TextInput({
           keyPressEvents: keypressData,
           content: textAreaValue,
           evaluate: true,
-          sender: participantId,
+          sender: {
+            id: participantId,
+            type: 'user',
+          },
         }),
       );
       setTextAreaValue('');

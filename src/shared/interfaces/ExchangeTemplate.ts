@@ -11,7 +11,7 @@ type ExchangeTemplate = {
   cue: string;
   inputType: InputType;
   assistant: Agent;
-  triggers: Trigger[];
+  triggers?: Trigger[];
   softLimit: number;
   hardLimit: number;
   email: string;

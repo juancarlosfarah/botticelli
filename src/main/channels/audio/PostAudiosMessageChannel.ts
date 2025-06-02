@@ -1,4 +1,5 @@
 import { Message } from '@main/entity/Message';
+import { getUserAudioPath } from '@main/utils/path';
 import { POST_AUDIOS_CHANNEL } from '@shared/channels';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
@@ -12,42 +13,35 @@ import { AppDataSource } from '../../data-source';
 import { Audio } from '../../entity/Audio';
 import { IpcChannel } from '../../interfaces/IpcChannel';
 
-function moveAudioFile(audioId: string, messageId: string) {
-  const initialFilePath = path.join(
-    __dirname,
-    '../../src/saved_audios',
-    audioId + '_resampled.wav',
-  );
-  const targetDir = path.join(__dirname, '../../src/saved_audios', messageId);
+function moveAudioFile(audioId: string, messageId: string): Promise<string> {
+  const initialFilePath = getUserAudioPath(`${audioId}_resampled.wav`);
+  log.debug('[moveAudioFile] Looking for:', initialFilePath);
+  log.debug('[moveAudioFile] File exists:', fs.existsSync(initialFilePath));
+  const targetDir = getUserAudioPath(messageId);
 
   return new Promise((resolve, reject) => {
-    // Read the initial file
     fs.readFile(initialFilePath, (err, buffer) => {
       if (err) {
+        log.error('Failed to read source audio:', initialFilePath, err);
         return reject(err);
       }
 
-      // Ensure the target directory exists
       fs.mkdir(targetDir, { recursive: true }, (err) => {
-        if (err) {
-          return reject(err);
-        }
+        if (err) return reject(err);
 
-        const targetFilePath = path.join(targetDir, audioId + '.wav');
+        const targetPath = getUserAudioPath(
+          path.join(messageId, `${audioId}.wav`),
+        );
 
-        // Write the file to the target directory
-        fs.writeFile(targetFilePath, buffer, (err) => {
-          if (err) {
-            return reject(err);
-          }
+        fs.writeFile(targetPath, buffer, (err) => {
+          if (err) return reject(err);
 
-          // Optionally, delete the initial file after moving
+          // cleanup after copying
           fs.unlink(initialFilePath, (err) => {
             if (err) {
-              return reject(err);
-            } else {
-              resolve(targetFilePath);
+              log.warn('Failed to delete temp resampled file:', err.message);
             }
+            resolve(targetPath);
           });
         });
       });
@@ -94,14 +88,13 @@ export class PostManyAudiosChannel implements IpcChannel {
         audios.push(audioEntity);
         audioEntity.message = myMessage;
         await audioRepository.save(audioEntity);
-        const targetDir = path.join(
-          __dirname,
-          '../../src/saved_audios',
-          myMessage.id,
-        );
-        const targetFilePath = path.join(targetDir, audioEntity.id + '.wav');
+        const targetDir = getUserAudioPath(myMessage.id);
+        const targetFilePath = path.join(targetDir, `${audioEntity.id}.wav`);
         audioEntity.blobPath = targetFilePath;
-        moveAudioFile(audioEntity.id, myMessage.id);
+        const savedPath = await moveAudioFile(audioEntity.id, myMessage.id);
+        audioEntity.blobPath = savedPath;
+        log.debug('Moved audio to:', savedPath);
+
         await messageRepository.save(myMessage);
 
         log.debug('target dir ', targetDir);
