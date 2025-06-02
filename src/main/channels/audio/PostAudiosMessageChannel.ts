@@ -30,7 +30,7 @@ function moveAudioFile(audioId: string, messageId: string): Promise<string> {
         if (err) return reject(err);
 
         const targetPath = getUserAudioPath(
-          path.join(messageId, `${audioId}.wav`),
+          path.join(messageId, `${audioId}.webm`),
         );
 
         fs.writeFile(targetPath, buffer, (err) => {
@@ -89,7 +89,7 @@ export class PostManyAudiosChannel implements IpcChannel {
         audioEntity.message = myMessage;
         await audioRepository.save(audioEntity);
         const targetDir = getUserAudioPath(myMessage.id);
-        const targetFilePath = path.join(targetDir, `${audioEntity.id}.wav`);
+        const targetFilePath = path.join(targetDir, `${audioEntity.id}.webm`);
         audioEntity.blobPath = targetFilePath;
         const savedPath = await moveAudioFile(audioEntity.id, myMessage.id);
         audioEntity.blobPath = savedPath;

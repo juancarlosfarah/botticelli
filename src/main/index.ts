@@ -204,7 +204,6 @@ class Main {
         });
 
         app.on('window-all-closed', this.onWindowAllClosed.bind(this));
-        app.on('activate', this.onActivate.bind(this));
 
         // Default open or close DevTools by F12 in development
         // and ignore CommandOrControl + R in production.

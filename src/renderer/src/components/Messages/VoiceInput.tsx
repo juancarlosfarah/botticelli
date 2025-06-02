@@ -56,7 +56,7 @@ export default function VoiceInput({
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<AudioChunk[]>([]);
-  const [keypressData, setKeypressData] = useState<KeyPressData[]>([]);
+  const [keypressData] = useState<KeyPressData[]>([]);
 
   const audioChunksRef = useRef<Blob[]>([]);
 
@@ -67,7 +67,7 @@ export default function VoiceInput({
   const status = useSelector((state: RootState) => state.audios.status);
   const audios = useSelector(selectAudios);
 
-  const sendMessage = async () => {
+  const sendMessage = async (): Promise<void> => {
     console.log('[SEND] dispatching transcribeAudio...');
     try {
       let text = '';
@@ -150,7 +150,7 @@ export default function VoiceInput({
     }
   };
 
-  const handleStartRecording = async () => {
+  const handleStartRecording = async (): Promise<void> => {
     let stream: MediaStream;
 
     try {
@@ -285,7 +285,7 @@ export default function VoiceInput({
           divider={<Divider orientation="vertical" flexItem />}
           sx={{ width: '100%', height: '100%' }}
         >
-          {/* Microphone recording */}
+          {/* Mic recording */}
           <Stack
             direction="column"
             justifyContent="space-evenly"
@@ -318,7 +318,7 @@ export default function VoiceInput({
             </Typography>
           </Stack>
 
-          {/* AudioChunks display */}
+          {/* audio chunks display */}
           <Box
             sx={{
               flexGrow: 1,
@@ -365,7 +365,7 @@ export default function VoiceInput({
             </List>
           </Box>
 
-          {/* Send button */}
+          {/* send button */}
           <Stack
             direction="column"
             justifyContent="space-evenly"

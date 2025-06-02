@@ -2,7 +2,6 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import { Persistor } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import thunk from 'redux-thunk';
 
 import audiosReducer from './components/Messages/AudiosSlice';
 import messagesReducer from './components/Messages/MessagesSlice';
@@ -43,7 +42,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['settings', 'user'],
+  whitelist: ['settings'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -52,7 +51,12 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: [thunk],
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
+    }),
 });
 
 export const persistor: Persistor = persistStore(store);

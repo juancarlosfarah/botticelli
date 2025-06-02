@@ -23,10 +23,13 @@ const userSlice = createSlice({
       state.currentUser = null;
       state.sessionLoggedIn = false;
     },
+    clearSession: (state) => {
+      state.sessionLoggedIn = false;
+    },
   },
 });
 
-export const { setCurrentUser, logoutUser } = userSlice.actions;
+export const { setCurrentUser, logoutUser, clearSession } = userSlice.actions;
 
 export const selectCurrentUser = (state: RootState) => state.user.currentUser;
 export const selectSessionLoggedIn = (state: RootState) =>

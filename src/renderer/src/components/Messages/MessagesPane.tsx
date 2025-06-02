@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,11 +11,7 @@ import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 
-import InputType from '@shared/enums/InputType';
-import { log } from 'electron-log/renderer';
-
-import { Message } from '../../../../shared/interfaces/Message';
-import robot from '../../assets/robot.png?asset';
+import robot from '../../assets/robot.png';
 import { AppDispatch, RootState } from '../../store';
 import { MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
@@ -134,19 +130,7 @@ export default function MessagesPane({
             {messages.map((message: MessageProps, index: number) => {
               const isYou = message?.sender?.id === participantId;
 
-              console.log(
-                '[UI] audioBlobs for message:',
-                message.id,
-                message.audioBlobs,
-              );
-
               {
-                console.log(
-                  '[UI] Message audio blobs:',
-                  message.audioBlobs?.length,
-                  message,
-                );
-
                 if (
                   isYou &&
                   Array.isArray(message.audioBlobs) &&
@@ -155,16 +139,6 @@ export default function MessagesPane({
                   const urls = message.audioBlobs.map((blob) =>
                     URL.createObjectURL(blob),
                   );
-
-                  console.log(
-                    'participantId:',
-                    participantId,
-                    'sender.id:',
-                    message.sender?.id,
-                    'isYou:',
-                    isYou,
-                  );
-                  console.log('audioBlobs:', message.audioBlobs);
 
                   return (
                     <Stack

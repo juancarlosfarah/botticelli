@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Autocomplete, FormControl, FormHelperText, FormLabel } from '@mui/joy';
 import Box from '@mui/joy/Box';
@@ -114,7 +114,7 @@ const EditSettings = (): ReactElement => {
       return;
     }
 
-    log.info('Entered API Key:', apiKey);
+    log.info('Entered API Key:', apiKey?.substring(0, 4) + '...');
 
     if (!apiKey?.trim()) {
       setApiKeyError(true);

@@ -176,7 +176,7 @@ export class PostOneSimulationChannel extends PostOneChannel {
                   exchangeTemplate.participantInstructionsOnComplete;
                 exchange.cue = exchangeTemplate.cue;
                 exchange.order = exchangeTemplateNumber;
-                exchange.triggers = exchangeTemplate.triggers;
+                exchange.triggers = exchangeTemplate.triggers ?? [];
                 exchange.assistant = exchangeTemplate.assistant;
                 exchange.softLimit = exchangeTemplate.softLimit;
                 exchange.hardLimit = exchangeTemplate.hardLimit;

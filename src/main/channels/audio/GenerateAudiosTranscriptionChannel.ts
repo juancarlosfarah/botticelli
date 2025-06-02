@@ -38,30 +38,15 @@ export class GenerateAudioTranscriptonChannel implements IpcChannel {
       log.info(`[${this.getName()}] Transcription successful`);
       log.debug(`[${this.getName()}] Transcription result:`, transcription);
 
-      const safeContent =
-        typeof transcription === 'string'
-          ? transcription
-          : JSON.stringify(transcription);
-
-      /*       event.sender.send('message:post', {
-        exchangeId,
-        content: safeContent,
-        inputType: 'Audio',
-        sender: {
-          id: participantId,
-          type: 'user',
-        },
-      }); */
-
       event.sender.send(
         request.responseChannel,
         instanceToPlain(transcription),
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       log.error(`[${this.getName()}] Transcription failed:`, err);
       event.sender.send(request.responseChannel, {
         error: 'Transcription failed',
-        detail: err.message,
+        detail: err instanceof Error ? err.message : String(err),
       });
     }
   }

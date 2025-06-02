@@ -20,10 +20,6 @@ import {
   fetchInteractionTemplate,
   selectInteractionTemplateById,
 } from './InteractionTemplatesSlice';
-import {
-  selectInteractionStatus,
-  selectInteractionStatusById,
-} from './InteractionsSlice';
 
 export default function InteractionTemplate(): ReactElement | null {
   const { interactionTemplateId } = useParams();
@@ -35,8 +31,6 @@ export default function InteractionTemplate(): ReactElement | null {
     (state: RootState) =>
       selectInteractionTemplateById(state, interactionTemplateId),
   );
-
-  const exchangeTemplates = interactionTemplate.exchangeTemplates || [];
 
   useEffect(() => {
     const query = { id: interactionTemplateId };
@@ -52,9 +46,7 @@ export default function InteractionTemplate(): ReactElement | null {
     return null;
   }
 
-  if (typeof interactionTemplateId === 'undefined') {
-    return <div>{t('Interaction Template Not Found')}</div>;
-  }
+  const exchangeTemplates = interactionTemplate.exchangeTemplates || [];
 
   return (
     <>

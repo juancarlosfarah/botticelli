@@ -5,7 +5,6 @@ import fs from 'fs';
 import { platform } from 'os';
 import path from 'path';
 import util from 'util';
-import { v4 as uuidv4 } from 'uuid';
 
 import { getUserAudioPath } from './path';
 
@@ -27,7 +26,7 @@ console.log('[FFmpeg] Using ffmpeg path:', ffmpegPath);
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-function getWhisperExecPath() {
+function getWhisperExecPath(): string {
   const isProd = app.isPackaged;
 
   if (isProd) {
@@ -74,7 +73,10 @@ function getWhisperExecPath() {
   throw new Error('Unsupported OS');
 }
 
-function resampleAudio(inputFilePath, outputFilePath, newSampleRate) {
+function resampleAudio(
+  inputFilePath: string,
+  outputFilePath: string,
+): Promise<string> {
   console.log('[FFmpeg] Resampling:', inputFilePath, '→', outputFilePath);
   return new Promise((resolve, reject) => {
     ffmpeg(inputFilePath)

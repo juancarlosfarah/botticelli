@@ -6,7 +6,6 @@ import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 import fs from 'fs';
-import path from 'path';
 
 function deleteAudio(filePath: string) {
   return new Promise((resolve, reject) => {
@@ -41,7 +40,7 @@ export class DeleteOneAudioChannel implements IpcChannel {
     const { audioId } = request.params;
 
     const filesToDelete = [
-      getUserAudioPath(`${audioId}.wav`),
+      getUserAudioPath(`${audioId}.webm`),
       getUserAudioPath(`${audioId}_resampled.wav`),
       getUserAudioPath(`${audioId}_resampled.wav.txt`),
     ];

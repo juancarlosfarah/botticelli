@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import {
   createAsyncThunk,
   createEntityAdapter,
-  createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
 import {
@@ -11,7 +10,6 @@ import {
   GENERATE_AUDIO_TRANSCRIPTION_CHANNEL,
   POST_AUDIOS_CHANNEL,
   POST_ONE_AUDIO_CHANNEL,
-  SEND_AUDIOS_CHANNEL,
 } from '@shared/channels';
 import { GET_MANY_AUDIOS_CHANNEL } from '@shared/channels';
 import InputType from '@shared/enums/InputType';
@@ -27,12 +25,12 @@ import {
   SendAudiosMessageParams,
 } from '@shared/interfaces/Audio';
 import { GetManyAudiosParams } from '@shared/interfaces/Audio';
-import { Message, PostOneMessageParams } from '@shared/interfaces/Message';
+import { Message } from '@shared/interfaces/Message';
 import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
 import { RootState } from '../../store';
-import { selectMessageById, updateMessage } from './MessagesSlice';
+import { updateMessage } from './MessagesSlice';
 import { saveNewMessage } from './MessagesSlice';
 
 export const audiosAdapter = createEntityAdapter<Audio>();
@@ -203,16 +201,6 @@ export const sendAudios = createAsyncThunk<
         inputType,
       }),
     ).unwrap();
-
-    // Save blobs to message in Redux
-    await dispatch(
-      updateMessage({
-        id: optimisticMessage.id,
-        changes: {
-          audioBlobs: blobs,
-        },
-      }),
-    );
 
     // Show temporary blobs immediately
     await dispatch(

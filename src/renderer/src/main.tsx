@@ -62,6 +62,7 @@ import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
 import Login from './components/user/Login.tsx';
+import { clearSession } from './components/user/UsersSlice.ts';
 import i18n from './config/i18nResources';
 import './index.css';
 import store, { persistor } from './store';
@@ -346,22 +347,23 @@ if (!sessionStorage.getItem('hasOpened')) {
   sessionStorage.setItem('hasOpened', 'true');
 }
 
-// Clear only the sessionLoggedIn flag on app boot
-persistor.subscribe(() => {
-  const state = store.getState();
-  if (state.user.sessionLoggedIn) {
-    store.dispatch({ type: 'user/logoutUser' }); // this resets sessionLoggedIn
-  }
-});
-
 // this is a call to add the app at the root of the document
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>
       <StyledEngineProvider injectFirst>
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <Suspense fallback={<div>Loading translations...</div>}>
+          <PersistGate
+            loading={null}
+            persistor={persistor}
+            onBeforeLift={() => {
+              const state = store.getState();
+              if (state.user.sessionLoggedIn) {
+                store.dispatch(clearSession());
+              }
+            }}
+          >
+            <Suspense fallback={<div>Loading...</div>}>
               <RouterProvider router={router} />
             </Suspense>
           </PersistGate>
