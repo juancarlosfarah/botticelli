@@ -271,8 +271,6 @@ class Main {
     this.mainWindow = new BrowserWindow({
       width: 900,
       height: 670,
-      x: 100,
-      y: 100,
       show: false,
       backgroundColor: '#ffffff',
       autoHideMenuBar: true,

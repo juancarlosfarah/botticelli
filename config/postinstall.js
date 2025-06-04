@@ -1,4 +1,11 @@
 // config/postinstall.js
+/**
+ * This script runs after `yarn install` and :
+ * - copies whisper binary into `resources/whisper-bin/<platform>/`
+ * - copies ffmpeg binary into `resources/ffmpeg/<platform>/`
+ * - rebuilds `sqlite3` for the current Electron version
+ */
+
 const fs = require('fs');
 const path = require('path');
 const os = require('os');

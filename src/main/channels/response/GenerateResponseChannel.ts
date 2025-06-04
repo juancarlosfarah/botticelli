@@ -162,8 +162,10 @@ export class GenerateResponseChannel implements IpcChannel {
       request.responseChannel = `${this.getName()}:response`;
     }
 
-    // todo: handle null params
     if (!request?.params?.exchangeId) {
+      event.sender.send(request.responseChannel, {
+        error: 'Missing exchangeId in request',
+      });
       return;
     }
 
@@ -181,8 +183,10 @@ export class GenerateResponseChannel implements IpcChannel {
     });
     const exchange = instances?.length ? instances[0] : null;
 
-    // todo: handle null exchange
     if (!exchange) {
+      event.sender.send(request.responseChannel, {
+        error: `Exchange not found for ID: ${exchangeId}`,
+      });
       return;
     }
 
@@ -222,6 +226,9 @@ export class GenerateResponseChannel implements IpcChannel {
 
       if (!savedMessage) {
         log.error(`[ERROR] Message was saved but not retrieved. ID: ${id}`);
+        event.sender.send(request.responseChannel, {
+          error: `Message was saved but not found for ID: ${id}`,
+        });
         return;
       }
 

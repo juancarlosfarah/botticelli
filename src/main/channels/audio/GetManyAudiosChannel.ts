@@ -35,7 +35,7 @@ export class GetManyAudioChannel implements IpcChannel {
     const { messageId } = request.params;
 
     const messagePath = getUserAudioPath(messageId);
-    log.debug('[DEBUG] getManyAudios will read from:', messagePath);
+    log.debug('getManyAudios will read from:', messagePath);
 
     log.debug('Message path:', messagePath);
     if (!existsSync(messagePath)) {

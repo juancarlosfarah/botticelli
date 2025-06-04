@@ -18,14 +18,13 @@ export class IpcService {
 
     // returns a promise which will be resolved when the response has arrived
     return new Promise((resolve) => {
-      const responseChannel =
-        request.responseChannel || `${channel}:response:${Date.now()}`;
-      request.responseChannel = responseChannel;
+      const responseChannel = request.responseChannel;
 
       ipcRenderer.once(responseChannel, (_, response) => {
         console.log(`Received response on ${responseChannel}`, response);
         resolve(response);
       });
+
       ipcRenderer.send(channel, request);
     });
   }

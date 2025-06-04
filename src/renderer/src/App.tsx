@@ -28,7 +28,7 @@ export default function JoyOrderDashboardTemplate(): ReactElement | null {
     if (currentUser && sessionLoggedIn) {
       setAuthReady(true);
     } else {
-      setTimeout(() => navigate('/login'), 0);
+      setTimeout(() => navigate('/login'));
     }
   }, [currentUser, sessionLoggedIn]);
 

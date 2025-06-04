@@ -1,4 +1,15 @@
 // config/postbuild.js
+/**
+ * This script copies required binaries (like whisper, FFmpeg) and model files into the final .app bundle after the build.
+ *
+ * Electron Builder doesnt preserve executable permissions or include external binaries by default, so
+ * this script:
+ * - locates the .app bundle
+ * - resolves the internal Resources path
+ * - copies the necessary binaries and model files into expected runtime locations
+ 
+ */
+
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -6,6 +17,8 @@ const { execSync } = require('child_process');
 
 function chmodSafe(targetPath, label) {
   try {
+    // 0o755 = means we set file permissions so the owner can read, write and execute the binaries
+    // required because packaging may change permissions from binaries
     fs.chmodSync(targetPath, 0o755);
   } catch (err) {
     console.error(`[postbuild] Failed to chmod ${label}:`, err.message);
