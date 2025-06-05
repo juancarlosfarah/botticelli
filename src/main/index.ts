@@ -145,16 +145,19 @@ class Main {
           });
 
           if (app.isPackaged) {
+            const platformDir =
+              process.platform === 'win32' ? 'win' : process.platform;
+
             const whisperBin = {
               darwin: 'main',
               linux: 'main',
-              win32: 'main.exe',
-            }[process.platform];
+              win: 'main.exe',
+            }[platformDir];
 
             const whisperBinaryPath = path.join(
               process.resourcesPath,
               'whisper-bin',
-              process.platform,
+              platformDir,
               whisperBin,
             );
 
@@ -171,16 +174,17 @@ class Main {
                 '[INIT] whisper-node binary not found at:',
                 whisperBinaryPath,
               );
-
               log.info('[INIT] resourcesPath:', process.resourcesPath);
-
-              const isProd = app.isPackaged;
-              const resolvedFfmpegPath = isProd
-                ? path.join(process.resourcesPath, 'ffmpeg')
-                : require('ffmpeg-static');
-
-              log.info('[INIT] resolved FFmpeg path:', resolvedFfmpegPath);
             }
+
+            const resolvedFfmpegPath = path.join(
+              process.resourcesPath,
+              'ffmpeg',
+            );
+            log.info('[INIT] resolved FFmpeg path:', resolvedFfmpegPath);
+          } else {
+            const resolvedFfmpegPath = require('ffmpeg-static');
+            log.info('[INIT] resolved FFmpeg path (dev):', resolvedFfmpegPath);
           }
 
           app.on('activate', () => {

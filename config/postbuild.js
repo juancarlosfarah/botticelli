@@ -71,8 +71,8 @@ if (platform === 'darwin') {
   );
 } else if (platform === 'win32') {
   copy(
-    path.resolve('resources/whisper-bin/win/main.exe'),
-    path.join(distResources, 'whisper-bin/win/main.exe'),
+    path.resolve('resources/whisper-bin/win32/main.exe'),
+    path.join(distResources, 'whisper-bin/win32/main.exe'),
   );
 }
 
