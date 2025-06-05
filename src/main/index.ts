@@ -198,8 +198,6 @@ class Main {
             }
           });
 
-          this.createWindow();
-
           if (is.dev) {
             installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
               .then((name) => log.debug(`Added Extension:  ${name}`))
