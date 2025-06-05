@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
 import CloseIcon from '@mui/icons-material/Close';
-import { Button } from '@mui/joy';
+import { Button, LinearProgress } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
 import Typography from '@mui/joy/Typography';
@@ -44,8 +44,14 @@ export default function ParticipantInteraction(): ReactElement | null {
     if (status === 'failed') {
       return <div>{t('Interaction Not Found')}</div>;
     }
-    return null;
+
+    return (
+      <Box sx={{ width: '100%', mt: 2 }}>
+        <LinearProgress />
+      </Box>
+    );
   }
+
   const handleStartInteraction = (): void => {
     dispatch(startInteraction(interactionId));
   };
