@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '@mui/joy';
+import { LinearProgress } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
 import List from '@mui/joy/List';
@@ -14,7 +15,7 @@ import InteractionType from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
 import _ from 'lodash';
 
-import { AppDispatch } from '../../store';
+import { AppDispatch, RootState } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
 import {
   fetchInteraction,
@@ -22,7 +23,7 @@ import {
   selectInteractionStatusById,
 } from './InteractionsSlice';
 
-export default function Interaction(): ReactElement | null {
+export default function Interaction(): ReactElement {
   const { interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
@@ -48,7 +49,11 @@ export default function Interaction(): ReactElement | null {
 
   if (!interaction) {
     if (status === 'loading') {
-      return null;
+      return (
+        <Box sx={{ width: '100%', mt: 2 }}>
+          <LinearProgress />
+        </Box>
+      );
     }
     return <div>{t('Interaction Not Found')}</div>;
   }

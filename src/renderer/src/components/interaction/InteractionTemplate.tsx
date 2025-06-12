@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '@mui/joy';
+import { LinearProgress } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
@@ -21,7 +22,7 @@ import {
   selectInteractionTemplateById,
 } from './InteractionTemplatesSlice';
 
-export default function InteractionTemplate(): ReactElement | null {
+export default function InteractionTemplate(): ReactElement {
   const { interactionTemplateId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
@@ -43,7 +44,11 @@ export default function InteractionTemplate(): ReactElement | null {
   }
 
   if (!interactionTemplate) {
-    return null;
+    return (
+      <Box sx={{ width: '100%', mt: 2 }}>
+        <LinearProgress />
+      </Box>
+    );
   }
 
   const exchangeTemplates = interactionTemplate.exchangeTemplates || [];

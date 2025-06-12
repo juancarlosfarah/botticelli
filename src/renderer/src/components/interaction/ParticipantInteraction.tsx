@@ -19,7 +19,7 @@ import {
   startInteraction,
 } from './InteractionsSlice';
 
-export default function ParticipantInteraction(): ReactElement | null {
+export default function ParticipantInteraction(): ReactElement {
   const { experimentId, participantId, interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();

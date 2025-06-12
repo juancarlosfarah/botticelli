@@ -1,3 +1,5 @@
+import log from 'electron-log/renderer';
+
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 
 export class IpcService {
@@ -21,7 +23,7 @@ export class IpcService {
       const responseChannel = request.responseChannel;
 
       ipcRenderer.once(responseChannel, (_, response) => {
-        console.log(`Received response on ${responseChannel}`, response);
+        log.debug(`Received response on ${responseChannel}`, response);
         resolve(response);
       });
 
