@@ -4,6 +4,7 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
+import { RootState } from '@renderer/store';
 import {
   DELETE_ONE_INTERACTION_CHANNEL,
   GET_MANY_INTERACTIONS_CHANNEL,
@@ -25,6 +26,7 @@ const interactionsAdapter = createEntityAdapter<Interaction>();
 
 const initialState = interactionsAdapter.getInitialState({
   status: 'idle',
+  statusById: {} as Record<string, 'idle' | 'loading' | 'succeeded' | 'failed'>,
 });
 
 // thunk functions
@@ -171,9 +173,12 @@ const interactionsSlice = createSlice({
         state.status = 'idle';
       })
 
-      .addCase(fetchInteraction.pending, (state) => {
+      .addCase(fetchInteraction.pending, (state, action) => {
         state.status = 'loading';
+        const id = action.meta.arg.id;
+        state.statusById[id] = 'loading';
       })
+
       .addCase(startInteraction.pending, (state) => {
         state.status = 'loading';
       })
@@ -185,9 +190,12 @@ const interactionsSlice = createSlice({
         state.status = 'idle';
       })
       .addCase(fetchInteraction.fulfilled, (state, action) => {
+        const id = action.payload.id;
         interactionsAdapter.setOne(state, action.payload);
         state.status = 'idle';
+        state.statusById[id] = 'succeeded';
       })
+
       .addCase(saveNewInteraction.fulfilled, (state, action) => {
         const interaction = action.payload;
         interactionsAdapter.addOne(state, interaction);
@@ -196,10 +204,16 @@ const interactionsSlice = createSlice({
         interactionsAdapter.setOne(state, action.payload);
         state.status = 'idle';
       })
+
       .addCase(deleteInteraction.fulfilled, interactionsAdapter.removeOne)
       .addCase(editInteraction.fulfilled, (state, action) => {
         const interaction = action.payload;
         interactionsAdapter.setOne(state, interaction);
+      })
+      .addCase(fetchInteraction.rejected, (state, action) => {
+        state.status = 'failed';
+        const id = action.meta.arg.id;
+        state.statusById[id] = 'failed';
       });
   },
 });
@@ -221,3 +235,6 @@ export const selectInteractionIds = createSelector(
   // and returns a final result value
   (interactions) => interactions.map((interaction) => interaction.id),
 );
+
+export const selectInteractionStatusById = (state: RootState, id: string) =>
+  state.interactions.statusById[id] ?? 'idle';

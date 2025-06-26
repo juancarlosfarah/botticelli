@@ -5,6 +5,7 @@ import { IpcRequest } from '@shared/interfaces/IpcRequest';
 import { PatchOneSettingParams } from '@shared/interfaces/Setting';
 import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
+import log from 'electron-log/main';
 
 import { PatchOneChannel } from '../common/PatchOneChannel';
 
@@ -20,19 +21,17 @@ export class PatchOneSettingChannel extends PatchOneChannel {
     event: IpcMainEvent,
     request: IpcRequest<PatchOneSettingParams>,
   ): Promise<void> {
-    if (!request.responseChannel) {
-      request.responseChannel = `${this.getName()}:response`;
-    }
+    const responseChannel =
+      request.responseChannel || `${this.getName()}:response`;
+    log.debug('PATCH_ONE_SETTING_CHANNEL received:', request);
 
-    // todo: error handling
     if (!request.params) {
-      event.sender.send(request.responseChannel, {});
+      event.sender.send(responseChannel, {});
       return;
     }
 
     const { modelProvider, model, apiKey, language, email } = request.params;
 
-    // update the setting
     const repository = AppDataSource.getRepository(this.entity);
     await repository.upsert(
       {
@@ -44,12 +43,11 @@ export class PatchOneSettingChannel extends PatchOneChannel {
       },
       ['email'],
     );
-
     // get the updated setting
-
     const setting = await repository.findOneBy({ email });
 
     // return the updated setting to the frontend
-    event.sender.send(request.responseChannel, instanceToPlain(setting));
+    log.debug('Sending response on channel:', responseChannel);
+    event.sender.send(responseChannel, instanceToPlain(setting));
   }
 }

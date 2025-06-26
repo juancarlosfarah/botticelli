@@ -1,4 +1,5 @@
 import { IpcChannel } from '@main/interfaces/IpcChannel';
+import { getUserAudioPath } from '@main/utils/path';
 import { POST_ONE_AUDIO_CHANNEL } from '@shared/channels';
 import { GenerateAudioTranscriptionHandlerParams } from '@shared/interfaces/Audio';
 import { PostOneAudioHandlerParams } from '@shared/interfaces/Audio';
@@ -19,25 +20,23 @@ async function saveAudio(
   filename: string,
 ): Promise<string> {
   const buffer = Buffer.from(arrayBuffer);
-  const filePath = path.join(__dirname, '../../src/saved_audios', filename);
+
+  const safeName = filename.endsWith('.webm') ? filename : `${filename}.webm`;
+  const filePath = getUserAudioPath(safeName);
 
   return new Promise<string>((resolve, reject) => {
-    fs.mkdir(
-      path.join(__dirname, '../../src/saved_audios'),
-      { recursive: true },
-      (err) => {
+    fs.mkdir(getUserAudioPath(), { recursive: true }, (err) => {
+      if (err) {
+        return reject(err);
+      }
+      fs.writeFile(filePath, buffer, (err) => {
         if (err) {
-          return reject(err);
+          reject(err);
+        } else {
+          resolve(filePath);
         }
-        fs.writeFile(filePath, buffer, (err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(filePath);
-          }
-        });
-      },
-    );
+      });
+    });
   });
 }
 
@@ -82,7 +81,7 @@ export class PostOneAudioChannel implements IpcChannel {
     const { id } = await audioRepository.save(audio);
     log.debug('after id');
 
-    const fileName = id + '.wav';
+    const fileName = id + '.webm';
     log.debug('file name ' + fileName);
 
     const blobPath = await saveAudio(blobBuffer, fileName);

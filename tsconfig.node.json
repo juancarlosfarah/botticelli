@@ -2,13 +2,14 @@
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
   "include": ["electron.vite.config.*", ".eslintrc.cjs", "src/main/**/*", "src/preload/**/*", "src/shared/**/*"],
   "compilerOptions": {
+    "baseUrl": ".",
     "composite": true,
     "types": ["electron-vite/node"],
     "lib": [
       "es5",
       "es6"
     ],
-    "target": "es5",
+    "target": "es2017",
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "./build",

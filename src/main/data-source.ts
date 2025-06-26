@@ -1,3 +1,5 @@
+import { app } from 'electron';
+import path from 'path';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
@@ -25,9 +27,13 @@ import { Simulation } from './entity/Simulation';
 import { SimulationInteractionTemplate } from './entity/SimulationInteractionTemplate';
 import { Trigger } from './entity/Trigger';
 
+const dbPath = app.isPackaged
+  ? path.join(app.getPath('userData'), 'database.sqlite')
+  : path.resolve('database.sqlite');
+
 export const AppDataSource = new DataSource({
   type: 'sqlite',
-  database: 'database.sqlite',
+  database: dbPath,
   synchronize: true,
   logging: false,
   entities: [

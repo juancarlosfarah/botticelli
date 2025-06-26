@@ -26,6 +26,8 @@ release
 *.sw?
 
 build/
+!build/entitlements.mac.plist.xml
+!build/Info.plist.xml
 tmp/
 temp/
 out

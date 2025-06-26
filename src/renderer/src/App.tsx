@@ -1,5 +1,7 @@
 import { ReactElement, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/joy/Box';
 import CssBaseline from '@mui/joy/CssBaseline';
@@ -9,19 +11,40 @@ import i18next from 'i18next';
 
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
+import {
+  selectCurrentUser,
+  selectSessionLoggedIn,
+} from './components/user/UsersSlice';
 
-const theme = extendTheme();
-
-export default function JoyOrderDashboardTemplate(): ReactElement {
+export default function JoyOrderDashboardTemplate(): ReactElement | null {
+  const theme = extendTheme();
+  const currentUser = useSelector(selectCurrentUser);
+  const sessionLoggedIn = useSelector(selectSessionLoggedIn);
+  const navigate = useNavigate();
   const [language, setLanguage] = useState('en');
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
-    window.languageChange.language((value) => {
-      setLanguage(value);
-    });
+    if (currentUser && sessionLoggedIn) {
+      setAuthReady(true);
+    } else {
+      setTimeout(() => navigate('/login'));
+    }
+  }, [currentUser, sessionLoggedIn]);
+
+  useEffect(() => {
+    if (window.languageChange?.language) {
+      window.languageChange.language((value) => {
+        setLanguage(value);
+      });
+    } else {
+      console.warn('window.languageChange.language is undefined');
+    }
 
     i18next.changeLanguage(language);
   }, [language]);
+
+  if (!authReady) return null;
 
   return (
     <CssVarsProvider theme={theme} disableTransitionOnChange>

@@ -28,7 +28,7 @@ export type PostOneMessageParams = {
   interactionId: string;
   exchangeId: string;
   content: string;
-  sender: string;
+  sender: { id: string; type: 'user' | 'agent' };
   inputType: InputType;
   evaluate: boolean;
   keyPressEvents?: KeyPressData[];
@@ -38,7 +38,10 @@ export type PostOneMessageParams = {
 export type PostOneMessageHandlerParams = {
   exchangeId: string;
   content: string;
-  sender: string;
+  sender: {
+    id: string;
+    type: 'user' | 'agent';
+  };
   inputType: InputType;
 };
 

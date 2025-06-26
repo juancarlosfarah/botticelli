@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createHashRouter } from 'react-router-dom';
 
 import { StyledEngineProvider } from '@mui/joy/styles';
+
+import { PersistGate } from 'redux-persist/integration/react';
 
 import App from './App.tsx';
 import Home from './components/Home';
@@ -60,11 +62,12 @@ import NewTrigger from './components/trigger/NewTrigger';
 import Trigger from './components/trigger/Trigger';
 import Triggers from './components/trigger/Triggers';
 import Login from './components/user/Login.tsx';
+import { clearSession } from './components/user/UsersSlice.ts';
 import i18n from './config/i18nResources';
 import './index.css';
-import store from './store';
+import store, { persistor } from './store';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/login',
     element: <Login />,
@@ -339,13 +342,31 @@ const router = createBrowserRouter([
   },
 ]);
 
+//this runs once per app launch
+if (!sessionStorage.getItem('hasOpened')) {
+  sessionStorage.setItem('hasOpened', 'true');
+}
+
 // this is a call to add the app at the root of the document
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>
       <StyledEngineProvider injectFirst>
         <Provider store={store}>
-          <RouterProvider router={router} />
+          <PersistGate
+            loading={null}
+            persistor={persistor}
+            onBeforeLift={() => {
+              const state = store.getState();
+              if (state.user.sessionLoggedIn) {
+                store.dispatch(clearSession());
+              }
+            }}
+          >
+            <Suspense fallback={<div>Loading...</div>}>
+              <RouterProvider router={router} />
+            </Suspense>
+          </PersistGate>
         </Provider>
       </StyledEngineProvider>
     </I18nextProvider>

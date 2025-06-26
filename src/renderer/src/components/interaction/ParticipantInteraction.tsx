@@ -5,43 +5,51 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
 import CloseIcon from '@mui/icons-material/Close';
-import { Button } from '@mui/joy';
+import { Button, LinearProgress } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
 import Typography from '@mui/joy/Typography';
 
-import log from 'electron-log/renderer';
-
-import { AppDispatch } from '../../store';
+import { AppDispatch, RootState } from '../../store';
 import MessagesPane from '../Messages/MessagesPane';
 import {
   fetchInteraction,
   selectInteractionById,
+  selectInteractionStatusById,
   startInteraction,
 } from './InteractionsSlice';
 
 export default function ParticipantInteraction(): ReactElement {
   const { experimentId, participantId, interactionId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-
   const { t } = useTranslation();
 
-  if (!interactionId || !experimentId || !participantId) {
+  if (!experimentId || !participantId || !interactionId) {
     return <div>{t('Interaction Not Found')}</div>;
   }
 
-  useEffect(() => {
-    const query = { id: interactionId };
-    log.debug(`fetching interaction ${interactionId}`);
-    dispatch(fetchInteraction(query));
-  }, [interactionId]);
-
-  const interaction = useSelector((state) =>
+  const interaction = useSelector((state: RootState) =>
     selectInteractionById(state, interactionId),
   );
 
+  const status = useSelector((state: RootState) =>
+    selectInteractionStatusById(state, interactionId),
+  );
+
+  useEffect(() => {
+    dispatch(fetchInteraction({ id: interactionId }));
+  }, [dispatch, interactionId]);
+
   if (!interaction) {
-    return <div>{t('Interaction Not Found')}</div>;
+    if (status === 'failed') {
+      return <div>{t('Interaction Not Found')}</div>;
+    }
+
+    return (
+      <Box sx={{ width: '100%', mt: 2 }}>
+        <LinearProgress />
+      </Box>
+    );
   }
 
   const handleStartInteraction = (): void => {

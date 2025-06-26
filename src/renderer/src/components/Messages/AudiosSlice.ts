@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import {
   createAsyncThunk,
   createEntityAdapter,
-  createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
 import {
@@ -11,7 +10,6 @@ import {
   GENERATE_AUDIO_TRANSCRIPTION_CHANNEL,
   POST_AUDIOS_CHANNEL,
   POST_ONE_AUDIO_CHANNEL,
-  SEND_AUDIOS_CHANNEL,
 } from '@shared/channels';
 import { GET_MANY_AUDIOS_CHANNEL } from '@shared/channels';
 import InputType from '@shared/enums/InputType';
@@ -27,18 +25,18 @@ import {
   SendAudiosMessageParams,
 } from '@shared/interfaces/Audio';
 import { GetManyAudiosParams } from '@shared/interfaces/Audio';
-import { Message, PostOneMessageParams } from '@shared/interfaces/Message';
+import { Message } from '@shared/interfaces/Message';
 import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
 import { RootState } from '../../store';
-import { selectMessageById, updateMessage } from './MessagesSlice';
+import { updateMessage } from './MessagesSlice';
 import { saveNewMessage } from './MessagesSlice';
 
 export const audiosAdapter = createEntityAdapter<Audio>();
 
 const initialState = audiosAdapter.getInitialState({
-  status: { recording: 'idle', toSend: 'loading' },
+  status: { recording: 'idle', toSend: 'idle' },
 });
 
 // Convert Blob to ArrayBuffer
@@ -52,28 +50,15 @@ async function blobToArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
 }
 
 export const saveNewAudio = createAsyncThunk<Audio, PostOneAudioParams>(
-  'audios/saveNewAudios',
-  async ({ exchangeId, blob }, { dispatch }) => {
-    log.debug(`saveNewAudio:`, exchangeId);
+  'audios/saveNewAudio',
+  async ({ exchangeId, blob, interactionId }) => {
     const blobBuffer = await blobToArrayBuffer(blob);
-
     const response = await IpcService.send<Audio, PostOneAudioHandlerParams>(
       POST_ONE_AUDIO_CHANNEL,
       {
-        params: { exchangeId, blobBuffer },
+        params: { exchangeId, interactionId, blobBuffer },
       },
     );
-    log.debug(`response before transcript`);
-    if (response?.blobPath) {
-      log.debug('blobPath from AudiosSlice: ', response.blobPath);
-      const transcription = await dispatch(
-        transcribeAudio({ blobPath: response.blobPath }),
-      ).unwrap();
-      response.transcription = transcription;
-      // log.debug('transcription: ', transcription);
-    }
-    log.debug(`after transcript`);
-
     return response;
   },
 );
@@ -81,14 +66,80 @@ export const saveNewAudio = createAsyncThunk<Audio, PostOneAudioParams>(
 export const transcribeAudio = createAsyncThunk<
   string,
   GenerateAudioTranscriptionParams
->('audios/transcribeAudios', async ({ blobPath }) => {
-  return await IpcService.send<string, GenerateAudioTranscriptionParams>(
-    GENERATE_AUDIO_TRANSCRIPTION_CHANNEL,
-    {
-      params: { blobPath },
-    },
-  );
-});
+>(
+  'audios/transcribeAudio',
+  async ({ blobPath, exchangeId, participantId, audioId }) => {
+    if (!blobPath) {
+      throw new Error('[transcribeAudio] Missing parameter: blobPath');
+    }
+    if (!exchangeId) {
+      throw new Error('[transcribeAudio] Missing parameter: exchangeId');
+    }
+    if (!participantId) {
+      throw new Error('[transcribeAudio] Missing parameter: participantId');
+    }
+    if (!audioId) {
+      throw new Error('[transcribeAudio] Missing parameter: audioId');
+    }
+
+    console.log('Transcribing:', blobPath);
+
+    const response = await IpcService.send<
+      string,
+      GenerateAudioTranscriptionParams
+    >(GENERATE_AUDIO_TRANSCRIPTION_CHANNEL, {
+      params: { blobPath, exchangeId, participantId, audioId },
+    });
+
+    const safeResponse =
+      typeof response === 'string' ? response : JSON.stringify(response);
+
+    console.log('Received transcription:', safeResponse);
+    return safeResponse;
+  },
+);
+
+export const transcribeAndSendAudio = createAsyncThunk<
+  void,
+  {
+    exchangeId: string;
+    interactionId: string;
+    blobPath: string;
+    participantId: string;
+    audioId: string;
+  }
+>(
+  'audios/transcribeAndSendAudio',
+  async (
+    { exchangeId, interactionId, blobPath, participantId, audioId },
+    { dispatch },
+  ) => {
+    const transcription = await dispatch(
+      transcribeAudio({ blobPath, exchangeId, participantId, audioId }),
+    ).unwrap();
+
+    if (transcription?.trim()) {
+      try {
+        await dispatch(
+          saveNewMessage({
+            interactionId,
+            exchangeId,
+            content: transcription || '',
+            evaluate: true,
+            sender: {
+              id: participantId,
+              type: 'user',
+            },
+            keyPressEvents: [],
+            inputType: InputType.Voice,
+          }),
+        ).unwrap();
+      } catch (error) {
+        log.error('Failed to save transcribed message:', error);
+      }
+    }
+  },
+);
 
 export const postAudios = createAsyncThunk<
   GetManyAudiosResponse,
@@ -123,10 +174,7 @@ async function convertArrayBufferToBlob(arrayBuffer) {
 
 export const addAudioToMessage = createAsyncThunk<string, AddAudiosParams>(
   'audios/addAudioToMessage',
-  async ({ messageId, blobs }, { dispatch, getState }) => {
-    console.log('adding audio to message', messageId);
-
-    // Dispatch an action to update the message with the new audio blobs
+  async ({ messageId, blobs }, { dispatch }) => {
     dispatch(
       updateMessage({
         id: messageId,
@@ -135,25 +183,14 @@ export const addAudioToMessage = createAsyncThunk<string, AddAudiosParams>(
         },
       }),
     );
-
-    const message = useSelector((state: RootState) =>
-      selectMessageById(state, messageId),
-    );
-
-    if (message) {
-      if (message.audioBlobs) {
-        console.log('message blob of length', message.audioBlobs.length);
-      } else {
-        console.log('no audio blobs');
-      }
-    } else {
-      console.log('no message found');
-    }
     return messageId;
   },
 );
 
-export const sendAudios = createAsyncThunk<Message, SendAudiosMessageParams>(
+export const sendAudios = createAsyncThunk<
+  Message,
+  SendAudiosMessageParams & { blobs: Blob[]; participantId: string }
+>(
   'audios/sendAudios',
   async (
     {
@@ -161,14 +198,16 @@ export const sendAudios = createAsyncThunk<Message, SendAudiosMessageParams>(
       exchangeId,
       content,
       evaluate,
-      sender,
       keyPressEvents,
       inputType,
       audios,
+      blobs,
+      sender,
     },
     { dispatch },
   ) => {
-    const newMessage = await dispatch(
+    // Step 1: Save message with optimistic UI blobs
+    const optimisticMessage = await dispatch(
       saveNewMessage({
         interactionId,
         exchangeId,
@@ -180,38 +219,43 @@ export const sendAudios = createAsyncThunk<Message, SendAudiosMessageParams>(
       }),
     ).unwrap();
 
-    log.debug('before postAudios');
+    // Show temporary blobs immediately
+    await dispatch(
+      addAudioToMessage({
+        messageId: optimisticMessage.id,
+        blobs,
+      }),
+    );
+
+    dispatch(removeAudios());
+
+    // Step 2: Send audio to backend
     await dispatch(
       postAudios({
-        message: newMessage,
+        message: optimisticMessage,
         savedAudios: audios,
       }),
     );
-    log.debug('after postAudios ');
 
+    // Step 3: Retrieve real audio blobs from backend
     const buffers = await dispatch(
-      getManyAudios({ messageId: newMessage.id }),
+      getManyAudios({ messageId: optimisticMessage.id }),
     ).unwrap();
 
-    log.debug('buffer in AudiosSlice of size ', buffers.length);
-
     const audioBlobs: Blob[] = [];
-    log.debug('audioBlobs initialized');
-    for (const arrayBuffer of buffers) {
-      log.debug('inside loop');
-
-      const audioBlob = await convertArrayBufferToBlob(arrayBuffer);
-      console.log('blob of length ', audioBlob.size);
-
-      audioBlobs.push(audioBlob);
+    for (const buffer of buffers) {
+      const blob = await convertArrayBufferToBlob(buffer);
+      audioBlobs.push(blob);
     }
-    log.debug('message blobs of length ', audioBlobs.length);
 
     await dispatch(
-      addAudioToMessage({ messageId: newMessage.id, blobs: audioBlobs }),
+      addAudioToMessage({
+        messageId: optimisticMessage.id,
+        blobs: audioBlobs,
+      }),
     );
 
-    return newMessage;
+    return optimisticMessage;
   },
 );
 
@@ -232,6 +276,10 @@ const audiosSlice = createSlice({
   reducers: {
     deleteAudio: audiosAdapter.removeOne,
     removeAudios: audiosAdapter.removeAll,
+    resetAudioStatus(state) {
+      state.status.toSend = 'idle';
+      state.status.recording = 'idle';
+    },
   },
   extraReducers(builder) {
     builder
@@ -250,16 +298,31 @@ const audiosSlice = createSlice({
         state.status.recording = 'idle';
       })
       .addCase(transcribeAudio.pending, (state) => {
+        console.log('[REDUX] transcribeAudio.pending');
         state.status.toSend = 'loading';
       })
       .addCase(transcribeAudio.fulfilled, (state) => {
+        console.log('[REDUX] transcribeAudio.fulfilled');
+        state.status.toSend = 'idle';
+      })
+      .addCase(transcribeAudio.rejected, (state, action) => {
+        console.error('[REDUX] transcribeAudio.rejected:', action.error);
+        state.status.toSend = 'idle';
+      })
+
+      .addCase(sendAudios.rejected, (state, action) => {
+        console.error('[REDUX] sendAudios.rejected:', action.error);
+        state.status.toSend = 'idle';
+      })
+      .addCase(postAudios.rejected, (state) => {
         state.status.toSend = 'idle';
       });
   },
 });
 
 export default audiosSlice.reducer;
-export const { deleteAudio, removeAudios } = audiosSlice.actions;
+export const { deleteAudio, removeAudios, resetAudioStatus } =
+  audiosSlice.actions;
 
 export const { selectAll: selectAudios, selectById: selectAudioById } =
   audiosAdapter.getSelectors((state: RootState) => state.audios);

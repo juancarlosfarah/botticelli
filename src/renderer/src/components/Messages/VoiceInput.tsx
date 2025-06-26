@@ -1,10 +1,8 @@
-import { ReactElement, useEffect, useRef, useState } from 'react';
-import * as React from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CheckIcon from '@mui/icons-material/CheckRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import MicOffRoundedIcon from '@mui/icons-material/MicOffRounded';
 import MicRoundedIcon from '@mui/icons-material/MicRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
@@ -25,11 +23,11 @@ import { dismissExchange } from '../exchange/ExchangesSlice';
 import {
   deleteAudio,
   deleteOneAudio,
-  removeAudios,
+  resetAudioStatus,
   saveNewAudio,
-  selectAudioById,
   selectAudios,
   sendAudios,
+  transcribeAudio,
 } from './AudiosSlice';
 
 interface AudioChunk {
@@ -58,7 +56,7 @@ export default function VoiceInput({
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<AudioChunk[]>([]);
-  const [keypressData, setKeypressData] = useState<KeyPressData[]>([]);
+  const [keypressData] = useState<KeyPressData[]>([]);
 
   const audioChunksRef = useRef<Blob[]>([]);
 
@@ -69,73 +67,126 @@ export default function VoiceInput({
   const status = useSelector((state: RootState) => state.audios.status);
   const audios = useSelector(selectAudios);
 
-  const sendMessage = () => {
-    let text = '';
-    audios.forEach((audio) => {
-      if (audio.transcription) {
-        text += audio.transcription + ' ';
+  const sendMessage = async (): Promise<void> => {
+    console.log('[SEND] dispatching transcribeAudio...');
+    try {
+      let text = '';
+      let allSucceeded = true;
+
+      for (const chunk of audioChunks) {
+        const reduxAudio = audios.find((a) => a.id === chunk.id);
+        if (!reduxAudio?.blobPath) {
+          console.warn('Missing blobPath for chunk', chunk.id);
+          allSucceeded = false;
+          continue;
+        }
+
+        try {
+          let transcription = await dispatch(
+            transcribeAudio({
+              blobPath: reduxAudio.blobPath,
+              exchangeId,
+              participantId,
+              audioId: reduxAudio.id,
+            }),
+          ).unwrap();
+
+          console.log(
+            `[DEBUG] Transcription for ${chunk.id}: "${transcription}"`,
+          );
+
+          if (!transcription.trim()) {
+            console.warn('Transcription is empty for chunk', chunk.id);
+            transcription = '[empty transcription]';
+          }
+
+          text += transcription + ' ';
+          setAudioChunks((prevChunks) =>
+            prevChunks.map((c) =>
+              c.id === chunk.id ? { ...c, transcription } : c,
+            ),
+          );
+        } catch (err) {
+          console.error('Transcription failed', err);
+          allSucceeded = false;
+        } finally {
+          dispatch(resetAudioStatus());
+        }
       }
-    });
-    dispatch(
-      sendAudios({
-        interactionId,
-        exchangeId,
-        inputType,
-        keyPressEvents: keypressData,
-        content: text,
-        evaluate: true,
-        sender: participantId,
-        audios,
-      }),
-    );
-    audioChunks.map((chunk, index) => deleteAudioChunk(index));
-    setAudioChunks([]);
+
+      if (!allSucceeded) {
+        console.warn(
+          '[SEND] Not all audio chunks succeeded — aborting sendAudios',
+        );
+        dispatch(resetAudioStatus());
+        return;
+      }
+
+      const result = await dispatch(
+        sendAudios({
+          interactionId,
+          exchangeId,
+          inputType,
+          keyPressEvents: keypressData,
+          content: text.trim(),
+          evaluate: true,
+          sender: {
+            id: participantId,
+            type: 'user',
+          },
+          participantId,
+          audios,
+          blobs: audioChunks.map((chunk) => chunk.blob),
+        }),
+      ).unwrap();
+
+      console.log('[SEND] sendAudios succeeded:', result);
+      setAudioChunks([]);
+      dispatch(resetAudioStatus());
+    } catch (err) {
+      console.error('[SEND] sendAudios failed:', err);
+      // Ensure UI is not stuck
+      dispatch(resetAudioStatus());
+    }
   };
 
-  const handleStartRecording = async () => {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      const audioContext = new window.AudioContext({
-        sampleRate: 16000,
-      });
+  const handleStartRecording = async (): Promise<void> => {
+    let stream: MediaStream;
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: false,
-      });
-
-      // Create a MediaStreamSource from the stream
-      const mediaStreamSource = audioContext.createMediaStreamSource(stream);
-
-      // Create a MediaStreamDestination
-      const mediaStreamDestination =
-        audioContext.createMediaStreamDestination();
-      mediaStreamDestination.channelCount = 1;
-
-      // Connect the source to the destination
-      mediaStreamSource.connect(mediaStreamDestination);
-
-      // Use the destination's stream for the MediaRecorder
-      mediaRecorderRef.current = new MediaRecorder(
-        mediaStreamDestination.stream,
-      );
-
-      // mediaRecorderRef.current = new MediaRecorder(stream);
-      mediaRecorderRef.current.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
-      mediaRecorderRef.current.start();
-      setIsRecording(true);
-      setRecordingDuration(0); // Start the recording duration counter
-      recordingIntervalRef.current = setInterval(() => {
-        setRecordingDuration((prevDuration) => {
-          if (prevDuration >= 30) {
-            handleStopRecording(); // Automatically stop recording after 30 seconds
-            return prevDuration;
-          }
-          return prevDuration + 1;
-        });
-      }, 1000);
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      console.error('Mic access failed:', err);
+      return;
     }
+
+    const audioContext = new AudioContext({ sampleRate: 16000 });
+    const source = audioContext.createMediaStreamSource(stream);
+    const destination = audioContext.createMediaStreamDestination();
+
+    source.connect(destination);
+
+    mediaRecorderRef.current = new MediaRecorder(stream, {
+      mimeType: 'audio/webm',
+    });
+
+    mediaRecorderRef.current.ondataavailable = (event) => {
+      audioChunksRef.current.push(event.data);
+    };
+
+    mediaRecorderRef.current.start();
+
+    setIsRecording(true);
+    setRecordingDuration(0);
+    recordingIntervalRef.current = setInterval(() => {
+      setRecordingDuration((prev) => {
+        if (prev >= 30) {
+          handleStopRecording();
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 1000);
   };
 
   const handleStopRecording = () => {
@@ -153,11 +204,13 @@ export default function VoiceInput({
 
       mediaRecorderRef.current.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, {
-          type: 'audio/wav',
+          type: 'audio/webm',
         });
-        const audioUrl = URL.createObjectURL(audioBlob);
 
-        // Clear the recording chunks
+        console.log('[DEBUG] audioBlob size:', audioBlob.size);
+        console.log('[DEBUG] audioBlob type:', audioBlob.type);
+
+        const audioUrl = URL.createObjectURL(audioBlob);
         audioChunksRef.current = [];
 
         console.log('front end saveNewAudio');
@@ -165,16 +218,16 @@ export default function VoiceInput({
           saveNewAudio({
             exchangeId,
             blob: audioBlob,
+            interactionId,
           }),
         ).unwrap();
 
         const newChunk: AudioChunk = {
           url: audioUrl,
           blob: audioBlob,
-          transcription: 'Transcribing...',
           id: newAudio.id,
         };
-        setAudioChunks([...audioChunks, newChunk]);
+        setAudioChunks((prev) => [...prev, newChunk]);
       };
     }
   };
@@ -232,7 +285,7 @@ export default function VoiceInput({
           divider={<Divider orientation="vertical" flexItem />}
           sx={{ width: '100%', height: '100%' }}
         >
-          {/* Microphone recording */}
+          {/* Mic recording */}
           <Stack
             direction="column"
             justifyContent="space-evenly"
@@ -265,7 +318,7 @@ export default function VoiceInput({
             </Typography>
           </Stack>
 
-          {/* AudioChunks display */}
+          {/* audio chunks display */}
           <Box
             sx={{
               flexGrow: 1,
@@ -276,24 +329,26 @@ export default function VoiceInput({
             }}
           >
             <List>
-              {audioChunks.map((chunk, index) => (
-                <Box
-                  key={index}
-                  sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-                >
-                  <div>{index + 1}</div>
-                  {/* status.status.recording === 'idle' &&  */}
-                  {<audio controls src={chunk.url} />}
-                  <Button
-                    size="sm"
-                    variant="outlined"
-                    color="danger"
-                    onClick={() => deleteStoredAudio(index)}
+              {audioChunks.length > 0 &&
+                status.toSend === 'idle' &&
+                audioChunks.map((chunk, index) => (
+                  <Box
+                    key={index}
+                    sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
                   >
-                    <DeleteForeverRoundedIcon />
-                  </Button>
-                </Box>
-              ))}
+                    <div>{index + 1}</div>
+                    {/* status.status.recording === 'idle' &&  */}
+                    {<audio controls src={chunk.url} />}
+                    <Button
+                      size="sm"
+                      variant="outlined"
+                      color="danger"
+                      onClick={() => deleteStoredAudio(index)}
+                    >
+                      <DeleteForeverRoundedIcon />
+                    </Button>
+                  </Box>
+                ))}
               {status.toSend == 'loading' && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <div>{audioChunks.length + 1}</div>
@@ -310,7 +365,7 @@ export default function VoiceInput({
             </List>
           </Box>
 
-          {/* Send button */}
+          {/* send button */}
           <Stack
             direction="column"
             justifyContent="space-evenly"
@@ -325,7 +380,7 @@ export default function VoiceInput({
             )}
             {completed && (
               <Typography variant="body1" align="center" gutterBottom>
-                Click "Done" to end this exchange...
+                Click `Done` to end this exchange...
               </Typography>
             )}
             {completed && (

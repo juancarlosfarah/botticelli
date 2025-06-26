@@ -14,14 +14,18 @@ import { getFormattedTime } from '../../utils/datetime';
 
 type ChatBubbleProps = MessageProps & {
   variant: 'sent' | 'received';
+  audioBlobs?: Blob[];
+  inputType?: string;
+  participantId: string;
 };
-
 export default function ChatBubble({
   content,
   variant,
   timestamp,
   attachment = undefined,
   sender,
+  audioBlobs,
+  participantId,
 }: ChatBubbleProps): React.ReactElement {
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = React.useState<boolean>(false);
@@ -36,8 +40,9 @@ export default function ChatBubble({
         sx={{ mb: 0.25 }}
       >
         <Typography level="body-xs">
-          {sender === t('You') ? sender : sender.name}
+          {sender?.id === participantId ? t('You') : 'bot'}
         </Typography>
+
         {timestamp && (
           <Typography level="body-xs">
             {getFormattedTime(timestamp, 'en')}
@@ -89,7 +94,13 @@ export default function ChatBubble({
                   : 'var(--joy-palette-text-primary)',
               }}
             >
-              <ReactMarkdown>{content}</ReactMarkdown>
+              {audioBlobs && audioBlobs.length > 0 ? (
+                audioBlobs.map((blob, i) => (
+                  <audio key={i} controls src={URL.createObjectURL(blob)} />
+                ))
+              ) : (
+                <ReactMarkdown>{content}</ReactMarkdown>
+              )}
             </Typography>
           </Sheet>
         </Box>

@@ -10,6 +10,7 @@ import {
   PATCH_ONE_SETTING_CHANNEL,
 } from '@shared/channels';
 import Setting, { PatchOneSettingParams } from '@shared/interfaces/Setting';
+import log from 'electron-log/renderer';
 
 import { IpcService } from '../../services/IpcService';
 import { selectCurrentUser } from '../user/UsersSlice';
@@ -67,12 +68,13 @@ const settingsSlice = createSlice({
       })
 
       .addCase(editSetting.fulfilled, (state, action) => {
+        log.info('Redux: Updated setting received:', action.payload);
         settingsAdapter.upsertOne(state, action.payload);
         state.status = 'idle';
       })
       .addCase(fetchSettings.rejected, (state, action) => {
         state.status = 'failed';
-        console.error('Failed to fetch settings:', action.error);
+        log.error('Failed to fetch settings:', action.error);
       });
   },
 });

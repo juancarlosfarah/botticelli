@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '@mui/joy';
+import { LinearProgress } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
 import List from '@mui/joy/List';
@@ -14,9 +15,13 @@ import InteractionType from '@shared/interfaces/Interaction';
 import log from 'electron-log/renderer';
 import _ from 'lodash';
 
-import { AppDispatch } from '../../store';
+import { AppDispatch, RootState } from '../../store';
 import CustomBreadcrumbs from '../layout/CustomBreadcrumbs';
-import { fetchInteraction, selectInteractionById } from './InteractionsSlice';
+import {
+  fetchInteraction,
+  selectInteractionById,
+  selectInteractionStatusById,
+} from './InteractionsSlice';
 
 export default function Interaction(): ReactElement {
   const { interactionId } = useParams();
@@ -24,9 +29,13 @@ export default function Interaction(): ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  if (typeof interactionId === 'undefined') {
-    return <div>{t('Interaction Not Found')}</div>;
-  }
+  const status = useSelector((state: RootState) =>
+    selectInteractionStatusById(state, interactionId),
+  );
+
+  const interaction: InteractionType | undefined = useSelector((state) =>
+    selectInteractionById(state, interactionId),
+  );
 
   useEffect(() => {
     const query = { id: interactionId };
@@ -34,11 +43,18 @@ export default function Interaction(): ReactElement {
     dispatch(fetchInteraction(query));
   }, [interactionId]);
 
-  const interaction: InteractionType | undefined = useSelector((state) =>
-    selectInteractionById(state, interactionId),
-  );
+  if (typeof interactionId === 'undefined') {
+    return <div>{t('Interaction Not Found')}</div>;
+  }
 
   if (!interaction) {
+    if (status === 'loading') {
+      return (
+        <Box sx={{ width: '100%', mt: 2 }}>
+          <LinearProgress />
+        </Box>
+      );
+    }
     return <div>{t('Interaction Not Found')}</div>;
   }
 

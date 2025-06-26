@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '@mui/joy';
+import { LinearProgress } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
@@ -27,9 +28,10 @@ export default function InteractionTemplate(): ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  if (typeof interactionTemplateId === 'undefined') {
-    return <div>Interaction Not Found</div>;
-  }
+  const interactionTemplate: InteractionTemplateType | undefined = useSelector(
+    (state: RootState) =>
+      selectInteractionTemplateById(state, interactionTemplateId),
+  );
 
   useEffect(() => {
     const query = { id: interactionTemplateId };
@@ -37,16 +39,19 @@ export default function InteractionTemplate(): ReactElement {
     dispatch(fetchInteractionTemplate(query));
   }, [interactionTemplateId]);
 
-  const interactionTemplate: InteractionTemplateType | undefined = useSelector(
-    (state: RootState) =>
-      selectInteractionTemplateById(state, interactionTemplateId),
-  );
-
-  if (!interactionTemplate) {
-    return <div>Interaction Template Not Found</div>;
+  if (!interactionTemplateId) {
+    return <div>{t('InteractionTemplate ID Not Found')}</div>;
   }
 
-  const exchangeTemplates = interactionTemplate?.exchangeTemplates || [];
+  if (!interactionTemplate) {
+    return (
+      <Box sx={{ width: '100%', mt: 2 }}>
+        <LinearProgress />
+      </Box>
+    );
+  }
+
+  const exchangeTemplates = interactionTemplate.exchangeTemplates || [];
 
   return (
     <>

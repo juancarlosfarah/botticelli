@@ -179,7 +179,10 @@ export class PostOneExperimentChannel extends PostOneChannel {
                   exchangeTemplate.participantInstructionsOnComplete;
                 exchange.cue = exchangeTemplate.cue;
                 exchange.order = exchangeTemplateNumber;
-                exchange.triggers = exchangeTemplate.triggers;
+                // Some exchange templates don't define triggers
+                // and without a fallback, this caused the bot to silently fail during the experiment (not responding).
+                // We default to an empty array to ensure the exchange still works even if no triggers is defined
+                exchange.triggers = exchangeTemplate.triggers ?? [];
                 exchange.assistant = exchangeTemplate.assistant;
                 exchange.softLimit = exchangeTemplate.softLimit;
                 exchange.hardLimit = exchangeTemplate.hardLimit;

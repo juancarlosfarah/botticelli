@@ -23,15 +23,15 @@ import {
   PostManyKeyPressEventsResponse,
 } from '@shared/interfaces/Event';
 import {
-  GenerateResponseHandlerParams,
-  GenerateResponseParams,
-  GenerateResponseResponse,
-  Message,
   DeleteOneMessageHandlerParams,
   DeleteOneMessageParams,
   DeleteOneMessageResponse,
+  GenerateResponseHandlerParams,
+  GenerateResponseParams,
+  GenerateResponseResponse,
   GetManyMessagesParams,
   GetManyMessagesResponse,
+  Message,
   PostOneMessageHandlerParams,
   PostOneMessageParams,
 } from '@shared/interfaces/Message';
@@ -204,7 +204,10 @@ const messagesSlice = createSlice({
   initialState,
   reducers: {
     messageDeleted: messagesAdapter.removeOne,
-    updateMessage: messagesAdapter.updateOne,
+    updateMessage: (state, action) => {
+      console.log('[REDUX] updateMessage called', action.payload);
+      messagesAdapter.updateOne(state, action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder

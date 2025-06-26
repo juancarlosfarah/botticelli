@@ -12,6 +12,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "allowImportingTsExtensions": true,
+    "noEmit": true,
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,11 +11,7 @@ import Button from '@mui/joy/Button';
 import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 
-import InputType from '@shared/enums/InputType';
-import { log } from 'electron-log/renderer';
-
-import { Message } from '../../../../shared/interfaces/Message';
-import robot from '../../assets/robot.png?asset';
+import robot from '../../assets/robot.png';
 import { AppDispatch, RootState } from '../../store';
 import { MessageProps } from '../../types';
 import AvatarWithStatus from '../Avatars/AvatarWithStatus';
@@ -28,7 +24,7 @@ import {
 import MessageLoader from '../layout/MessageLoader';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-import { fetchMessages, selectMessages, saveNewMessage } from './MessagesSlice';
+import { fetchMessages, saveNewMessage, selectMessages } from './MessagesSlice';
 
 type MessagesPaneProps = {
   exchangeId: string;
@@ -136,15 +132,14 @@ export default function MessagesPane({
 
               {
                 if (
-                  exchange.inputType == InputType.Voice &&
                   isYou &&
-                  message.audioBlobs
+                  Array.isArray(message.audioBlobs) &&
+                  message.audioBlobs.length > 0
                 ) {
-                  console.log('voice input messagesPane');
-                  const audioBlobs = message.audioBlobs;
-                  const urls = audioBlobs.map((blob) =>
+                  const urls = message.audioBlobs.map((blob) =>
                     URL.createObjectURL(blob),
                   );
+
                   return (
                     <Stack
                       key={index}
@@ -176,9 +171,11 @@ export default function MessagesPane({
                       <ChatBubble
                         variant={isYou ? 'sent' : 'received'}
                         content={message.content}
-                        // timestamp={message.updatedAt.toString()}
                         attachment={false}
-                        sender={isYou ? 'You' : message?.sender}
+                        sender={message?.sender}
+                        timestamp={message.timestamp}
+                        audioBlobs={message.audioBlobs}
+                        participantId={participantId}
                       />
                     </Stack>
                   );
@@ -237,7 +234,11 @@ export default function MessagesPane({
                   keyPressEvents,
                   content: textAreaValue,
                   evaluate: true,
-                  sender: participantId,
+                  inputType: exchange.inputType,
+                  sender: {
+                    id: participantId,
+                    type: 'user',
+                  },
                 }),
               );
             }}

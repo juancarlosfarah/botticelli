@@ -6,33 +6,48 @@ import { instanceToPlain } from 'class-transformer';
 import { IpcMainEvent } from 'electron';
 import log from 'electron-log/main';
 
-import { AppDataSource } from '../../data-source';
-import { Audio } from '../../entity/Audio';
 import { transcribeAudio } from '../../utils/transcribeAudio';
 
 export class GenerateAudioTranscriptonChannel implements IpcChannel {
   getName(): string {
     return GENERATE_AUDIO_TRANSCRIPTION_CHANNEL;
   }
+
   async handle(
     event: IpcMainEvent,
     request: IpcRequest<GenerateAudioTranscriptionParams>,
   ): Promise<void> {
-    log.debug(`generate audio transcription channel`);
-    log.debug(`handling ${this.getName()}...`);
+    log.debug(`[${this.getName()}] Handling request`, request);
 
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}:response`;
     }
-    if (!request?.params?.blobPath) {
+
+    const blobPath = request?.params?.blobPath;
+    const exchangeId = request?.params?.exchangeId;
+    const participantId = request?.params?.participantId;
+    const audioId = request?.params?.audioId;
+
+    if (!blobPath || !exchangeId || !participantId || !audioId) {
+      log.error(`[${this.getName()}] Missing required parameters`);
       return;
     }
 
-    const { blobPath } = request.params;
+    try {
+      const transcription = await transcribeAudio({ blobPath, audioId });
+      log.info(`[${this.getName()}] Transcription successful`);
+      log.debug(`[${this.getName()}] Transcription result:`, transcription);
 
-    const transcription = await transcribeAudio(blobPath);
-    log.debug('transcription ' + transcription);
-
-    event.sender.send(request.responseChannel, instanceToPlain(transcription));
+      event.sender.send(
+        request.responseChannel,
+        instanceToPlain(transcription),
+      );
+    } catch (err: unknown) {
+      log.error(`[${this.getName()}] Transcription failed:`, err);
+      event.sender.send(request.responseChannel, {
+        error: 'Transcription failed',
+        detail: err instanceof Error ? err.message : String(err),
+      });
+    }
   }
 }

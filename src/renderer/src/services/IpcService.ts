@@ -1,3 +1,5 @@
+import log from 'electron-log/renderer';
+
 import { IpcRequest } from '../../../shared/interfaces/IpcRequest';
 
 export class IpcService {
@@ -15,13 +17,17 @@ export class IpcService {
     if (!request.responseChannel) {
       request.responseChannel = `${channel}:response:${new Date().getTime()}`;
     }
-    ipcRenderer.send(channel, request);
 
     // returns a promise which will be resolved when the response has arrived
     return new Promise((resolve) => {
-      ipcRenderer.once(request.responseChannel, (_, response) =>
-        resolve(response),
-      );
+      const responseChannel = request.responseChannel;
+
+      ipcRenderer.once(responseChannel, (_, response) => {
+        log.debug(`Received response on ${responseChannel}`, response);
+        resolve(response);
+      });
+
+      ipcRenderer.send(channel, request);
     });
   }
 }

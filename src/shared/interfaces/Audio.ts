@@ -14,12 +14,14 @@ export interface Audio {
 // refers to the redux handler
 export type PostOneAudioParams = {
   exchangeId: string;
+  interactionId: string;
   // messageId: string;
   blob: Blob;
 };
 
 export type PostOneAudioHandlerParams = {
   exchangeId: string;
+  interactionId: string;
   // messageId: string;
   blobBuffer: ArrayBuffer;
 };
@@ -28,6 +30,9 @@ export type PostOneAudioHandlerParams = {
 export type GenerateAudioTranscriptionParams = {
   // messageId?: string;
   blobPath: string; // Path to audio blob
+  exchangeId: string;
+  participantId: string;
+  audioId: string;
 };
 
 export type GenerateAudioTranscriptionHandlerParams = {
@@ -39,7 +44,10 @@ export type SendAudiosMessageParams = {
   interactionId: string;
   exchangeId: string;
   content: string;
-  sender: string;
+  sender: {
+    id: string;
+    type: 'user' | 'agent';
+  };
   inputType: InputType;
   evaluate: boolean;
   keyPressEvents: KeyPressData[];

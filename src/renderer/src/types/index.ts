@@ -6,7 +6,7 @@ export type UserProps = {
 };
 
 export type AgentProps = {
-  id: number;
+  id: string;
   type: 'bot' | 'user';
 };
 
