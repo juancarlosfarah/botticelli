@@ -36,3 +36,7 @@ results/
 # data
 database.sqlite
 *.sqlite
+
+# vendored binaries and runtime output
+resources/ffmpeg/
+src/saved_audios/
